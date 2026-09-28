@@ -23,6 +23,15 @@ dev = [
     "pytest>=8.0.0",
     "python-dotenv>=1.2.1",
 ]
+# the compression search (scripts/compress_*.py); transformers only for HuggingFace models
+compress = [
+    "datasets>=4.0.0",
+    "dill>=0.4.0",
+    "matplotlib>=3.10.8",
+    "pandas>=2.2.0",
+    "pymoo>=0.6.2",
+    "transformers>=5.0.0",
+]
 
 [tool.pytest.ini_options]
 markers = [
