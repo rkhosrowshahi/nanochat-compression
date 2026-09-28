@@ -450,6 +450,8 @@ while algorithm.has_next():
         nadir = front_F.max(axis=0)
         if nadir[0] <= 0:  # the whole initial front is at least as good as the original: use the population's worst
             nadir[0] = algorithm.pop.get("F")[:, 0].max()
+        if nadir[0] <= 0:  # every candidate beats the original (only seen with random test models)
+            nadir[0] = args.max_delta_loss or 1.0
         assert (nadir > 0).all(), f"nadir {nadir} must be positive to normalize the hypervolume"
         atomic_dump({"nadir": nadir.tolist(), "objectives": ["delta_loss", "size_mb"], "gen": gen}, norm_path, json)
     hv = float(HV(ref_point=np.ones(2))(front_F / nadir)) if len(front_F) else 0.0
