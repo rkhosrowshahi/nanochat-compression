@@ -58,13 +58,16 @@ for name in ("front.csv", "generations.csv"):
                  "that did not log every generation, so it cannot be plotted")
 
 if args.all:  # one process per plot, so no matplotlib state carries over between them
-    has_bins = "k_used_mean" in pd.read_csv(os.path.join(args.run_dir, "front.csv"), nrows=0).columns
-    runs = [["--hv"]] + [[*x, *pop, *still] for x, pop, still in itertools.product(
-        [[], ["--x", "bins"]] if has_bins else [[]], [[], ["--with-init-pop"], ["--with-pop-every-gen"]], [[], ["--last-gen"]])]
+    front_csv = pd.read_csv(os.path.join(args.run_dir, "front.csv"))
+    has_bins = "k_used_mean" in front_csv.columns
+    runs = [["--hv"]] + ([] if front_csv.empty else [[*x, *pop, *still] for x, pop, still in itertools.product(
+        [[], ["--x", "bins"]] if has_bins else [[]], [[], ["--with-init-pop"], ["--with-pop-every-gen"]], [[], ["--last-gen"]])])
     for flags in runs:
         subprocess.run([sys.executable, "-m", "scripts.compress_plot", "--run-dir", args.run_dir, "--fps", str(args.fps), *flags],
                        check=True)
-    if not has_bins:
+    if front_csv.empty:
+        print("no front plots: no generation has a feasible solution yet (see --max-delta-loss)")
+    elif not has_bins:
         print("no bins plots: this run does not log the used bins (k_used_mean)")
     raise SystemExit
 
@@ -88,6 +91,8 @@ if args.hv:
 read = lambda name: pd.read_csv(os.path.join(args.run_dir, name)).rename(columns={"loss_increase": "delta_loss", "k": "k_init"})
 X = "size_mb" if args.x == "size" else "k_used_mean"
 front = read("front.csv")
+if front.empty:
+    sys.exit(f"{args.run_dir}: the front is empty, no generation has a feasible solution yet (see --max-delta-loss)")
 assert X in front.columns, f"{args.run_dir} does not log {X} (run made before the lookup tables)"
 gens = pd.read_csv(os.path.join(args.run_dir, "generations.csv")).set_index("gen")
 # along the front: left to right, and top to bottom among solutions with the same x

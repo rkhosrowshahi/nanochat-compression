@@ -15,6 +15,10 @@ NSGA-II then ranks every feasible solution ahead of every infeasible one, and in
 ones by how far they exceed the limit, so the population is spent on usable models instead
 of broken ones. The front and the hypervolume only count feasible solutions.
 
+K range (--auto-k-bounds, optional): instead of the hand-set --k-min/--k-max, a one-time warm-up
+before the initial population finds [K_min, K_max] on this model's own error-vs-K curve (see
+find_k_bounds; the method of moea-compression's automatic search-range selection).
+
 Calibration batch (--calib-every):
     0   one fixed random batch for the whole run (the GPTQ/AWQ recipe): every solution
         is evaluated once, parents keep their scores, and the search is noise-free.
@@ -30,13 +34,15 @@ Outputs in <out-dir>:
     generations.csv  one summary row per generation: hypervolume, timing, GPU memory, ...
     normalization.json  the nadir point used to normalize the hypervolume
     calib_pool.pt    all calibration batches of the run
+    warmup.json      with --auto-k-bounds: the K range found and every warm-up evaluation
     pareto.json      the final Pareto set (delta_loss <= --test-max-delta-loss) scored on
                      WikiText-2 test and C4 validation with 2048-token windows, with the
                      Huffman-coded storage size of each solution (reported, never optimized)
 Every row carries the genes, both objectives, perplexity, size and pruning counts.
 
-Hypervolume: each objective is divided by the nadir point (worst value on the
-Pareto front) of the initial population, then measured against reference (1, 1).
+Hypervolume: each objective is divided by the nadir point (worst value on the Pareto front of
+the initial population; with --max-delta-loss, of the first generation that has a feasible
+solution, the hypervolume being 0 until then), then measured against reference (1, 1).
 
 Designed to survive interruptions on a long server run: the full NSGA-II state
 (incl. RNG) is saved to <out-dir>/checkpoint.pkl after every generation; rerunning
@@ -112,6 +118,18 @@ parser.add_argument("--k-space", type=str, default="log2", choices=["log2", "lin
                     help="gene for k: log2 searches b = log2(k) with k = round(2^b), so crossover/mutation steps "
                          "mean about the same number of bits at every k and each bit width gets an equal share "
                          "of the random initial population; linear searches k itself")
+parser.add_argument("--auto-k-bounds", action="store_true",
+                    help="replace --k-min/--k-max by a warm-up search on the calibration batch (see find_k_bounds)")
+parser.add_argument("--warmup-min-delta", type=float, default=math.log(1.5),
+                    help="auto-k-bounds: K_min = largest K whose delta_loss is still above this "
+                         "(default ln 1.5 = 0.405: perplexity +50%%)")
+parser.add_argument("--warmup-max-delta", type=float, default=math.log(1.005),
+                    help="auto-k-bounds: K_max = smallest K whose delta_loss is at or below this "
+                         "(default ln 1.005 = 0.0050: perplexity +0.5%%)")
+parser.add_argument("--warmup-log-k-range", type=float, nargs=2, default=[math.log2(3), 13.0],
+                    help="auto-k-bounds: log2(K) interval bisected (default K in [3, 8192])")
+parser.add_argument("--warmup-log-k-resolution", type=float, default=0.1,
+                    help="auto-k-bounds: bisection stops at this width in log2(K) (~7%% relative K)")
 parser.add_argument("--c-min", type=float, default=0.7)
 parser.add_argument("--c-max", type=float, default=1.0)
 parser.add_argument("--alpha-min", type=float, default=-1.0, help="alpha in [alpha-min, 0]")
@@ -261,6 +279,89 @@ def evaluate(cand, tokens, huffman=False):
     return loss, stats
 
 
+def find_k_bounds(tokens, baseline):
+    """
+    K-range warm-up, ported from moea-compression (moea/engine.py find_k_bounds; report/
+    methodology.tex, "Automatic Search-Range Selection"). The classifier's relative accuracy loss
+    becomes the LM's loss increase on the calibration batch, in the same unit as the search
+    objective and constraint:
+        error(K) = delta_loss(K) = loss_K - loss_original   (nats; perplexity ratio = exp(error))
+    of plain uniform quantization with K levels (no clipping: c = 1; no pruning: alpha = beta = 0).
+    The default thresholds are the method's relative ones in this unit: ln(1.5) and ln(1.005), i.e.
+    a perplexity increase of 50% and 0.5% (monotone in delta_loss, so the bounds are identical).
+    error(K) does not increase with K, so two crossings are bisected in log2(K), continuously,
+    down to --warmup-log-k-resolution:
+        K_min = the LARGEST K whose error is still ABOVE --warmup-min-delta (0.405): the aggressive
+                end keeps the "still bad" side of the cliff, since a point just past it can be
+                Pareto-optimal and excluding it would hide it from the search
+        K_max = the SMALLEST K whose error is AT OR BELOW --warmup-max-delta (0.0050): finer grids
+                beyond it buy nothing, so this end takes the "already good" side
+    Both are then snapped OUTWARD to powers of two (floor for K_min, ceil for K_max), which keeps
+    each bound's guarantee by monotonicity. K_min is at least 3, the smallest grid with a
+    positive level. Returns a dict with k_min, k_max and every evaluation.
+    """
+    min_error, max_error = args.warmup_min_delta, args.warmup_max_delta
+    fmt = lambda d: f"delta {d:+.4f} (ppl {math.expm1(min(d, 700.0)):+.2%})"  # both units in every message
+    lo, hi = args.warmup_log_k_range
+    resolution = args.warmup_log_k_resolution
+    cache, evals = {}, []  # K -> error (the grid only depends on the rounded K)
+
+    def error_at(log_k):
+        k = max(3, round(2 ** log_k))
+        if k not in cache:
+            t0 = time.time()
+            loss, stats = evaluate(Candidate(k, 1.0, 0.0, 0.0), tokens)
+            delta = loss - baseline
+            cache[k] = delta
+            evals.append({"log2_k": log_k, "k": k, "delta_loss": delta, "ppl_increase": math.expm1(min(delta, 700.0)),
+                          "size_mb": stats["size_mb"], "k_used_mean": stats["k_used_mean"],
+                          "seconds": round(time.time() - t0, 1)})
+            print(f"    log2(K)={log_k:.4f} -> K={k}: {fmt(delta)}, size {stats['size_mb']:.1f} MB", flush=True)
+        return cache[k]
+
+    def bisect_boundary(threshold, a, b):
+        """Narrow [a, b] to within `resolution` keeping error(a) > threshold >= error(b)."""
+        while b - a > resolution:
+            mid = (a + b) / 2
+            if error_at(mid) <= threshold:
+                b = mid
+            else:
+                a = mid
+        return a, b
+
+    print(f"K-bounds warm-up: bisecting log2(K) in [{lo:.3f}, {hi:.3f}] (K_min: {fmt(min_error)} exceeded, "
+          f"K_max: {fmt(max_error)} reached)", flush=True)
+    err_lo, err_hi = error_at(lo), error_at(hi)
+    if err_lo <= min_error:  # even the floor is good enough: nothing "still bad" to keep
+        k_min_log = lo
+    elif err_hi > min_error:
+        print(f"  WARNING: at the range ceiling {fmt(err_hi)} is above the K_min threshold; using it as K_min. "
+              f"Consider raising --warmup-log-k-range.", flush=True)
+        k_min_log = hi
+    else:
+        k_min_log, _ = bisect_boundary(min_error, lo, hi)
+    if err_hi > max_error:
+        print(f"  WARNING: at the range ceiling {fmt(err_hi)} is above the K_max threshold; using it as K_max. "
+              f"Consider raising --warmup-log-k-range.", flush=True)
+        k_max_log = hi
+    else:
+        _, k_max_log = bisect_boundary(max_error, k_min_log, hi)
+    if k_max_log <= k_min_log and k_min_log < hi:  # a near-vertical cliff: give K_max a little headroom
+        k_max_log = min(k_min_log + resolution, hi)
+        error_at(k_max_log)
+    # snap outward to powers of two; measure there so the reported errors are real, not inferred
+    k_min_pow2_log, k_max_pow2_log = math.floor(k_min_log), math.ceil(k_max_log)
+    if k_max_pow2_log <= k_min_pow2_log:
+        k_max_pow2_log = k_min_pow2_log + 1
+    err_min, err_max = error_at(k_min_pow2_log), error_at(k_max_pow2_log)
+    k_min, k_max = max(3, 2 ** k_min_pow2_log), 2 ** k_max_pow2_log
+    print(f"K-bounds warm-up result: K_min={k_min} ({fmt(err_min)}), K_max={k_max} ({fmt(err_max)}), "
+          f"{len(cache)} evaluations", flush=True)
+    return {"k_min": k_min, "k_max": k_max, "delta_loss_at_k_min": err_min, "delta_loss_at_k_max": err_max,
+            "ppl_increase_at_k_min": math.expm1(min(err_min, 700.0)), "ppl_increase_at_k_max": math.expm1(err_max),
+            "evaluations": evals}
+
+
 def atomic_dump(obj, path, dumper):
     tmp = path + ".tmp"
     with open(tmp, "wb" if dumper is dill else "w") as f:
@@ -318,13 +419,24 @@ t0 = time.time()
 baseline_loss = eval_loss(model, calib_batch(0))
 print(f"Baseline: calib loss {baseline_loss:.4f} on the first batch, size {compressor.baseline_bits / 8 / 1e6:.1f} MB, "
       f"one forward pass over a batch takes {time.time() - t0:.1f}s", flush=True)
+if args.auto_k_bounds:
+    # run once and saved: a resumed run must keep the same bounds, since the K gene is scaled to them
+    warm_settings = {k: getattr(args, k) for k in ("warmup_min_delta", "warmup_max_delta", "warmup_log_k_range",
+                                                  "warmup_log_k_resolution", "calib_seqs", "seq_len", "data_seed")}
+    warm = json.load(open(out("warmup.json"))) if os.path.exists(out("warmup.json")) else None
+    if warm is None or warm["settings"] != warm_settings:
+        warm = {"settings": warm_settings, "baseline_loss": baseline_loss, **find_k_bounds(calib_batch(0), baseline_loss)}
+        atomic_dump(warm, out("warmup.json"), json)
+    else:
+        print(f"K-bounds warm-up (from warmup.json): K_min={warm['k_min']}, K_max={warm['k_max']}", flush=True)
+    args.k_min, args.k_max = warm["k_min"], warm["k_max"]
 if os.path.exists(ckpt_path) and os.path.exists(out("config.json")):
     # the checkpoint stores raw genes: resuming with another encoding or other bounds would misread them
     old = json.load(open(out("config.json")))["args"]
     for key, default in (("k_space", "linear"), ("k_min", 3), ("k_max", 256), ("c_min", 0.2), ("c_max", 1.0),
                          ("alpha_min", -1.0), ("beta_max", 1.0), ("no_pruning", False), ("calib_every", 1), ("max_delta_loss", None),
                          ("model", "Qwen/Qwen2.5-0.5B-Instruct"), ("include_lm_head", False), ("include_embeddings", False),
-                         ("calib_seqs", 8), ("seq_len", 1024)):
+                         ("calib_seqs", 8), ("seq_len", 1024), ("auto_k_bounds", False)):
         assert old.get(key, default) == getattr(args, key), \
             f"this run was started with --{key.replace('_', '-')} {old.get(key, default)}, not {getattr(args, key)}"
 atomic_dump({"args": vars(args), "git_commit": git_commit, "baseline_size_mb": compressor.baseline_bits / 8 / 1e6,
@@ -409,7 +521,9 @@ def population_rows(individuals, gen):
         cand = decode(ind.X)
         r = cache[(batch_index(gen), cache_key(cand))]
         rows.append({"gen": gen, "rank": ind.get("rank"), "crowding": ind.get("crowding"), **gene_fields(cand, ind.X), **r,
-                     "f1_norm": r["delta_loss"] / nadir[0], "f2_norm": r["size_mb"] / nadir[1]})
+                     # normalized objectives; empty until the nadir exists (with a constraint: the first feasible front)
+                     "f1_norm": r["delta_loss"] / nadir[0] if nadir is not None else None,
+                     "f2_norm": r["size_mb"] / nadir[1] if nadir is not None else None})
     return rows
 
 
@@ -446,7 +560,9 @@ while algorithm.has_next():
 
     # with a constraint and no feasible solution yet, pymoo's opt holds the least infeasible ones
     front_F = algorithm.opt.get("F")[algorithm.opt.get("feas")]
-    if nadir is None and len(front_F):  # fixed once, from the (feasible) Pareto front of the initial population
+    # fixed once, from the Pareto front of the initial population; with a constraint, from the first
+    # generation that has a feasible solution (until then the hypervolume is 0)
+    if nadir is None and len(front_F):
         nadir = front_F.max(axis=0)
         if nadir[0] <= 0:  # the whole initial front is at least as good as the original: use the population's worst
             nadir[0] = algorithm.pop.get("F")[:, 0].max()

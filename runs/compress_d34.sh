@@ -15,14 +15,20 @@
 #   bash runs/compress_d34.sh           # the real run
 # Settings to override with environment variables:
 #   CALIB_SEQS  calibration windows of 2048 tokens (default 128, the GPTQ size). The time per
-#               generation is ~100 x (forward time over CALIB_SEQS windows + ~1 s compression),
-#               i.e. ~CALIB_SEQS/8 x the smoke run's forward time x 100.
+#               generation is ~100 x (forward time over CALIB_SEQS windows + ~1 s compression).
 #   EVAL_BATCH  windows per forward pass (default 2: fits a 24 GB L4; 8 on an 80 GB H100)
-#   N_GEN, POP  generations (default 50) and population size (default 100)
+#   N_GEN, POP  generations (default 10) and population size (default 100)
+#   C_MIN       lowest clipping fraction searched (default 0.9)
+#   PRUNE_MAX   widest pruning bound searched, in row std units: alpha >= -PRUNE_MAX, beta <= PRUNE_MAX (0.3)
+#   MAX_DELTA   constraint: candidates with a larger calibration delta_loss are infeasible (default 1.0)
+#   EXTRA       any further compress_search options, e.g. EXTRA="--warmup-max-error 0.002"
 #
-# Settings: fixed calibration batch of random C4-train windows, log2 K with K <= 256, constraint
-# delta_loss <= 1.0. The final front is scored on WikiText-2 test and C4 validation with 2048-token
-# windows (pareto.json), then every plot is made.
+# Search: fixed calibration batch of random C4-train windows; log2 K with its range [K_min, K_max] found
+# by the warm-up (--auto-k-bounds: uniform quantization only, K_min = largest K with >50% perplexity
+# increase, K_max = smallest K with <=0.5%, both snapped outward to powers of two); c in [C_MIN, 1] and
+# pruning within +-PRUNE_MAX sigma, narrowed for d34, which the first 25 random candidates of a wide
+# search showed breaks at c < 0.9 or wide pruning; constraint delta_loss <= 1.0. The final front is
+# scored on WikiText-2 test and C4 validation with 2048-token windows (pareto.json), then plotted.
 
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -43,18 +49,23 @@ fi
 MODEL=nanochat:base:d34
 CALIB_SEQS=${CALIB_SEQS:-128}
 EVAL_BATCH=${EVAL_BATCH:-2}
+N_GEN=${N_GEN:-10}
+C_MIN=${C_MIN:-0.9}
+PRUNE_MAX=${PRUNE_MAX:-0.3}
+MAX_DELTA=${MAX_DELTA:-1.0}
 if [ "${SMOKE:-0}" = "1" ]; then
     OUT=${OUT:-compress_runs/d34_smoke}
     ARGS="--pop-size 4 --n-gen 2 --calib-seqs 8 --wikitext-seqs 4 --c4-test-seqs 4"
 else
-    OUT=${OUT:-compress_runs/d34_${N_GEN:-50}_log2_k256_calib_fixed_${CALIB_SEQS}x2048_maxdelta1}
-    ARGS="--pop-size ${POP:-100} --n-gen ${N_GEN:-50} --calib-seqs $CALIB_SEQS"
+    OUT=${OUT:-compress_runs/d34_${N_GEN}_log2_autok_c${C_MIN}_prune${PRUNE_MAX}_calib_fixed_${CALIB_SEQS}x2048_maxdelta${MAX_DELTA}}
+    ARGS="--pop-size ${POP:-100} --n-gen $N_GEN --calib-seqs $CALIB_SEQS"
 fi
 mkdir -p "$OUT"
 
 nvidia-smi --query-gpu=name,memory.total,memory.used --format=csv | tee -a "$OUT/run.log"
 python -u -m scripts.compress_search --model "$MODEL" $ARGS \
-    --seq-len 2048 --calib-every 0 --k-space log2 --k-max 256 --max-delta-loss 1.0 \
-    --eval-batch-size "$EVAL_BATCH" --out-dir "$OUT" 2>&1 | tee -a "$OUT/run.log"
+    --seq-len 2048 --calib-every 0 --k-space log2 --auto-k-bounds \
+    --c-min "$C_MIN" --alpha-min "-$PRUNE_MAX" --beta-max "$PRUNE_MAX" --max-delta-loss "$MAX_DELTA" \
+    --eval-batch-size "$EVAL_BATCH" --out-dir "$OUT" ${EXTRA:-} 2>&1 | tee -a "$OUT/run.log"
 python -m scripts.compress_plot --run-dir "$OUT" --all 2>&1 | tee -a "$OUT/run.log"
 echo "done: $OUT (pareto.json = test scores of the final front)" | tee -a "$OUT/run.log"
