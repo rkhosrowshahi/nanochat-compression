@@ -25,7 +25,7 @@ import time
 import pandas as pd
 import torch
 from nanochat import compress_eval, compress_models
-from nanochat.compress import Candidate, GlobalCompressor
+from nanochat.compress import Candidate, GlobalCompressor, include_from_config
 
 parser = argparse.ArgumentParser(description="test-set perplexity of the final Pareto front of a compress_search run")
 parser.add_argument("--run-dir", type=str, required=True)
@@ -64,10 +64,9 @@ def save():
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, tokenizer, exclude = compress_models.load(search["model"], search["dtype"], device)
-compressor = GlobalCompressor(model, search["include_lm_head"], search["size_mode"], search["offload_originals"],
+compressor = GlobalCompressor(model, include_from_config(search), search["size_mode"], search["offload_originals"],
                               search.get("reconstruction", "grid"), formats=search.get("formats", "dense,bitmap").split(","),
-                              prune=not search.get("no_pruning", False), exclude=exclude,
-                              include_embeddings=search.get("include_embeddings", False))
+                              prune=not search.get("no_pruning", False), exclude=exclude)
 test_sets = compress_eval.load_test_sets(tokenizer, args.seq_len, args.wikitext_seqs, args.c4_test_seqs)
 for name, tokens in test_sets.items():
     print(f"Test set {name}: {tokens.size(0)} windows, {tokens.numel()} tokens", flush=True)

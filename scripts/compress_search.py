@@ -63,7 +63,9 @@ import csv
 import json
 import math
 import os
+import shutil
 import subprocess
+import sys
 import time
 
 import dill
@@ -79,7 +81,7 @@ from pymoo.operators.sampling.rnd import FloatRandomSampling
 from pymoo.problems.static import StaticProblem
 from pymoo.termination import get_termination
 from nanochat import compress_eval, compress_models
-from nanochat.compress import Candidate, GlobalCompressor
+from nanochat.compress import INCLUDE_GROUPS, Candidate, GlobalCompressor, include_from_config
 
 parser = argparse.ArgumentParser(description="NSGA-II search over global quantization + pruning genes")
 # model
@@ -87,10 +89,11 @@ parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-0.5B-Instruct",
                     help="HuggingFace model id or local path, or a nanochat checkpoint nanochat:<base|sft|rl>:<tag>[:<step>], "
                          "e.g. nanochat:base:d34 (see nanochat/compress_models.py)")
 parser.add_argument("--dtype", type=str, default="bfloat16", choices=["bfloat16", "float16", "float32"])
-parser.add_argument("--include-lm-head", action="store_true", help="also compress the output projection")
-parser.add_argument("--include-embeddings", action="store_true",
-                    help="also compress the embedding tables (nn.Embedding, one row per token); for nanochat the token "
-                         "embedding and the value embeddings (37%% of d34's parameters)")
+parser.add_argument("--include", nargs="*", default=[], choices=INCLUDE_GROUPS, metavar="GROUP",
+                    help="also compress these parameter groups (by default only the linear layers, without lm_head): "
+                         "lm_head = the output projection; embeddings = every embedding table (the token embedding, "
+                         "and nanochat's value embeddings). A token embedding tied to lm_head (Qwen2.5) is one "
+                         "matrix, compressed if either group is given. E.g. --include embeddings lm_head")
 parser.add_argument("--offload-originals", type=str, default="auto", choices=["auto", "yes", "no"], help="keep original weights in CPU memory")
 # data, following GPTQ/AWQ: the search only ever sees C4 train (a new calibration batch
 # every generation); the final Pareto set is scored on WikiText-2 test and C4 validation
@@ -110,6 +113,9 @@ parser.add_argument("--test-max-delta-loss", type=float, default=1.0,
 parser.add_argument("--text-field", type=str, default="text")
 parser.add_argument("--seq-len", type=int, default=1024)
 parser.add_argument("--data-seed", type=int, default=0, help="which random documents/windows are sampled")
+parser.add_argument("--calib-from", type=str, default=None,
+                    help="reuse the calibration batches saved by another run (its calib_pool.pt) instead of downloading "
+                         "them; used only if they match --calib-seqs/--seq-len/--data-seed, otherwise resampled")
 parser.add_argument("--eval-batch-size", type=int, default=1)
 # genes (search bounds)
 parser.add_argument("--k-min", type=int, default=3)
@@ -375,6 +381,33 @@ def atomic_dump(obj, path, dumper):
 os.makedirs(args.out_dir, exist_ok=True)
 out = lambda name: os.path.join(args.out_dir, name)
 ckpt_path, norm_path, pool_path = out("checkpoint.pkl"), out("normalization.json"), out("calib_pool.pt")
+
+
+class Tee:
+    """Write to the terminal and to <out-dir>/run.log at once (appended, so a resumed run continues it)."""
+
+    def __init__(self, stream, log):
+        self.stream, self.log = stream, log
+
+    def write(self, text):
+        self.stream.write(text)
+        self.log.write(text)
+        return len(text)
+
+    def flush(self):
+        self.stream.flush()
+        self.log.flush()
+
+    def __getattr__(self, name):  # isatty, fileno, encoding, ... of the terminal
+        return getattr(self.stream, name)
+
+
+run_log = open(out("run.log"), "a", encoding="utf-8", buffering=1)
+sys.stdout, sys.stderr = Tee(sys.stdout, run_log), Tee(sys.stderr, run_log)
+print(f"=== {time.strftime('%Y-%m-%d %H:%M:%S')}  python -m scripts.compress_search {' '.join(sys.argv[1:])}", flush=True)
+if args.calib_from and not os.path.exists(pool_path):
+    shutil.copy(os.path.join(args.calib_from, "calib_pool.pt"), pool_path)
+    print(f"Calibration batches copied from {args.calib_from}", flush=True)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 try:
     git_commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
@@ -383,9 +416,8 @@ except OSError:
 
 print(f"Loading {args.model} on {device}", flush=True)
 model, tokenizer, exclude = compress_models.load(args.model, args.dtype, device)
-compressor = GlobalCompressor(model, args.include_lm_head, args.size_mode, args.offload_originals, args.reconstruction,
-                              formats=args.formats.split(","), prune=not args.no_pruning, exclude=exclude,
-                              include_embeddings=args.include_embeddings)
+compressor = GlobalCompressor(model, tuple(args.include), args.size_mode, args.offload_originals, args.reconstruction,
+                              formats=args.formats.split(","), prune=not args.no_pruning, exclude=exclude)
 print(f"Compressing {len(compressor.targets)} matrices, {compressor.n_target_params / 1e6:.1f}M weights "
       f"({compressor.n_target_params / (compressor.n_target_params + compressor.rest_params):.1%} of params), "
       f"originals {'offloaded to CPU' if compressor.offloaded else 'kept on GPU'}", flush=True)
@@ -435,10 +467,13 @@ if os.path.exists(ckpt_path) and os.path.exists(out("config.json")):
     old = json.load(open(out("config.json")))["args"]
     for key, default in (("k_space", "linear"), ("k_min", 3), ("k_max", 256), ("c_min", 0.2), ("c_max", 1.0),
                          ("alpha_min", -1.0), ("beta_max", 1.0), ("no_pruning", False), ("calib_every", 1), ("max_delta_loss", None),
-                         ("model", "Qwen/Qwen2.5-0.5B-Instruct"), ("include_lm_head", False), ("include_embeddings", False),
+                         ("model", "Qwen/Qwen2.5-0.5B-Instruct"),
                          ("calib_seqs", 8), ("seq_len", 1024), ("auto_k_bounds", False)):
         assert old.get(key, default) == getattr(args, key), \
             f"this run was started with --{key.replace('_', '-')} {old.get(key, default)}, not {getattr(args, key)}"
+    assert sorted(include_from_config(old)) == sorted(args.include), \
+        f"this run was started with --include {' '.join(include_from_config(old)) or '(none)'}, " \
+        f"not {' '.join(args.include) or '(none)'}"
 atomic_dump({"args": vars(args), "git_commit": git_commit, "baseline_size_mb": compressor.baseline_bits / 8 / 1e6,
              "n_target_params": compressor.n_target_params, "n_other_params": compressor.rest_params},
             out("config.json"), json)

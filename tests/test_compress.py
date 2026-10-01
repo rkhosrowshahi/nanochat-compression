@@ -11,7 +11,8 @@ import pytest
 import torch
 import torch.nn as nn
 
-from nanochat.compress import Candidate, GlobalCompressor, centroid_levels, compress_weight, encoded_bits, find_target_linears, format_bits, huffman_bits
+from nanochat.compress import (Candidate, GlobalCompressor, centroid_levels, compress_weight, encoded_bits, find_target_linears,
+                               format_bits, huffman_bits, include_from_config)
 
 
 def make_weight(rows=64, cols=128, seed=0):
@@ -100,17 +101,23 @@ def test_codes_address_only_used_levels():
 def test_targets_skip_tied_output_head():
     model = TinyLM()
     assert [name for name, _ in find_target_linears(model)] == ["fc1", "fc2"]
-    assert [name for name, _ in find_target_linears(model, include_lm_head=True)] == ["fc1", "fc2", "lm_head"]
+    assert [name for name, _ in find_target_linears(model, include=("lm_head",))] == ["fc1", "fc2", "lm_head"]
 
 
 def test_targets_exclude_and_embeddings():
     model = TinyLM()
     assert [name for name, _ in find_target_linears(model, exclude=("fc2",))] == ["fc1"]
-    # the embedding is tied to the output head, which stays uncompressed
-    assert [name for name, _ in find_target_linears(model, include_embeddings=True)] == ["fc1", "fc2"]
+    # tied to the output head, the token embedding is one matrix: compressed once with either group
+    assert [name for name, _ in find_target_linears(model, include=("embeddings",))] == ["embed", "fc1", "fc2"]
+    assert [name for name, _ in find_target_linears(model, include=("embeddings", "lm_head"))] == ["embed", "fc1", "fc2"]
     model.lm_head.weight = nn.Parameter(model.embed.weight.detach().clone())  # untie
-    assert [name for name, _ in find_target_linears(model, include_embeddings=True)] == ["embed", "fc1", "fc2"]
-    comp = GlobalCompressor(model, include_embeddings=True)
+    assert [name for name, _ in find_target_linears(model, include=("embeddings",))] == ["embed", "fc1", "fc2"]
+    assert [name for name, _ in find_target_linears(model, include=("embeddings", "lm_head"))] == ["embed", "fc1", "fc2", "lm_head"]
+    with pytest.raises(AssertionError):
+        find_target_linears(model, include=("embedding",))
+    assert include_from_config({"include_lm_head": True, "include_embeddings": False}) == ("lm_head",)
+    assert include_from_config({"include": ["embeddings"]}) == ("embeddings",)
+    comp = GlobalCompressor(model, include=("embeddings",))
     before = model.embed.weight.detach().clone()
     comp.apply(Candidate(5, 0.8, -0.5, 0.5))
     assert not torch.equal(model.embed.weight, before)

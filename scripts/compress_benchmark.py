@@ -132,13 +132,13 @@ if todo:
     from lm_eval.models.huggingface import HFLM
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    from nanochat.compress import Candidate, GlobalCompressor
+    from nanochat.compress import Candidate, GlobalCompressor, include_from_config
 
     results["settings"]["lm_eval_version"] = lm_eval.__version__
     device = "cuda" if torch.cuda.is_available() else "cpu"
     tokenizer = AutoTokenizer.from_pretrained(search["model"])
     model = AutoModelForCausalLM.from_pretrained(search["model"], dtype=getattr(torch, search["dtype"])).to(device).eval()
-    compressor = GlobalCompressor(model, search["include_lm_head"], search["size_mode"], search["offload_originals"],
+    compressor = GlobalCompressor(model, include_from_config(search), search["size_mode"], search["offload_originals"],
                                   search["reconstruction"], formats=search["formats"].split(","),
                                   prune=not search.get("no_pruning", False))
     lm = HFLM(pretrained=model, tokenizer=tokenizer, batch_size=args.batch_size)  # sees the in-place weight changes

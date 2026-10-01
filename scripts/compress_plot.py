@@ -17,6 +17,10 @@ Works on a finished or running run.
        non-empty bins per matrix, i.e. the lookup-table size k_used_mean, averaged over the matrices;
        not the k gene. Combines with the other options, e.g. --last-gen -> pareto_front_bins.png/.pdf)
 
+    python -m scripts.compress_plot --run-dir compress_runs/local_100 --y linear
+    -> <run-dir>/front_evolution_ylinear.gif (calibration loss on a plain linear y-axis instead of the
+       default log one (symlog: linear near 0, log above); combines with the other options)
+
     python -m scripts.compress_plot --run-dir compress_runs/local_100 --hv
     -> <run-dir>/hypervolume.png/.pdf (hypervolume of the front per generation)
 
@@ -25,7 +29,7 @@ Works on a finished or running run.
 
     python -m scripts.compress_plot --run-dir compress_runs/local_100 --all
     -> every plot above: the GIF and the still image for each x-axis (bins only if the run logs
-       the used bins) and each population view, plus the hypervolume
+       the used bins), each y-axis scale and each population view, plus the hypervolume
 """
 
 import argparse
@@ -48,6 +52,8 @@ pop_mode.add_argument("--with-pop-every-gen", action="store_true",
                       help="also plot the current population of every generation (instead of the initial one)")
 parser.add_argument("--x", type=str, default="size", choices=["size", "bins"],
                     help="x-axis: model size in MB, or the number of non-empty bins per matrix (log2 axis)")
+parser.add_argument("--y", type=str, default="log", choices=["log", "linear"],
+                    help="y-axis scale of the calibration loss: log (symlog, linear near 0) or linear")
 parser.add_argument("--hv", action="store_true", help="plot the hypervolume per generation instead of the GIF")
 parser.add_argument("--last-gen", action="store_true", help="save only the latest generation as a still image (PNG + PDF) instead of the GIF")
 parser.add_argument("--all", action="store_true", help="make every plot (all combinations of the options above)")
@@ -60,8 +66,9 @@ for name in ("front.csv", "generations.csv"):
 if args.all:  # one process per plot, so no matplotlib state carries over between them
     front_csv = pd.read_csv(os.path.join(args.run_dir, "front.csv"))
     has_bins = "k_used_mean" in front_csv.columns
-    runs = [["--hv"]] + ([] if front_csv.empty else [[*x, *pop, *still] for x, pop, still in itertools.product(
-        [[], ["--x", "bins"]] if has_bins else [[]], [[], ["--with-init-pop"], ["--with-pop-every-gen"]], [[], ["--last-gen"]])])
+    runs = [["--hv"]] + ([] if front_csv.empty else [[*x, *y, *pop, *still] for x, y, pop, still in itertools.product(
+        [[], ["--x", "bins"]] if has_bins else [[]], [[], ["--y", "linear"]],
+        [[], ["--with-init-pop"], ["--with-pop-every-gen"]], [[], ["--last-gen"]])])
     for flags in runs:
         subprocess.run([sys.executable, "-m", "scripts.compress_plot", "--run-dir", args.run_dir, "--fps", str(args.fps), *flags],
                        check=True)
@@ -121,11 +128,11 @@ bins = args.x == "bins"
 if not args.with_pop_every_gen:  # the population view shows the current generation only
     ax.plot(first[X], first["delta_loss"], "o" if bins else "--", color="gray", mfc="none", label="Initial Pareto front")
 line, = ax.plot([], [], "o" if bins else "o-", label="Pareto front")
-ax.set_yscale("symlog", linthresh=0.01)  # linear near 0, log above: shows both +0.001 and +15
+if args.y == "log":
+    ax.set_yscale("symlog", linthresh=0.01)  # linear near 0, log above: shows both +0.001 and +15
 if args.x == "size":
     ax.plot(baseline_mb, 0, "D", color="black", label="Uncompressed")
-    pad = 0.05 * (baseline_mb - front["size_mb"].min())  # 5% of the size range on each side
-    ax.set_xlim(front["size_mb"].min() - pad, baseline_mb + pad)
+    ax.set_xlim(0, 1.05 * baseline_mb)  # from 0 MB, so sizes read as fractions of the original
     ax.set_xlabel("Model size (MB)")
 else:  # the uncompressed model has no bins (16-bit floats), so it has no point here
     shown = pd.concat([front[X], pop[X] if args.with_init_pop or args.with_pop_every_gen else front[X]])
@@ -135,7 +142,10 @@ else:  # the uncompressed model has no bins (16-bit floats), so it has no point 
     ticks = sorted({round(lo), *(2 ** b for b in range(1, 11) if lo <= 2 ** b <= hi)})
     ax.set_xticks(ticks, labels=[str(k) for k in ticks])
     ax.set_xlabel("Non-empty bins per matrix (mean)")
-ax.set_ylim(-0.005, y_max * 1.5)
+if args.y == "log":
+    ax.set_ylim(-0.005, y_max * 1.5)
+else:
+    ax.set_ylim(-0.02 * y_max, y_max * 1.05)
 ax.set_ylabel("Calibration loss")
 ax.grid(True, alpha=0.3)
 legend = ax.legend(loc="upper right")
@@ -172,7 +182,7 @@ def draw(gen):
     return line, title, bar, bar_label, bar_pct, *([pop_scatter] if pop_scatter is not None else [])
 
 
-suffix = ("_bins" if args.x == "bins" else "") + \
+suffix = ("_bins" if args.x == "bins" else "") + ("_ylinear" if args.y == "linear" else "") + \
          ("_with_init_pop" if args.with_init_pop else "_with_pop_every_gen" if args.with_pop_every_gen else "")
 if args.last_gen:
     draw(gens.index[-1])

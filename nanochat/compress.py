@@ -57,27 +57,44 @@ class Candidate:
     beta: float
 
 
-def find_target_linears(model, include_lm_head=False, exclude=(), include_embeddings=False):
-    """Return [(name, module)] of the nn.Linear layers to compress, each weight once.
-    exclude: skip modules whose name contains any of these strings (e.g. tiny gates).
-    include_embeddings: also compress nn.Embedding tables (one row per token), except the
-    output projection's weight when it is tied to one and include_lm_head is off."""
+INCLUDE_GROUPS = ("lm_head", "embeddings")
+
+
+def find_target_linears(model, include=(), exclude=()):
+    """Return [(name, module)] of the layers to compress, each weight once.
+    By default: every nn.Linear except the output projection (lm_head). include adds groups:
+        "lm_head"     the output projection
+        "embeddings"  every embedding table (nn.Embedding, one row per token): the token
+                      embedding, and in nanochat also the value embeddings
+    A token embedding tied to lm_head (e.g. Qwen2.5) is one matrix, compressed once when either
+    group is included. exclude: skip modules whose name contains any of these strings (tiny gates)."""
+    unknown = set(include) - set(INCLUDE_GROUPS)
+    assert not unknown, f"unknown include group(s) {sorted(unknown)}, choose from {INCLUDE_GROUPS}"
     skip = set()
-    if not include_lm_head and hasattr(model, "get_output_embeddings"):
+    if "lm_head" not in include and hasattr(model, "get_output_embeddings"):
         out = model.get_output_embeddings()
         if out is not None:
             skip.add(out.weight.data_ptr())
-    kinds = (nn.Linear, nn.Embedding) if include_embeddings else (nn.Linear,)
+    kinds = (nn.Linear, nn.Embedding) if "embeddings" in include else (nn.Linear,)
     targets, seen = [], set()
     for name, module in model.named_modules():
         if not isinstance(module, kinds) or any(e in name for e in exclude):
             continue
         ptr = module.weight.data_ptr()
-        if ptr in skip or ptr in seen:
+        # the output projection is skipped as a Linear; a token embedding tied to it is still an embedding
+        if ptr in seen or (ptr in skip and not isinstance(module, nn.Embedding)):
             continue
         seen.add(ptr)
         targets.append((name, module))
     return targets
+
+
+def include_from_config(run_args):
+    """The --include groups of a run's saved arguments (runs from before --include stored two flags)."""
+    if "include" in run_args:
+        return tuple(run_args["include"])
+    return tuple(g for g, flag in (("lm_head", "include_lm_head"), ("embeddings", "include_embeddings"))
+                 if run_args.get(flag))
 
 
 @torch.no_grad()
@@ -186,8 +203,8 @@ class GlobalCompressor:
     Originals live on the GPU when they fit (fast) or in pinned CPU memory.
     """
 
-    def __init__(self, model, include_lm_head=False, size_mode="fixed", offload="auto", reconstruction="grid",
-                 formats=("dense", "bitmap"), prune=True, exclude=(), include_embeddings=False):
+    def __init__(self, model, include=(), size_mode="fixed", offload="auto", reconstruction="grid",
+                 formats=("dense", "bitmap"), prune=True, exclude=()):
         assert reconstruction in ("grid", "centroid")
         assert formats and set(formats) <= set(FORMATS), f"formats must be a subset of {FORMATS}"
         self.model = model
@@ -195,7 +212,7 @@ class GlobalCompressor:
         self.formats = tuple(formats)
         self.reconstruction = reconstruction
         self.prune = prune
-        self.targets = find_target_linears(model, include_lm_head, exclude, include_embeddings)
+        self.targets = find_target_linears(model, include, exclude)
         assert self.targets, "no layers found to compress"
         device = self.targets[0][1].weight.device
         target_bytes = sum(m.weight.numel() * m.weight.element_size() for _, m in self.targets)

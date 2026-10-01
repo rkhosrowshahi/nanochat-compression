@@ -66,6 +66,6 @@ nvidia-smi --query-gpu=name,memory.total,memory.used --format=csv | tee -a "$OUT
 python -u -m scripts.compress_search --model "$MODEL" $ARGS \
     --seq-len 2048 --calib-every 0 --k-space log2 --auto-k-bounds \
     --c-min "$C_MIN" --alpha-min "-$PRUNE_MAX" --beta-max "$PRUNE_MAX" --max-delta-loss "$MAX_DELTA" \
-    --eval-batch-size "$EVAL_BATCH" --out-dir "$OUT" ${EXTRA:-} 2>&1 | tee -a "$OUT/run.log"
+    --eval-batch-size "$EVAL_BATCH" --out-dir "$OUT" ${EXTRA:-}  # writes $OUT/run.log itself
 python -m scripts.compress_plot --run-dir "$OUT" --all 2>&1 | tee -a "$OUT/run.log"
 echo "done: $OUT (pareto.json = test scores of the final front)" | tee -a "$OUT/run.log"
