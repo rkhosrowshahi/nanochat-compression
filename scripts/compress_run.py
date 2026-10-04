@@ -32,6 +32,11 @@ import sys
 
 import yaml
 
+# also runnable as a file (python scripts/compress_run.py ...): put the repo root on the path for nanochat,
+# and run the steps from it so the scripts.* modules and relative paths resolve
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO)
+
 TOP = {"model", "out_dir", "download", "nanochat_base_dir", "include", "dtype", "offload_originals",
        "eval_batch_size", "search", "calibration", "test"}
 SEARCH = {"pop_size", "n_gen", "seed", "k_space", "k_min", "k_max", "auto_k_bounds", "warmup_min_delta",
@@ -103,6 +108,7 @@ print(f"Experiment {args.config} -> {out_dir}", flush=True)
 
 # nanochat checkpoints: where they live, and a one-time download
 env = dict(os.environ)
+env["PYTHONPATH"] = os.pathsep.join(p for p in (REPO, env.get("PYTHONPATH")) if p)  # the steps import scripts.*, nanochat
 if cfg["model"].startswith("nanochat:"):
     if cfg.get("nanochat_base_dir"):
         env["NANOCHAT_BASE_DIR"] = os.path.expanduser(cfg["nanochat_base_dir"])
