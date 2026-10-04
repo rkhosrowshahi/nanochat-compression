@@ -24,8 +24,7 @@ search:
 calibration:
   seqs: 128
   seq_len: 2048
-  every: 0
-  from: compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0   # same batch as d34.yaml
+  every: 0                # the batch is shared through the cache, no download if a run made it
 
 test:
   seq_len: 2048

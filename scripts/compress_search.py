@@ -63,7 +63,6 @@ import csv
 import json
 import math
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -114,8 +113,8 @@ parser.add_argument("--text-field", type=str, default="text")
 parser.add_argument("--seq-len", type=int, default=1024)
 parser.add_argument("--data-seed", type=int, default=0, help="which random documents/windows are sampled")
 parser.add_argument("--calib-from", type=str, default=None,
-                    help="reuse the calibration batches saved by another run (its calib_pool.pt) instead of downloading "
-                         "them; used only if they match --calib-seqs/--seq-len/--data-seed, otherwise resampled")
+                    help="reuse the calibration batches saved by another run (its calib_pool.pt); rarely needed, since "
+                         "every run also shares them through the cache in $COMPRESS_CACHE (~/.cache/nanochat-compress)")
 parser.add_argument("--eval-batch-size", type=int, default=1)
 # genes (search bounds)
 parser.add_argument("--k-min", type=int, default=3)
@@ -405,9 +404,6 @@ class Tee:
 run_log = open(out("run.log"), "a", encoding="utf-8", buffering=1)
 sys.stdout, sys.stderr = Tee(sys.stdout, run_log), Tee(sys.stderr, run_log)
 print(f"=== {time.strftime('%Y-%m-%d %H:%M:%S')}  python -m scripts.compress_search {' '.join(sys.argv[1:])}", flush=True)
-if args.calib_from and not os.path.exists(pool_path):
-    shutil.copy(os.path.join(args.calib_from, "calib_pool.pt"), pool_path)
-    print(f"Calibration batches copied from {args.calib_from}", flush=True)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 try:
     git_commit = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
@@ -425,24 +421,53 @@ print(f"Compressing {len(compressor.targets)} matrices, {compressor.n_target_par
 # the calibration batches, all drawn up front from a single shuffled pass over the documents
 # (no document is used twice) and saved, so a resumed run sees exactly the same batches.
 # A longer run with the same seed draws the same first batches, then more.
+# Taken from, in order: this run's calib_pool.pt (resume), --calib-from (another run's), the shared
+# cache (any earlier run with the same calibration settings and model, in any directory), and only
+# then sampled (downloaded); the result is kept in the run directory and in the cache.
 assert args.calib_every >= 0, "--calib-every must be 0 (fixed batch) or a positive number of generations"
 batch_index = lambda gen: 0 if args.calib_every == 0 else (gen - 1) // args.calib_every  # which batch gen uses
 n_batches = batch_index(args.n_gen) + 1
 pool_meta = {"source": [args.calib_dataset, args.calib_config, args.calib_split],
              "seed": args.data_seed, "seq_len": args.seq_len, "calib_seqs": args.calib_seqs}
-pool = None
-if os.path.exists(pool_path):
-    saved = torch.load(pool_path)
-    if saved["meta"] == pool_meta and saved["tokens"].size(0) >= n_batches * args.calib_seqs:
-        pool = saved["tokens"]
+need = n_batches * args.calib_seqs
+pool_cache = compress_eval.cache_path("calib", {**pool_meta, "model": args.model})
+
+
+def usable_pool(path):
+    """The token windows saved at path if they fit this run, else None."""
+    if not path or not os.path.exists(path):
+        return None
+    saved = torch.load(path)
+    # token ids only mean something for the tokenizer that made them (pools from before this check
+    # carry no model and are trusted, as before)
+    if saved["meta"] != pool_meta or saved["tokens"].size(0) < need or saved.get("model", args.model) != args.model:
+        return None
+    return saved["tokens"]
+
+
+sources = [(pool_path, None), (os.path.join(args.calib_from, "calib_pool.pt") if args.calib_from else None,
+                               f"--calib-from {args.calib_from}"), (pool_cache, "the shared cache")]
+pool, origin = None, None
+for path, name in sources:
+    pool = usable_pool(path)
+    if pool is not None:
+        origin = name
+        break
+if args.calib_from and origin != f"--calib-from {args.calib_from}" and not os.path.exists(pool_path):
+    print(f"Note: --calib-from {args.calib_from} has no matching calib_pool.pt", flush=True)
 if pool is None:
     t0 = time.time()
     print(f"Sampling {n_batches} calibration batch(es) of {args.calib_seqs} x {args.seq_len} tokens from "
           f"{args.calib_dataset} {args.calib_split}...", flush=True)
-    pool = sample_windows(tokenizer, args.calib_dataset, args.calib_config, args.calib_split,
-                          n_batches * args.calib_seqs, args.data_seed)
-    torch.save({"meta": pool_meta, "tokens": pool}, pool_path)
+    pool = sample_windows(tokenizer, args.calib_dataset, args.calib_config, args.calib_split, need, args.data_seed)
+    origin = "a fresh sample"
     print(f"...done in {time.time() - t0:.0f}s", flush=True)
+saved = {"meta": pool_meta, "tokens": pool, "model": args.model}
+if origin is not None:  # not this run's own file: keep a copy with the run
+    compress_eval.save_atomic(saved, pool_path)
+    print(f"Calibration batches from {origin}", flush=True)
+if usable_pool(pool_cache) is None:  # share them with later runs, from any directory
+    compress_eval.save_atomic(saved, pool_cache)
 calib_batch = lambda b: pool[b * args.calib_seqs:(b + 1) * args.calib_seqs]
 print("Calibration: " + ("one fixed batch for the whole run" if args.calib_every == 0 else
                          f"a new batch every {args.calib_every} generation(s)"), flush=True)
@@ -638,7 +663,8 @@ last_gen = algorithm.n_gen - 1
 order = [i for i in np.argsort(opt.get("F")[:, 1]) if opt.get("F")[i, 0] <= args.test_max_delta_loss]
 print(f"Scoring {len(order)} of {len(opt)} final solutions (delta_loss <= {args.test_max_delta_loss}) "
       f"with {args.test_seq_len}-token windows", flush=True)
-test_sets = compress_eval.load_test_sets(tokenizer, args.test_seq_len, args.wikitext_seqs, args.c4_test_seqs)
+test_sets = compress_eval.load_test_sets(tokenizer, args.test_seq_len, args.wikitext_seqs, args.c4_test_seqs,
+                                         cache_key=args.model)
 for name, tokens in test_sets.items():
     print(f"Test set {name}: {tokens.size(0)} windows, {tokens.numel()} tokens", flush=True)
 results = {"baseline": {"last_batch_loss": batch_baselines[batch_index(last_gen)], "size_mb": compressor.baseline_bits / 8 / 1e6},

@@ -67,7 +67,8 @@ model, tokenizer, exclude = compress_models.load(search["model"], search["dtype"
 compressor = GlobalCompressor(model, include_from_config(search), search["size_mode"], search["offload_originals"],
                               search.get("reconstruction", "grid"), formats=search.get("formats", "dense,bitmap").split(","),
                               prune=not search.get("no_pruning", False), exclude=exclude)
-test_sets = compress_eval.load_test_sets(tokenizer, args.seq_len, args.wikitext_seqs, args.c4_test_seqs)
+test_sets = compress_eval.load_test_sets(tokenizer, args.seq_len, args.wikitext_seqs, args.c4_test_seqs,
+                                         cache_key=search["model"])
 for name, tokens in test_sets.items():
     print(f"Test set {name}: {tokens.size(0)} windows, {tokens.numel()} tokens", flush=True)
 
