@@ -1,0 +1,11 @@
+{
+  "nadir": [
+    9.540422873995755,
+    630.847232
+  ],
+  "objectives": [
+    "loss_increase",
+    "size_mb"
+  ],
+  "gen": 1
+}

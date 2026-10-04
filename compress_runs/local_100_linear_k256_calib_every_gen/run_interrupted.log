@@ -1,0 +1,63 @@
+Loading Qwen/Qwen2.5-0.5B-Instruct (bfloat16) on cuda
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|##########| 290/290 [00:00<00:00, 8697.46it/s]
+Compressing 168 matrices, 357.8M weights (72.4% of params), originals kept on GPU
+Sampling 200 calibration batches of 8 windows from allenai/c4 train...
+...done in 34s
+Baseline: calib loss 2.7250 on the first batch, size 988.1 MB, one forward pass over a batch takes 2.0s
+gen 1 initial [1/100] k=199 c=0.832 alpha=-0.302 beta=+0.302 | loss 3.0587 (+0.3337) size 585.5 MB sparsity 25.2%
+gen 1 initial [2/100] k= 26 c=0.993 alpha=-0.918 beta=+0.918 | loss 10.0851 (+7.3602) size 394.0 MB sparsity 65.9%
+gen 1 initial [3/100] k= 35 c=0.835 alpha=-0.781 beta=+0.781 | loss 8.2011 (+5.4761) size 429.2 MB sparsity 58.5%
+gen 1 initial [4/100] k=166 c=0.947 alpha=-0.111 beta=+0.111 | loss 2.7382 (+0.0133) size 630.8 MB sparsity 9.4%
+gen 1 initial [5/100] k=143 c=0.719 alpha=-0.997 beta=+0.997 | loss 11.6715 (+8.9465) size 426.2 MB sparsity 69.7%
+gen 1 initial [6/100] k=195 c=0.806 alpha=-0.879 beta=+0.879 | loss 9.7765 (+7.0516) size 447.0 MB sparsity 63.9%
+gen 1 initial [7/100] k=200 c=0.758 alpha=-0.284 beta=+0.284 | loss 3.1604 (+0.4355) size 590.7 MB sparsity 23.7%
+gen 1 initial [8/100] k= 42 c=0.905 alpha=-0.837 beta=+0.837 | loss 9.6576 (+6.9326) size 420.8 MB sparsity 61.6%
+gen 1 initial [9/100] k= 85 c=0.811 alpha=-0.106 beta=+0.106 | loss 2.7869 (+0.0620) size 586.1 MB sparsity 9.1%
+gen 1 initial [10/100] k= 36 c=0.843 alpha=-0.999 beta=+0.999 | loss 11.2338 (+8.5089) size 398.8 MB sparsity 69.8%
+gen 1 initial [11/100] k=114 c=0.950 alpha=-0.666 beta=+0.666 | loss 6.4927 (+3.7678) size 469.8 MB sparsity 51.4%
+gen 1 initial [12/100] k=214 c=0.941 alpha=-0.650 beta=+0.650 | loss 6.0165 (+3.2915) size 495.1 MB sparsity 50.4%
+gen 1 initial [13/100] k=176 c=0.742 alpha=-0.090 beta=+0.090 | loss 2.8383 (+0.1133) size 630.8 MB sparsity 7.7%
+gen 1 initial [14/100] k=202 c=0.899 alpha=-0.897 beta=+0.897 | loss 9.4823 (+6.7574) size 443.7 MB sparsity 64.8%
+gen 1 initial [15/100] k=119 c=0.871 alpha=-0.029 beta=+0.029 | loss 2.7496 (+0.0247) size 586.1 MB sparsity 2.9%
+gen 1 initial [16/100] k=172 c=0.841 alpha=-0.241 beta=+0.241 | loss 2.9170 (+0.1920) size 603.1 MB sparsity 20.2%
+gen 1 initial [17/100] k=164 c=0.866 alpha=-0.143 beta=+0.143 | loss 2.7730 (+0.0481) size 630.6 MB sparsity 12.1%
+gen 1 initial [18/100] k= 10 c=0.831 alpha=-0.777 beta=+0.777 | loss 10.1198 (+7.3948) size 391.5 MB sparsity 58.8%
+gen 1 initial [19/100] k=219 c=0.770 alpha=-0.198 beta=+0.198 | loss 2.9305 (+0.2055) size 615.7 MB sparsity 16.7%
+gen 1 initial [20/100] k= 77 c=0.899 alpha=-0.911 beta=+0.911 | loss 9.6350 (+6.9100) size 425.8 MB sparsity 65.5%
+gen 1 initial [21/100] k=171 c=0.822 alpha=-0.656 beta=+0.656 | loss 6.0255 (+3.3005) size 493.7 MB sparsity 50.8%
+gen 1 initial [22/100] k=  8 c=0.727 alpha=-0.036 beta=+0.036 | loss 8.0759 (+5.3510) size 397.4 MB sparsity 40.6%
+gen 1 initial [23/100] k= 43 c=0.850 alpha=-0.005 beta=+0.005 | loss 2.8086 (+0.0836) size 541.4 MB sparsity 7.6%
+gen 1 initial [24/100] k=116 c=0.814 alpha=-0.052 beta=+0.052 | loss 2.7685 (+0.0435) size 586.1 MB sparsity 4.5%
+gen 1 initial [25/100] k= 94 c=0.726 alpha=-0.606 beta=+0.606 | loss 5.4409 (+2.7160) size 482.0 MB sparsity 47.5%
+gen 1 initial [26/100] k=233 c=0.910 alpha=-0.801 beta=+0.801 | loss 8.2698 (+5.5448) size 462.2 MB sparsity 59.6%
+gen 1 initial [27/100] k=200 c=0.915 alpha=-0.239 beta=+0.239 | loss 2.8742 (+0.1492) size 603.8 MB sparsity 20.1%
+gen 1 initial [28/100] k= 27 c=0.971 alpha=-0.849 beta=+0.849 | loss 9.6766 (+6.9516) size 402.1 MB sparsity 62.3%
+gen 1 initial [29/100] k= 80 c=0.874 alpha=-0.057 beta=+0.057 | loss 2.7504 (+0.0254) size 586.1 MB sparsity 5.3%
+gen 1 initial [30/100] k=195 c=0.916 alpha=-0.801 beta=+0.801 | loss 8.2262 (+5.5013) size 462.3 MB sparsity 59.6%
+gen 1 initial [31/100] k=151 c=0.895 alpha=-0.928 beta=+0.928 | loss 10.2720 (+7.5470) size 438.1 MB sparsity 66.4%
+gen 1 initial [32/100] k= 13 c=0.848 alpha=-0.772 beta=+0.772 | loss 8.7928 (+6.0679) size 392.7 MB sparsity 58.1%
+gen 1 initial [33/100] k= 29 c=0.876 alpha=-0.698 beta=+0.698 | loss 7.2276 (+4.5027) size 421.8 MB sparsity 53.5%
+gen 1 initial [34/100] k=150 c=0.804 alpha=-0.838 beta=+0.838 | loss 9.4257 (+6.7008) size 455.0 MB sparsity 61.7%
+gen 1 initial [35/100] k=246 c=0.845 alpha=-0.040 beta=+0.040 | loss 2.7526 (+0.0277) size 630.8 MB sparsity 3.5%
+gen 1 initial [36/100] k=126 c=0.847 alpha=-0.202 beta=+0.202 | loss 2.8474 (+0.1225) size 577.5 MB sparsity 17.0%
+gen 1 initial [37/100] k=123 c=0.780 alpha=-0.125 beta=+0.125 | loss 2.8179 (+0.0930) size 586.1 MB sparsity 10.6%
+gen 1 initial [38/100] k=114 c=0.706 alpha=-0.505 beta=+0.505 | loss 4.7963 (+2.0714) size 504.0 MB sparsity 40.5%
+gen 1 initial [39/100] k= 38 c=0.866 alpha=-0.745 beta=+0.745 | loss 7.0519 (+4.3269) size 434.9 MB sparsity 56.3%
+gen 1 initial [40/100] k= 74 c=0.898 alpha=-0.630 beta=+0.630 | loss 5.5431 (+2.8182) size 477.0 MB sparsity 49.1%
+gen 1 initial [41/100] k= 30 c=0.975 alpha=-0.851 beta=+0.851 | loss 9.6582 (+6.9333) size 401.9 MB sparsity 62.4%
+gen 1 initial [42/100] k=143 c=0.811 alpha=-0.155 beta=+0.155 | loss 2.8186 (+0.0936) size 628.5 MB sparsity 13.2%
+gen 1 initial [43/100] k= 83 c=0.986 alpha=-0.735 beta=+0.735 | loss 7.2247 (+4.4997) size 456.4 MB sparsity 55.7%
+gen 1 initial [44/100] k= 68 c=0.981 alpha=-0.193 beta=+0.193 | loss 2.8259 (+0.1009) size 579.6 MB sparsity 16.4%
+gen 1 initial [45/100] k=113 c=0.998 alpha=-0.271 beta=+0.271 | loss 2.9367 (+0.2117) size 559.9 MB sparsity 22.7%
+gen 1 initial [46/100] k=229 c=0.968 alpha=-0.710 beta=+0.710 | loss 7.1013 (+4.3764) size 481.6 MB sparsity 54.2%
+gen 1 initial [47/100] k=199 c=0.898 alpha=-0.980 beta=+0.980 | loss 10.9546 (+8.2296) size 429.0 MB sparsity 68.9%
+gen 1 initial [48/100] k=192 c=0.779 alpha=-0.612 beta=+0.612 | loss 5.4255 (+2.7005) size 504.1 MB sparsity 47.9%
+gen 1 initial [49/100] k= 34 c=0.949 alpha=-0.055 beta=+0.055 | loss 2.8111 (+0.0862) size 541.4 MB sparsity 11.0%
+gen 1 initial [50/100] k=155 c=0.962 alpha=-0.616 beta=+0.616 | loss 5.4629 (+2.7380) size 503.0 MB sparsity 48.2%
+gen 1 initial [51/100] k=200 c=0.992 alpha=-0.042 beta=+0.042 | loss 2.7271 (+0.0021) size 630.8 MB sparsity 3.7%
+gen 1 initial [52/100] k=  6 c=0.769 alpha=-0.884 beta=+0.884 | loss 12.2654 (+9.5404) size 362.9 MB sparsity 66.4%
+gen 1 initial [53/100] k= 33 c=0.852 alpha=-0.710 beta=+0.710 | loss 7.2014 (+4.4764) size 420.2 MB sparsity 54.2%
+gen 1 initial [54/100] k= 53 c=0.941 alpha=-0.173 beta=+0.173 | loss 2.8046 (+0.0796) size 541.3 MB sparsity 14.8%
+gen 1 initial [55/100] k= 36 c=0.737 alpha=-0.092 beta=+0.092 | loss 2.8810 (+0.1560) size 541.4 MB sparsity 8.9%
+gen 1 initial [56/100] k= 79 c=0.847 alpha=-0.184 beta=+0.184 | loss 2.8297 (+0.1047) size 582.2 MB sparsity 15.6%
+gen 1 initial [57/100] k= 75 c=0.977 alpha=-0.980 beta=+0.980 | loss 10.5675 (+7.8425) size 415.1 MB sparsity 68.9%

@@ -1,0 +1,1098 @@
+Loading Qwen/Qwen2.5-0.5B-Instruct (bfloat16) on cuda
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|##########| 290/290 [00:00<00:00, 8299.21it/s]
+Compressing 168 matrices, 357.8M weights (72.4% of params), originals kept on GPU
+Baseline: calib loss 3.0558, size 988.1 MB, one forward pass over the calibration set takes 1.6s
+gen 1 [1/100] k=199 c=0.832 alpha=-0.302 beta=+0.302 | loss 3.4057 size 585.6 MB zeros 25.2%
+gen 1 [2/100] k= 26 c=0.993 alpha=-0.918 beta=+0.918 | loss 10.0440 size 394.0 MB zeros 65.9%
+gen 1 [3/100] k= 35 c=0.835 alpha=-0.781 beta=+0.781 | loss 8.6595 size 429.2 MB zeros 58.5%
+gen 1 [4/100] k=166 c=0.947 alpha=-0.111 beta=+0.111 | loss 3.0694 size 630.9 MB zeros 9.4%
+gen 1 [5/100] k=143 c=0.719 alpha=-0.997 beta=+0.997 | loss 11.0741 size 426.2 MB zeros 69.7%
+gen 1 [6/100] k=195 c=0.806 alpha=-0.879 beta=+0.879 | loss 10.4258 size 447.1 MB zeros 63.9%
+gen 1 [7/100] k=200 c=0.758 alpha=-0.284 beta=+0.284 | loss 3.3894 size 590.7 MB zeros 23.7%
+gen 1 [8/100] k= 42 c=0.905 alpha=-0.837 beta=+0.837 | loss 9.5974 size 420.8 MB zeros 61.6%
+gen 1 [9/100] k= 85 c=0.811 alpha=-0.106 beta=+0.106 | loss 3.0898 size 586.1 MB zeros 9.1%
+gen 1 [10/100] k= 36 c=0.843 alpha=-0.999 beta=+0.999 | loss 11.1830 size 398.8 MB zeros 69.8%
+gen 1 [11/100] k=114 c=0.950 alpha=-0.666 beta=+0.666 | loss 7.7063 size 469.8 MB zeros 51.4%
+gen 1 [12/100] k=214 c=0.941 alpha=-0.650 beta=+0.650 | loss 7.4527 size 495.1 MB zeros 50.4%
+gen 1 [13/100] k=176 c=0.742 alpha=-0.090 beta=+0.090 | loss 3.1146 size 630.9 MB zeros 7.7%
+gen 1 [14/100] k=202 c=0.899 alpha=-0.897 beta=+0.897 | loss 9.9622 size 443.8 MB zeros 64.8%
+gen 1 [15/100] k=119 c=0.871 alpha=-0.029 beta=+0.029 | loss 3.0716 size 586.2 MB zeros 2.9%
+gen 1 [16/100] k=172 c=0.841 alpha=-0.241 beta=+0.241 | loss 3.2430 size 603.2 MB zeros 20.2%
+gen 1 [17/100] k=164 c=0.866 alpha=-0.143 beta=+0.143 | loss 3.0921 size 630.6 MB zeros 12.1%
+gen 1 [18/100] k= 10 c=0.831 alpha=-0.777 beta=+0.777 | loss 9.8617 size 391.5 MB zeros 58.8%
+gen 1 [19/100] k=219 c=0.770 alpha=-0.198 beta=+0.198 | loss 3.1839 size 615.7 MB zeros 16.7%
+gen 1 [20/100] k= 77 c=0.899 alpha=-0.911 beta=+0.911 | loss 10.0325 size 425.8 MB zeros 65.5%
+gen 1 [21/100] k=171 c=0.822 alpha=-0.656 beta=+0.656 | loss 7.7048 size 493.7 MB zeros 50.8%
+gen 1 [22/100] k=  8 c=0.727 alpha=-0.036 beta=+0.036 | loss 8.2661 size 397.4 MB zeros 40.6%
+gen 1 [23/100] k= 43 c=0.850 alpha=-0.005 beta=+0.005 | loss 3.1371 size 541.4 MB zeros 7.6%
+gen 1 [24/100] k=116 c=0.814 alpha=-0.052 beta=+0.052 | loss 3.0897 size 586.2 MB zeros 4.5%
+gen 1 [25/100] k= 94 c=0.726 alpha=-0.606 beta=+0.606 | loss 6.8196 size 482.0 MB zeros 47.5%
+gen 1 [26/100] k=233 c=0.910 alpha=-0.801 beta=+0.801 | loss 9.0119 size 462.3 MB zeros 59.6%
+gen 1 [27/100] k=200 c=0.915 alpha=-0.239 beta=+0.239 | loss 3.2295 size 603.9 MB zeros 20.1%
+gen 1 [28/100] k= 27 c=0.971 alpha=-0.849 beta=+0.849 | loss 9.8330 size 402.1 MB zeros 62.3%
+gen 1 [29/100] k= 80 c=0.874 alpha=-0.057 beta=+0.057 | loss 3.0827 size 586.1 MB zeros 5.3%
+gen 1 [30/100] k=195 c=0.916 alpha=-0.801 beta=+0.801 | loss 9.1013 size 462.4 MB zeros 59.6%
+gen 1 [31/100] k=151 c=0.895 alpha=-0.928 beta=+0.928 | loss 10.3990 size 438.2 MB zeros 66.4%
+gen 1 [32/100] k= 13 c=0.848 alpha=-0.772 beta=+0.772 | loss 9.4993 size 392.7 MB zeros 58.1%
+gen 1 [33/100] k= 29 c=0.876 alpha=-0.698 beta=+0.698 | loss 8.0648 size 421.8 MB zeros 53.5%
+gen 1 [34/100] k=150 c=0.804 alpha=-0.838 beta=+0.838 | loss 9.7487 size 455.0 MB zeros 61.7%
+gen 1 [35/100] k=246 c=0.845 alpha=-0.040 beta=+0.040 | loss 3.0764 size 630.9 MB zeros 3.5%
+gen 1 [36/100] k=126 c=0.847 alpha=-0.202 beta=+0.202 | loss 3.1667 size 577.5 MB zeros 17.0%
+gen 1 [37/100] k=123 c=0.780 alpha=-0.125 beta=+0.125 | loss 3.1121 size 586.2 MB zeros 10.6%
+gen 1 [38/100] k=114 c=0.706 alpha=-0.505 beta=+0.505 | loss 4.9958 size 504.0 MB zeros 40.5%
+gen 1 [39/100] k= 38 c=0.866 alpha=-0.745 beta=+0.745 | loss 7.9169 size 434.9 MB zeros 56.3%
+gen 1 [40/100] k= 74 c=0.898 alpha=-0.630 beta=+0.630 | loss 7.2302 size 477.0 MB zeros 49.1%
+gen 1 [41/100] k= 30 c=0.975 alpha=-0.851 beta=+0.851 | loss 9.9992 size 401.9 MB zeros 62.4%
+gen 1 [42/100] k=143 c=0.811 alpha=-0.155 beta=+0.155 | loss 3.1166 size 628.5 MB zeros 13.2%
+gen 1 [43/100] k= 83 c=0.986 alpha=-0.735 beta=+0.735 | loss 8.2022 size 456.4 MB zeros 55.7%
+gen 1 [44/100] k= 68 c=0.981 alpha=-0.193 beta=+0.193 | loss 3.1713 size 579.6 MB zeros 16.4%
+gen 1 [45/100] k=113 c=0.998 alpha=-0.271 beta=+0.271 | loss 3.3228 size 559.9 MB zeros 22.7%
+gen 1 [46/100] k=229 c=0.968 alpha=-0.710 beta=+0.710 | loss 8.1106 size 481.7 MB zeros 54.2%
+gen 1 [47/100] k=199 c=0.898 alpha=-0.980 beta=+0.980 | loss 10.4886 size 429.0 MB zeros 68.9%
+gen 1 [48/100] k=192 c=0.779 alpha=-0.612 beta=+0.612 | loss 7.0864 size 504.2 MB zeros 47.9%
+gen 1 [49/100] k= 34 c=0.949 alpha=-0.055 beta=+0.055 | loss 3.1408 size 541.4 MB zeros 11.0%
+gen 1 [50/100] k=155 c=0.962 alpha=-0.616 beta=+0.616 | loss 6.8388 size 503.0 MB zeros 48.2%
+gen 1 [51/100] k=200 c=0.992 alpha=-0.042 beta=+0.042 | loss 3.0588 size 630.9 MB zeros 3.7%
+gen 1 [52/100] k=  6 c=0.769 alpha=-0.884 beta=+0.884 | loss 11.0461 size 362.9 MB zeros 66.4%
+gen 1 [53/100] k= 33 c=0.852 alpha=-0.710 beta=+0.710 | loss 8.0893 size 420.2 MB zeros 54.2%
+gen 1 [54/100] k= 53 c=0.941 alpha=-0.173 beta=+0.173 | loss 3.1564 size 541.3 MB zeros 14.8%
+gen 1 [55/100] k= 36 c=0.737 alpha=-0.092 beta=+0.092 | loss 3.1853 size 541.4 MB zeros 8.9%
+gen 1 [56/100] k= 79 c=0.847 alpha=-0.184 beta=+0.184 | loss 3.1529 size 582.2 MB zeros 15.6%
+gen 1 [57/100] k= 75 c=0.977 alpha=-0.980 beta=+0.980 | loss 10.4919 size 415.1 MB zeros 68.9%
+gen 1 [58/100] k=164 c=0.732 alpha=-0.459 beta=+0.459 | loss 4.4719 size 542.6 MB zeros 37.2%
+gen 1 [59/100] k=248 c=0.879 alpha=-0.784 beta=+0.784 | loss 8.9015 size 465.9 MB zeros 58.6%
+gen 1 [60/100] k=121 c=0.935 alpha=-0.636 beta=+0.636 | loss 7.1127 size 475.7 MB zeros 49.6%
+gen 1 [61/100] k=213 c=0.939 alpha=-0.572 beta=+0.572 | loss 5.9499 size 513.6 MB zeros 45.3%
+gen 1 [62/100] k=156 c=0.960 alpha=-0.145 beta=+0.145 | loss 3.0881 size 630.5 MB zeros 12.3%
+gen 1 [63/100] k= 98 c=0.828 alpha=-0.946 beta=+0.946 | loss 10.6118 size 420.3 MB zeros 67.3%
+gen 1 [64/100] k=118 c=0.774 alpha=-0.301 beta=+0.301 | loss 3.4331 size 552.2 MB zeros 25.1%
+gen 1 [65/100] k=210 c=0.732 alpha=-0.578 beta=+0.578 | loss 5.8123 size 512.3 MB zeros 45.7%
+gen 1 [66/100] k= 40 c=0.947 alpha=-0.700 beta=+0.700 | loss 7.8268 size 442.3 MB zeros 53.6%
+gen 1 [67/100] k=236 c=0.750 alpha=-0.649 beta=+0.649 | loss 7.4830 size 495.4 MB zeros 50.4%
+gen 1 [68/100] k= 32 c=0.706 alpha=-0.941 beta=+0.941 | loss 10.8328 size 391.6 MB zeros 67.0%
+gen 1 [69/100] k= 16 c=0.877 alpha=-0.148 beta=+0.148 | loss 3.7335 size 450.4 MB zeros 22.6%
+gen 1 [70/100] k= 83 c=0.851 alpha=-0.508 beta=+0.508 | loss 4.9198 size 503.1 MB zeros 40.8%
+gen 1 [71/100] k= 14 c=0.754 alpha=-0.404 beta=+0.404 | loss 4.9486 size 435.7 MB zeros 34.1%
+gen 1 [72/100] k=148 c=0.825 alpha=-0.474 beta=+0.474 | loss 4.4929 size 538.5 MB zeros 38.3%
+gen 1 [73/100] k=136 c=0.731 alpha=-0.119 beta=+0.119 | loss 3.1487 size 630.9 MB zeros 10.1%
+gen 1 [74/100] k=237 c=0.730 alpha=-0.134 beta=+0.134 | loss 3.1523 size 630.8 MB zeros 11.4%
+gen 1 [75/100] k=251 c=0.941 alpha=-0.278 beta=+0.278 | loss 3.3232 size 592.4 MB zeros 23.3%
+gen 1 [76/100] k=200 c=0.740 alpha=-0.305 beta=+0.305 | loss 3.4915 size 584.8 MB zeros 25.4%
+gen 1 [77/100] k=220 c=0.839 alpha=-0.428 beta=+0.428 | loss 4.1094 size 550.7 MB zeros 34.9%
+gen 1 [78/100] k= 70 c=0.742 alpha=-0.611 beta=+0.611 | loss 7.0914 size 481.0 MB zeros 47.9%
+gen 1 [79/100] k= 62 c=0.810 alpha=-0.635 beta=+0.635 | loss 7.2819 size 453.5 MB zeros 49.4%
+gen 1 [80/100] k= 99 c=0.906 alpha=-0.412 beta=+0.412 | loss 3.8858 size 525.4 MB zeros 33.7%
+gen 1 [81/100] k=235 c=0.844 alpha=-0.409 beta=+0.409 | loss 3.8718 size 555.9 MB zeros 33.5%
+gen 1 [82/100] k=218 c=0.896 alpha=-0.218 beta=+0.218 | loss 3.1872 size 610.0 MB zeros 18.3%
+gen 1 [83/100] k=163 c=0.786 alpha=-0.588 beta=+0.588 | loss 6.1007 size 509.8 MB zeros 46.4%
+gen 1 [84/100] k=179 c=0.958 alpha=-0.317 beta=+0.317 | loss 3.4442 size 581.3 MB zeros 26.4%
+gen 1 [85/100] k= 27 c=0.918 alpha=-0.036 beta=+0.036 | loss 3.2502 size 496.7 MB zeros 13.1%
+gen 1 [86/100] k= 37 c=0.988 alpha=-0.418 beta=+0.418 | loss 4.0621 size 494.2 MB zeros 34.3%
+gen 1 [87/100] k=201 c=0.939 alpha=-0.474 beta=+0.474 | loss 4.4873 size 538.5 MB zeros 38.3%
+gen 1 [88/100] k=152 c=0.729 alpha=-0.226 beta=+0.226 | loss 3.2876 size 607.6 MB zeros 19.0%
+gen 1 [89/100] k=146 c=0.872 alpha=-0.572 beta=+0.572 | loss 5.7972 size 513.6 MB zeros 45.3%
+gen 1 [90/100] k=197 c=0.940 alpha=-0.566 beta=+0.566 | loss 5.6605 size 515.3 MB zeros 44.8%
+gen 1 [91/100] k=239 c=0.736 alpha=-0.702 beta=+0.702 | loss 8.1138 size 483.4 MB zeros 53.7%
+gen 1 [92/100] k=170 c=0.826 alpha=-0.648 beta=+0.648 | loss 7.4880 size 495.6 MB zeros 50.3%
+gen 1 [93/100] k= 87 c=0.970 alpha=-0.652 beta=+0.652 | loss 7.5079 size 472.5 MB zeros 50.6%
+gen 1 [94/100] k= 95 c=0.794 alpha=-0.316 beta=+0.316 | loss 3.4582 size 548.5 MB zeros 26.3%
+gen 1 [95/100] k=240 c=0.831 alpha=-0.787 beta=+0.787 | loss 8.9944 size 465.2 MB zeros 58.8%
+gen 1 [96/100] k=143 c=0.981 alpha=-0.549 beta=+0.549 | loss 5.4388 size 519.4 MB zeros 43.7%
+gen 1 [97/100] k= 98 c=0.996 alpha=-0.431 beta=+0.431 | loss 4.1008 size 520.7 MB zeros 35.2%
+gen 1 [98/100] k= 33 c=0.955 alpha=-0.626 beta=+0.626 | loss 7.0853 size 432.1 MB zeros 48.9%
+gen 1 [99/100] k=152 c=0.906 alpha=-0.361 beta=+0.361 | loss 3.6008 size 569.0 MB zeros 29.8%
+gen 1 [100/100] k=212 c=0.789 alpha=-0.513 beta=+0.513 | loss 4.9645 size 528.5 MB zeros 41.1%
+=== generation 1/10 done in 196s (0 from cache), Pareto front has 18 points, best loss 3.0588, smallest 362.9 MB
+gen 2 [1/100] k=189 c=0.959 alpha=-0.424 beta=+0.322 | loss 3.6737 size 565.9 MB zeros 30.7%
+gen 2 [2/100] k=164 c=0.966 alpha=-0.143 beta=+0.602 | loss 15.3382 size 569.3 MB zeros 29.7%
+gen 2 [3/100] k=233 c=0.740 alpha=-0.649 beta=+0.679 | loss 7.6794 size 492.0 MB zeros 51.3%
+gen 2 [4/100] k=189 c=0.798 alpha=-0.887 beta=+0.898 | loss 10.3245 size 444.6 MB zeros 64.6%
+gen 2 [5/100] k=157 c=0.905 alpha=-0.648 beta=+0.642 | loss 7.4739 size 496.3 MB zeros 50.1%
+gen 2 [6/100] k= 28 c=0.981 alpha=-0.617 beta=+0.611 | loss 7.2218 size 433.8 MB zeros 48.1%
+gen 2 [7/100] k=114 c=0.701 alpha=-0.527 beta=+0.030 | loss 18.0042 size 560.5 MB zeros 22.5%
+gen 2 [8/100] k=143 c=0.736 alpha=-0.156 beta=+0.154 | loss 3.1548 size 628.6 MB zeros 13.1%
+gen 2 [9/100] k=151 c=0.895 alpha=-0.989 beta=+0.953 | loss 10.3793 size 430.6 MB zeros 68.5%
+gen 2 [10/100] k=143 c=0.995 alpha=-0.289 beta=+0.565 | loss 12.6177 size 552.3 MB zeros 34.5%
+gen 2 [11/100] k= 32 c=0.726 alpha=-0.148 beta=+0.148 | loss 3.2408 size 496.7 MB zeros 13.2%
+gen 2 [12/100] k= 39 c=0.866 alpha=-0.698 beta=+0.745 | loss 7.7869 size 438.8 MB zeros 54.9%
+gen 2 [13/100] k=192 c=0.768 alpha=-0.612 beta=+0.633 | loss 7.3012 size 501.7 MB zeros 48.6%
+gen 2 [14/100] k= 26 c=0.727 alpha=-0.036 beta=+0.040 | loss 3.2190 size 496.7 MB zeros 11.3%
+gen 2 [15/100] k= 34 c=0.727 alpha=-0.909 beta=+0.973 | loss 11.0340 size 406.3 MB zeros 67.0%
+gen 2 [16/100] k= 33 c=0.930 alpha=-0.036 beta=+0.036 | loss 3.1400 size 517.2 MB zeros 10.8%
+gen 2 [17/100] k= 34 c=0.949 alpha=-0.055 beta=+0.055 | loss 3.1408 size 541.4 MB zeros 11.0%
+gen 2 [18/100] k=122 c=0.935 alpha=-0.572 beta=+0.574 | loss 5.9041 size 488.9 MB zeros 45.3%
+gen 2 [19/100] k=176 c=0.742 alpha=-0.346 beta=+0.080 | loss 3.2407 size 612.2 MB zeros 17.7%
+gen 2 [20/100] k=129 c=0.759 alpha=-0.839 beta=+0.838 | loss 9.9486 size 437.7 MB zeros 61.7%
+gen 2 [21/100] k=156 c=0.960 alpha=-0.145 beta=+0.147 | loss 3.0889 size 630.4 MB zeros 12.4%
+gen 2 [22/100] k=221 c=0.993 alpha=-0.707 beta=+0.918 | loss 15.1564 size 461.1 MB zeros 60.0%
+gen 2 [23/100] k= 74 c=0.897 alpha=-0.630 beta=+0.655 | loss 7.4704 size 474.5 MB zeros 49.9%
+gen 2 [24/100] k=182 c=0.991 alpha=-0.321 beta=+0.325 | loss 3.4515 size 579.6 MB zeros 26.8%
+gen 2 [25/100] k=202 c=0.998 alpha=-0.271 beta=+0.326 | loss 3.3705 size 586.7 MB zeros 24.9%
+gen 2 [26/100] k= 27 c=0.918 alpha=-0.662 beta=+0.232 | loss 17.9704 size 461.6 MB zeros 35.7%
+gen 2 [27/100] k=153 c=0.871 alpha=-0.009 beta=+0.440 | loss 3.8134 size 607.7 MB zeros 19.0%
+gen 2 [28/100] k=109 c=0.706 alpha=-0.999 beta=+0.505 | loss 17.8968 size 458.2 MB zeros 55.2%
+gen 2 [29/100] k=247 c=0.811 alpha=-0.100 beta=+0.687 | loss 15.3999 size 566.0 MB zeros 30.7%
+gen 2 [30/100] k=188 c=0.806 alpha=-0.981 beta=+0.068 | loss 17.8971 size 541.9 MB zeros 37.4%
+gen 2 [31/100] k= 32 c=0.706 alpha=-0.186 beta=+0.941 | loss 15.4083 size 448.5 MB zeros 41.5%
+gen 2 [32/100] k= 74 c=0.898 alpha=-0.535 beta=+0.630 | loss 6.6118 size 487.1 MB zeros 45.9%
+gen 2 [33/100] k= 94 c=0.906 alpha=-0.508 beta=+0.411 | loss 4.4182 size 514.4 MB zeros 37.2%
+gen 2 [34/100] k= 94 c=0.985 alpha=-0.606 beta=+0.606 | loss 6.7306 size 482.0 MB zeros 47.5%
+gen 2 [35/100] k=212 c=0.847 alpha=-0.305 beta=+0.305 | loss 3.4073 size 584.8 MB zeros 25.4%
+gen 2 [36/100] k= 97 c=0.828 alpha=-0.157 beta=+0.095 | loss 3.0982 size 586.1 MB zeros 10.7%
+gen 2 [37/100] k=251 c=0.941 alpha=-0.271 beta=+0.278 | loss 3.3155 size 593.5 MB zeros 23.0%
+gen 2 [38/100] k=  8 c=0.988 alpha=-0.193 beta=+0.193 | loss 11.7751 size 382.2 MB zeros 52.0%
+gen 2 [39/100] k= 18 c=0.848 alpha=-0.143 beta=+0.005 | loss 3.4912 size 494.0 MB zeros 19.3%
+gen 2 [40/100] k=170 c=0.857 alpha=-0.890 beta=+0.630 | loss 17.9536 size 472.4 MB zeros 56.8%
+gen 2 [41/100] k= 42 c=0.965 alpha=-0.837 beta=+0.837 | loss 9.6287 size 420.8 MB zeros 61.6%
+gen 2 [42/100] k=233 c=0.910 alpha=-0.780 beta=+0.801 | loss 8.8611 size 464.5 MB zeros 59.0%
+gen 2 [43/100] k=210 c=0.731 alpha=-0.577 beta=+0.650 | loss 7.2524 size 503.9 MB zeros 48.0%
+gen 2 [44/100] k=143 c=0.967 alpha=-0.549 beta=+0.549 | loss 5.3904 size 519.4 MB zeros 43.7%
+gen 2 [45/100] k=198 c=0.916 alpha=-0.929 beta=+0.928 | loss 10.2755 size 438.1 MB zeros 66.4%
+gen 2 [46/100] k=163 c=0.786 alpha=-0.096 beta=+0.094 | loss 3.0936 size 630.9 MB zeros 8.1%
+gen 2 [47/100] k= 45 c=0.955 alpha=-0.626 beta=+0.635 | loss 7.0621 size 454.2 MB zeros 49.2%
+gen 2 [48/100] k= 27 c=0.986 alpha=-0.312 beta=+0.414 | loss 3.8274 size 473.9 MB zeros 30.2%
+gen 2 [49/100] k=155 c=0.853 alpha=-0.616 beta=+0.158 | loss 17.9362 size 565.4 MB zeros 30.8%
+gen 2 [50/100] k= 83 c=0.851 alpha=-0.509 beta=+0.511 | loss 4.9899 size 502.7 MB zeros 40.9%
+gen 2 [51/100] k= 14 c=0.754 alpha=-0.396 beta=+0.327 | loss 4.4990 size 441.1 MB zeros 31.1%
+gen 2 [52/100] k= 96 c=0.827 alpha=-0.412 beta=+0.432 | loss 4.0733 size 523.0 MB zeros 34.5%
+gen 2 [53/100] k= 67 c=0.955 alpha=-0.157 beta=+0.173 | loss 3.1217 size 585.7 MB zeros 14.1%
+gen 2 [54/100] k=239 c=0.854 alpha=-0.002 beta=+0.517 | loss 15.3080 size 599.2 MB zeros 21.4%
+gen 2 [55/100] k=239 c=0.811 alpha=-0.702 beta=+0.673 | loss 8.2094 size 486.7 MB zeros 52.8%
+gen 2 [56/100] k= 75 c=0.977 alpha=-0.928 beta=+0.980 | loss 10.8614 size 419.1 MB zeros 67.6%
+gen 2 [57/100] k=251 c=0.941 alpha=-0.538 beta=+0.278 | loss 4.0497 size 557.3 MB zeros 33.1%
+gen 2 [58/100] k=143 c=0.869 alpha=-0.997 beta=+0.997 | loss 10.5875 size 426.2 MB zeros 69.7%
+gen 2 [59/100] k= 28 c=0.867 alpha=-0.745 beta=+0.698 | loss 8.2337 size 418.6 MB zeros 54.9%
+gen 2 [60/100] k= 16 c=0.791 alpha=-0.884 beta=+0.862 | loss 10.1121 size 382.9 MB zeros 63.6%
+gen 2 [61/100] k= 53 c=0.941 alpha=-0.174 beta=+0.169 | loss 3.1586 size 541.4 MB zeros 14.7%
+gen 2 [62/100] k=150 c=0.724 alpha=-0.256 beta=+0.183 | loss 3.2752 size 609.4 MB zeros 18.5%
+gen 2 [63/100] k= 18 c=0.848 alpha=-0.772 beta=+0.569 | loss 18.0568 size 425.9 MB zeros 51.6%
+gen 2 [64/100] k= 43 c=0.851 alpha=-0.005 beta=+0.005 | loss 3.1391 size 541.4 MB zeros 7.6%
+gen 2 [65/100] k=213 c=0.939 alpha=-0.629 beta=+0.635 | loss 7.1149 size 499.4 MB zeros 49.3%
+gen 2 [66/100] k= 95 c=0.794 alpha=-0.060 beta=+0.324 | loss 3.2923 size 580.5 MB zeros 16.1%
+gen 2 [67/100] k= 35 c=0.835 alpha=-0.780 beta=+0.781 | loss 8.6947 size 429.3 MB zeros 58.4%
+gen 2 [68/100] k= 98 c=0.828 alpha=-0.756 beta=+0.828 | loss 8.9933 size 446.1 MB zeros 59.0%
+gen 2 [69/100] k= 34 c=0.968 alpha=-0.931 beta=+0.710 | loss 17.9114 size 424.1 MB zeros 60.4%
+gen 2 [70/100] k= 26 c=0.844 alpha=-0.954 beta=+0.968 | loss 10.7263 size 389.3 MB zeros 68.0%
+gen 2 [71/100] k= 78 c=0.761 alpha=-0.431 beta=+0.431 | loss 4.2333 size 520.7 MB zeros 35.2%
+gen 2 [72/100] k=108 c=0.995 alpha=-0.056 beta=+0.020 | loss 3.0722 size 586.2 MB zeros 4.3%
+gen 2 [73/100] k=160 c=0.822 alpha=-0.033 beta=+0.656 | loss 15.3849 size 579.4 MB zeros 26.9%
+gen 2 [74/100] k=118 c=0.903 alpha=-0.361 beta=+0.021 | loss 3.2098 size 579.7 MB zeros 16.4%
+gen 2 [75/100] k=143 c=0.719 alpha=-0.474 beta=+0.997 | loss 15.4188 size 482.4 MB zeros 54.0%
+gen 2 [76/100] k=101 c=0.879 alpha=-0.791 beta=+0.203 | loss 17.8805 size 511.6 MB zeros 38.1%
+gen 2 [77/100] k=116 c=0.814 alpha=-0.002 beta=+0.864 | loss 15.4559 size 527.9 MB zeros 32.9%
+gen 2 [78/100] k= 16 c=0.877 alpha=-0.891 beta=+0.171 | loss 17.6491 size 418.7 MB zeros 43.6%
+gen 2 [79/100] k= 36 c=0.887 alpha=-0.999 beta=+0.990 | loss 10.5993 size 399.4 MB zeros 69.6%
+gen 2 [80/100] k=189 c=0.779 alpha=-0.612 beta=+0.612 | loss 7.1173 size 504.2 MB zeros 47.9%
+gen 2 [81/100] k= 84 c=0.853 alpha=-0.412 beta=+0.509 | loss 4.3857 size 514.1 MB zeros 37.3%
+gen 2 [82/100] k= 37 c=0.754 alpha=-0.418 beta=+0.385 | loss 3.8990 size 497.7 MB zeros 33.0%
+gen 2 [83/100] k=  6 c=0.751 alpha=-0.772 beta=+0.772 | loss 11.7741 size 369.4 MB zeros 61.5%
+gen 2 [84/100] k=239 c=0.736 alpha=-0.669 beta=+0.702 | loss 7.7951 size 487.2 MB zeros 52.7%
+gen 2 [85/100] k=144 c=0.811 alpha=-0.943 beta=+0.985 | loss 10.4521 size 431.8 MB zeros 68.1%
+gen 2 [86/100] k=246 c=0.845 alpha=-0.048 beta=+0.040 | loss 3.0767 size 630.9 MB zeros 3.8%
+gen 2 [87/100] k= 68 c=0.746 alpha=-0.404 beta=+0.404 | loss 3.9042 size 527.2 MB zeros 33.1%
+gen 2 [88/100] k=147 c=0.868 alpha=-0.009 beta=+0.105 | loss 3.0757 size 630.9 MB zeros 5.6%
+gen 2 [89/100] k=  6 c=0.769 alpha=-0.652 beta=+0.902 | loss 13.5000 size 367.4 MB zeros 63.0%
+gen 2 [90/100] k=101 c=0.904 alpha=-0.669 beta=+0.640 | loss 7.5229 size 472.1 MB zeros 50.7%
+gen 2 [91/100] k=214 c=0.955 alpha=-0.651 beta=+0.578 | loss 6.7283 size 503.6 MB zeros 48.1%
+gen 2 [92/100] k= 97 c=0.899 alpha=-0.911 beta=+0.945 | loss 11.0500 size 423.1 MB zeros 66.4%
+gen 2 [93/100] k=148 c=0.895 alpha=-0.829 beta=+0.801 | loss 9.5162 size 459.6 MB zeros 60.4%
+gen 2 [94/100] k=176 c=0.742 alpha=-0.582 beta=+0.585 | loss 6.0329 size 510.8 MB zeros 46.1%
+gen 2 [95/100] k=150 c=0.796 alpha=-0.838 beta=+0.798 | loss 9.6069 size 459.0 MB zeros 60.5%
+gen 2 [96/100] k=109 c=0.998 alpha=-0.414 beta=+0.275 | loss 3.5814 size 541.9 MB zeros 28.4%
+gen 2 [97/100] k=143 c=0.720 alpha=-0.988 beta=+0.977 | loss 10.6214 size 428.6 MB zeros 69.0%
+gen 2 [98/100] k=235 c=0.841 alpha=-0.404 beta=+0.409 | loss 3.8224 size 556.5 MB zeros 33.3%
+gen 2 [99/100] k= 17 c=0.754 alpha=-0.261 beta=+0.400 | loss 4.1372 size 446.3 MB zeros 28.1%
+gen 2 [100/100] k=143 c=0.810 alpha=-0.147 beta=+0.160 | loss 3.1105 size 629.0 MB zeros 13.0%
+=== generation 2/10 done in 196s (0 from cache), Pareto front has 26 points, best loss 3.0588, smallest 362.9 MB
+gen 3 [1/100] k=  7 c=0.988 alpha=-0.193 beta=+0.193 | loss 11.7743 size 382.2 MB zeros 52.0%
+gen 3 [2/100] k=  7 c=0.727 alpha=-0.041 beta=+0.989 | loss 15.1144 size 377.9 MB zeros 55.2%
+gen 3 [3/100] k= 46 c=0.904 alpha=-0.897 beta=+0.160 | loss 17.8799 size 480.6 MB zeros 39.3%
+gen 3 [4/100] k= 49 c=0.955 alpha=-0.580 beta=+0.965 | loss 15.3635 size 433.1 MB zeros 57.0%
+gen 3 [5/100] k= 33 c=0.936 alpha=-0.036 beta=+0.036 | loss 3.1337 size 517.0 MB zeros 10.9%
+gen 3 [6/100] k= 78 c=0.847 alpha=-0.873 beta=+0.209 | loss 17.8625 size 503.7 MB zeros 40.6%
+gen 3 [7/100] k=121 c=0.935 alpha=-0.610 beta=+0.159 | loss 17.9308 size 535.0 MB zeros 30.6%
+gen 3 [8/100] k= 98 c=0.827 alpha=-0.946 beta=+0.946 | loss 10.6717 size 420.3 MB zeros 67.3%
+gen 3 [9/100] k= 94 c=0.899 alpha=-0.549 beta=+0.953 | loss 15.3593 size 456.6 MB zeros 55.7%
+gen 3 [10/100] k= 10 c=0.823 alpha=-0.777 beta=+0.777 | loss 9.4578 size 391.5 MB zeros 58.8%
+gen 3 [11/100] k=142 c=0.868 alpha=-0.662 beta=+0.105 | loss 17.9245 size 568.1 MB zeros 30.0%
+gen 3 [12/100] k= 76 c=0.853 alpha=-0.412 beta=+0.562 | loss 4.5654 size 508.3 MB zeros 39.1%
+gen 3 [13/100] k= 39 c=0.949 alpha=-0.700 beta=+0.006 | loss 17.8944 size 501.7 MB zeros 31.5%
+gen 3 [14/100] k= 38 c=0.875 alpha=-0.745 beta=+0.006 | loss 17.8649 size 498.3 MB zeros 32.7%
+gen 3 [15/100] k= 45 c=0.811 alpha=-0.155 beta=+0.749 | loss 15.3987 size 492.2 MB zeros 35.0%
+gen 3 [16/100] k= 13 c=0.814 alpha=-0.142 beta=+0.009 | loss 3.9980 size 449.3 MB zeros 24.3%
+gen 3 [17/100] k= 67 c=0.834 alpha=-0.157 beta=+0.009 | loss 3.1239 size 586.1 MB zeros 9.1%
+gen 3 [18/100] k= 35 c=0.835 alpha=-0.780 beta=+0.781 | loss 8.7041 size 429.3 MB zeros 58.4%
+gen 3 [19/100] k= 74 c=0.754 alpha=-0.404 beta=+0.404 | loss 3.8781 size 527.2 MB zeros 33.1%
+gen 3 [20/100] k= 15 c=0.944 alpha=-0.151 beta=+0.173 | loss 3.8813 size 449.4 MB zeros 24.2%
+gen 3 [21/100] k=246 c=0.948 alpha=-0.658 beta=+0.666 | loss 7.6351 size 492.5 MB zeros 51.2%
+gen 3 [22/100] k=136 c=0.890 alpha=-0.839 beta=+0.838 | loss 9.6765 size 454.9 MB zeros 61.7%
+gen 3 [23/100] k= 27 c=0.981 alpha=-0.617 beta=+0.611 | loss 7.2304 size 433.8 MB zeros 48.1%
+gen 3 [24/100] k=  6 c=0.769 alpha=-0.884 beta=+0.911 | loss 12.8823 size 362.1 MB zeros 66.9%
+gen 3 [25/100] k= 36 c=0.843 alpha=-0.980 beta=+0.942 | loss 10.8742 size 403.6 MB zeros 68.0%
+gen 3 [26/100] k= 32 c=0.708 alpha=-0.941 beta=+0.941 | loss 10.9166 size 391.6 MB zeros 67.0%
+gen 3 [27/100] k=240 c=0.845 alpha=-0.040 beta=+0.040 | loss 3.0722 size 630.9 MB zeros 3.5%
+gen 3 [28/100] k= 17 c=0.791 alpha=-0.884 beta=+0.147 | loss 17.8120 size 423.1 MB zeros 41.1%
+gen 3 [29/100] k= 38 c=0.868 alpha=-0.745 beta=+0.745 | loss 7.9643 size 434.9 MB zeros 56.3%
+gen 3 [30/100] k= 94 c=0.712 alpha=-0.606 beta=+0.606 | loss 6.7560 size 482.0 MB zeros 47.5%
+gen 3 [31/100] k= 79 c=0.749 alpha=-0.090 beta=+0.090 | loss 3.1190 size 586.1 MB zeros 7.8%
+gen 3 [32/100] k= 35 c=0.850 alpha=-0.700 beta=+0.700 | loss 8.1910 size 442.3 MB zeros 53.6%
+gen 3 [33/100] k= 97 c=0.851 alpha=-0.954 beta=+0.888 | loss 9.7694 size 424.3 MB zeros 66.0%
+gen 3 [34/100] k= 33 c=0.870 alpha=-0.789 beta=+0.759 | loss 8.5682 size 411.6 MB zeros 58.1%
+gen 3 [35/100] k= 10 c=0.834 alpha=-0.790 beta=+0.797 | loss 10.1949 size 389.8 MB zeros 59.7%
+gen 3 [36/100] k=193 c=0.846 alpha=-0.042 beta=+0.045 | loss 3.0822 size 630.9 MB zeros 3.8%
+gen 3 [37/100] k= 27 c=0.986 alpha=-0.280 beta=+0.414 | loss 3.7474 size 476.6 MB zeros 29.0%
+gen 3 [38/100] k= 32 c=0.968 alpha=-0.927 beta=+0.915 | loss 9.7568 size 393.8 MB zeros 66.0%
+gen 3 [39/100] k= 44 c=0.977 alpha=-0.740 beta=+0.980 | loss 15.1947 size 418.5 MB zeros 62.5%
+gen 3 [40/100] k=142 c=0.814 alpha=-0.146 beta=+0.155 | loss 3.1104 size 629.7 MB zeros 12.8%
+gen 3 [41/100] k= 32 c=0.955 alpha=-0.687 beta=+0.625 | loss 7.3895 size 427.7 MB zeros 50.8%
+gen 3 [42/100] k= 32 c=0.941 alpha=-0.174 beta=+0.853 | loss 15.3798 size 454.1 MB zeros 39.0%
+gen 3 [43/100] k= 77 c=0.975 alpha=-0.400 beta=+0.473 | loss 4.1488 size 519.6 MB zeros 35.5%
+gen 3 [44/100] k= 43 c=0.951 alpha=-0.055 beta=+0.061 | loss 3.1178 size 541.4 MB zeros 8.5%
+gen 3 [45/100] k=  6 c=0.727 alpha=-0.036 beta=+0.034 | loss 12.4400 size 376.8 MB zeros 56.0%
+gen 3 [46/100] k= 70 c=0.876 alpha=-0.394 beta=+0.431 | loss 3.8948 size 525.1 MB zeros 33.8%
+gen 3 [47/100] k= 16 c=0.877 alpha=-0.878 beta=+0.171 | loss 17.6312 size 419.4 MB zeros 43.2%
+gen 3 [48/100] k= 88 c=0.810 alpha=-0.635 beta=+0.557 | loss 6.4918 size 484.3 MB zeros 46.8%
+gen 3 [49/100] k= 35 c=0.727 alpha=-0.907 beta=+0.015 | loss 17.8776 size 487.7 MB zeros 36.7%
+gen 3 [50/100] k= 53 c=0.936 alpha=-0.209 beta=+0.835 | loss 15.4205 size 479.8 MB zeros 39.6%
+gen 3 [51/100] k= 44 c=0.844 alpha=-0.952 beta=+0.638 | loss 17.9599 size 428.8 MB zeros 58.6%
+gen 3 [52/100] k=  7 c=0.768 alpha=-0.194 beta=+0.884 | loss 14.7155 size 379.9 MB zeros 53.7%
+gen 3 [53/100] k= 32 c=0.726 alpha=-0.148 beta=+0.626 | loss 15.3098 size 472.0 MB zeros 31.0%
+gen 3 [54/100] k=176 c=0.743 alpha=-0.090 beta=+0.090 | loss 3.1170 size 630.9 MB zeros 7.7%
+gen 3 [55/100] k= 37 c=0.955 alpha=-0.940 beta=+0.568 | loss 17.9049 size 435.9 MB zeros 56.0%
+gen 3 [56/100] k=122 c=0.935 alpha=-0.602 beta=+0.633 | loss 6.9570 size 479.7 MB zeros 48.3%
+gen 3 [57/100] k= 15 c=0.769 alpha=-0.010 beta=+0.889 | loss 15.4777 size 421.2 MB zeros 42.2%
+gen 3 [58/100] k=251 c=0.845 alpha=-0.040 beta=+0.040 | loss 3.0821 size 630.9 MB zeros 3.5%
+gen 3 [59/100] k= 84 c=0.977 alpha=-0.980 beta=+0.926 | loss 10.2053 size 419.3 MB zeros 67.6%
+gen 3 [60/100] k= 14 c=0.947 alpha=-0.055 beta=+0.783 | loss 15.4573 size 419.1 MB zeros 43.4%
+gen 3 [61/100] k=200 c=0.983 alpha=-0.042 beta=+0.761 | loss 15.4218 size 566.6 MB zeros 30.5%
+gen 3 [62/100] k=128 c=0.866 alpha=-0.698 beta=+0.151 | loss 17.9256 size 527.0 MB zeros 33.2%
+gen 3 [63/100] k=118 c=0.791 alpha=-0.795 beta=+0.867 | loss 10.3292 size 439.1 MB zeros 61.3%
+gen 3 [64/100] k= 18 c=0.997 alpha=-0.143 beta=+0.170 | loss 3.7499 size 490.4 MB zeros 22.5%
+gen 3 [65/100] k= 35 c=0.843 alpha=-0.769 beta=+0.781 | loss 8.7060 size 430.2 MB zeros 58.1%
+gen 3 [66/100] k=  3 c=0.885 alpha=-0.911 beta=+0.911 | loss 17.1492 size 321.8 MB zeros 91.0%
+gen 3 [67/100] k= 54 c=0.874 alpha=-0.912 beta=+0.171 | loss 17.9179 size 478.5 MB zeros 40.1%
+gen 3 [68/100] k=113 c=0.846 alpha=-0.057 beta=+0.040 | loss 3.0912 size 586.2 MB zeros 4.3%
+gen 3 [69/100] k= 22 c=0.761 alpha=-0.698 beta=+0.685 | loss 8.2581 size 422.6 MB zeros 53.1%
+gen 3 [70/100] k= 28 c=0.986 alpha=-0.312 beta=+0.500 | loss 4.2187 size 466.9 MB zeros 33.3%
+gen 3 [71/100] k= 77 c=0.899 alpha=-0.875 beta=+0.879 | loss 10.1666 size 431.3 MB zeros 63.8%
+gen 3 [72/100] k=174 c=0.983 alpha=-0.112 beta=+0.152 | loss 3.0810 size 630.8 MB zeros 11.2%
+gen 3 [73/100] k=129 c=0.756 alpha=-0.823 beta=+0.916 | loss 10.3957 size 432.7 MB zeros 63.3%
+gen 3 [74/100] k= 14 c=0.754 alpha=-0.396 beta=+0.294 | loss 4.4095 size 443.0 MB zeros 30.0%
+gen 3 [75/100] k= 33 c=0.877 alpha=-0.223 beta=+0.879 | loss 15.3929 size 448.6 MB zeros 41.5%
+gen 3 [76/100] k=147 c=0.866 alpha=-0.009 beta=+0.105 | loss 3.0761 size 630.9 MB zeros 5.6%
+gen 3 [77/100] k= 94 c=0.996 alpha=-0.606 beta=+0.605 | loss 6.6510 size 482.1 MB zeros 47.5%
+gen 3 [78/100] k=172 c=0.971 alpha=-0.928 beta=+0.980 | loss 10.8306 size 433.6 MB zeros 67.6%
+gen 3 [79/100] k=249 c=0.942 alpha=-0.048 beta=+0.040 | loss 3.0586 size 630.9 MB zeros 3.8%
+gen 3 [80/100] k= 18 c=0.885 alpha=-0.129 beta=+0.074 | loss 3.5440 size 493.3 MB zeros 20.1%
+gen 3 [81/100] k= 97 c=0.840 alpha=-0.151 beta=+0.095 | loss 3.0993 size 586.1 MB zeros 10.5%
+gen 3 [82/100] k=  8 c=0.979 alpha=-0.169 beta=+0.173 | loss 12.3290 size 382.6 MB zeros 51.7%
+gen 3 [83/100] k=123 c=0.992 alpha=-0.202 beta=+0.167 | loss 3.1322 size 582.1 MB zeros 15.6%
+gen 3 [84/100] k= 60 c=0.850 alpha=-0.019 beta=+0.005 | loss 3.0907 size 541.4 MB zeros 5.5%
+gen 3 [85/100] k= 26 c=0.724 alpha=-0.139 beta=+0.152 | loss 3.2353 size 496.7 MB zeros 13.5%
+gen 3 [86/100] k= 76 c=0.833 alpha=-0.999 beta=+0.781 | loss 17.9230 size 430.1 MB zeros 64.1%
+gen 3 [87/100] k=117 c=0.811 alpha=-0.051 beta=+0.046 | loss 3.0904 size 586.2 MB zeros 4.3%
+gen 3 [88/100] k= 84 c=0.851 alpha=-0.517 beta=+0.512 | loss 4.9472 size 501.8 MB zeros 41.2%
+gen 3 [89/100] k= 27 c=0.926 alpha=-0.849 beta=+0.166 | loss 17.9118 size 454.5 MB zeros 38.8%
+gen 3 [90/100] k= 28 c=0.743 alpha=-0.620 beta=+0.611 | loss 6.8418 size 433.6 MB zeros 48.2%
+gen 3 [91/100] k=  6 c=0.767 alpha=-0.652 beta=+0.924 | loss 14.6776 size 366.9 MB zeros 63.4%
+gen 3 [92/100] k=  8 c=0.751 alpha=-0.744 beta=+0.839 | loss 10.3352 size 371.5 MB zeros 60.0%
+gen 3 [93/100] k=118 c=0.906 alpha=-0.412 beta=+0.412 | loss 3.8642 size 525.4 MB zeros 33.7%
+gen 3 [94/100] k= 25 c=0.761 alpha=-0.710 beta=+0.698 | loss 8.2532 size 421.0 MB zeros 53.9%
+gen 3 [95/100] k= 45 c=0.955 alpha=-0.639 beta=+0.647 | loss 7.2949 size 452.0 MB zeros 50.0%
+gen 3 [96/100] k= 37 c=0.838 alpha=-0.761 beta=+0.147 | loss 17.8991 size 491.8 MB zeros 35.1%
+gen 3 [97/100] k=178 c=0.735 alpha=-0.081 beta=+0.095 | loss 3.1175 size 630.9 MB zeros 7.5%
+gen 3 [98/100] k= 47 c=0.955 alpha=-0.629 beta=+0.641 | loss 7.2144 size 453.3 MB zeros 49.5%
+gen 3 [99/100] k=154 c=0.957 alpha=-0.164 beta=+0.781 | loss 15.4134 size 546.2 MB zeros 36.2%
+gen 3 [100/100] k= 95 c=0.808 alpha=-0.157 beta=+0.091 | loss 3.1060 size 586.1 MB zeros 10.5%
+=== generation 3/10 done in 196s (0 from cache), Pareto front has 36 points, best loss 3.0586, smallest 321.8 MB
+gen 4 [1/100] k= 52 c=0.975 alpha=-0.005 beta=+0.005 | loss 3.0997 size 541.4 MB zeros 7.3%
+gen 4 [2/100] k=104 c=0.874 alpha=-0.106 beta=+0.018 | loss 3.0701 size 586.2 MB zeros 6.2%
+gen 4 [3/100] k= 43 c=0.835 alpha=-0.811 beta=+0.797 | loss 9.1689 size 425.8 MB zeros 59.8%
+gen 4 [4/100] k=231 c=0.845 alpha=-0.043 beta=+0.094 | loss 3.0745 size 630.9 MB zeros 5.8%
+gen 4 [5/100] k= 27 c=0.769 alpha=-0.884 beta=+0.861 | loss 10.1066 size 399.4 MB zeros 63.5%
+gen 4 [6/100] k= 10 c=0.949 alpha=-0.823 beta=+0.005 | loss 18.1153 size 405.9 MB zeros 50.7%
+gen 4 [7/100] k=121 c=0.856 alpha=-0.636 beta=+0.969 | loss 15.3358 size 446.3 MB zeros 59.0%
+gen 4 [8/100] k= 43 c=0.817 alpha=-0.173 beta=+0.058 | loss 3.1370 size 541.4 MB zeros 11.1%
+gen 4 [9/100] k= 29 c=0.867 alpha=-0.698 beta=+0.698 | loss 8.3654 size 421.8 MB zeros 53.5%
+gen 4 [10/100] k= 25 c=0.761 alpha=-0.772 beta=+0.760 | loss 8.4447 size 412.6 MB zeros 57.6%
+gen 4 [11/100] k=243 c=0.953 alpha=-0.639 beta=+0.662 | loss 7.4140 size 495.0 MB zeros 50.5%
+gen 4 [13/100] k=  7 c=0.988 alpha=-0.193 beta=+0.603 | loss 11.8125 size 381.2 MB zeros 52.7%
+gen 4 [14/100] k= 32 c=0.868 alpha=-0.792 beta=+0.164 | loss 17.8961 size 458.9 MB zeros 36.9%
+gen 4 [15/100] k= 47 c=0.836 alpha=-0.629 beta=+0.622 | loss 7.2286 size 455.1 MB zeros 48.8%
+gen 4 [16/100] k= 32 c=0.708 alpha=-0.889 beta=+0.752 | loss 12.8310 size 405.9 MB zeros 60.6%
+gen 4 [17/100] k= 45 c=0.935 alpha=-0.680 beta=+0.635 | loss 7.5975 size 449.5 MB zeros 50.9%
+gen 4 [18/100] k= 54 c=0.847 alpha=-0.019 beta=+0.005 | loss 3.1207 size 541.4 MB zeros 6.1%
+gen 4 [19/100] k= 58 c=0.947 alpha=-0.114 beta=+0.173 | loss 3.1638 size 541.4 MB zeros 12.4%
+gen 4 [20/100] k=  9 c=0.768 alpha=-0.192 beta=+0.896 | loss 15.3418 size 386.0 MB zeros 49.1%
+gen 4 [21/100] k= 18 c=0.998 alpha=-0.674 beta=+0.170 | loss 17.3192 size 458.0 MB zeros 37.3%
+gen 4 [22/100] k=253 c=0.942 alpha=-0.043 beta=+0.041 | loss 3.0603 size 630.9 MB zeros 3.6%
+gen 4 [23/100] k= 26 c=0.734 alpha=-0.747 beta=+0.034 | loss 17.9129 size 465.5 MB zeros 33.9%
+gen 4 [24/100] k=  9 c=0.727 alpha=-0.239 beta=+0.116 | loss 5.3200 size 409.4 MB zeros 31.7%
+gen 4 [25/100] k=147 c=0.866 alpha=-0.707 beta=+0.105 | loss 17.9029 size 563.0 MB zeros 31.5%
+gen 4 [26/100] k= 16 c=0.877 alpha=-0.055 beta=+0.148 | loss 3.7298 size 450.4 MB zeros 22.6%
+gen 4 [27/100] k=116 c=0.814 alpha=-0.057 beta=+0.044 | loss 3.0945 size 586.2 MB zeros 4.4%
+gen 4 [28/100] k=157 c=0.971 alpha=-0.124 beta=+0.817 | loss 15.4420 size 548.5 MB zeros 35.5%
+gen 4 [29/100] k=244 c=0.864 alpha=-0.086 beta=+0.040 | loss 3.0631 size 630.9 MB zeros 5.4%
+gen 4 [30/100] k= 74 c=0.899 alpha=-0.712 beta=+0.699 | loss 8.2427 size 462.0 MB zeros 53.9%
+gen 4 [31/100] k= 17 c=0.852 alpha=-0.710 beta=+0.723 | loss 8.4014 size 398.8 MB zeros 54.7%
+gen 4 [32/100] k= 28 c=0.739 alpha=-0.792 beta=+0.756 | loss 9.2375 size 411.6 MB zeros 58.0%
+gen 4 [33/100] k= 53 c=0.941 alpha=-0.948 beta=+0.173 | loss 17.9529 size 475.9 MB zeros 41.1%
+gen 4 [34/100] k= 22 c=0.734 alpha=-0.698 beta=+0.685 | loss 8.6262 size 422.7 MB zeros 53.1%
+gen 4 [35/100] k=119 c=0.871 alpha=-0.029 beta=+0.060 | loss 3.0709 size 586.2 MB zeros 4.1%
+gen 4 [36/100] k= 14 c=0.753 alpha=-0.163 beta=+0.330 | loss 4.0973 size 449.2 MB zeros 25.8%
+gen 4 [37/100] k= 67 c=0.834 alpha=-0.227 beta=+0.009 | loss 3.1488 size 586.1 MB zeros 12.0%
+gen 4 [38/100] k=121 c=0.988 alpha=-0.563 beta=+0.642 | loss 6.6969 size 482.9 MB zeros 47.3%
+gen 4 [39/100] k= 28 c=0.751 alpha=-0.279 beta=+0.842 | loss 15.3290 size 445.9 MB zeros 42.7%
+gen 4 [40/100] k=  7 c=0.702 alpha=-0.036 beta=+0.756 | loss 14.6470 size 386.6 MB zeros 48.7%
+gen 4 [41/100] k= 14 c=0.755 alpha=-0.404 beta=+0.742 | loss 15.6997 size 415.8 MB zeros 45.2%
+gen 4 [42/100] k= 25 c=0.995 alpha=-0.075 beta=+0.040 | loss 3.2581 size 496.4 MB zeros 15.3%
+gen 4 [43/100] k=  7 c=0.870 alpha=-0.194 beta=+0.884 | loss 14.5005 size 376.7 MB zeros 56.1%
+gen 4 [44/100] k=  7 c=0.850 alpha=-0.193 beta=+0.196 | loss 11.7516 size 389.9 MB zeros 46.2%
+gen 4 [45/100] k= 16 c=0.801 alpha=-0.148 beta=+0.148 | loss 3.6365 size 451.2 MB zeros 20.7%
+gen 4 [46/100] k= 10 c=0.951 alpha=-0.046 beta=+0.037 | loss 7.4483 size 425.1 MB zeros 40.0%
+gen 4 [47/100] k= 44 c=0.905 alpha=-0.850 beta=+0.837 | loss 9.8361 size 419.9 MB zeros 61.9%
+gen 4 [48/100] k=  4 c=0.769 alpha=-0.711 beta=+0.867 | loss 19.4821 size 329.7 MB zeros 86.7%
+gen 4 [49/100] k=  9 c=0.823 alpha=-0.044 beta=+0.839 | loss 15.0505 size 386.6 MB zeros 48.7%
+gen 4 [50/100] k= 26 c=0.932 alpha=-0.879 beta=+0.691 | loss 18.2856 size 410.7 MB zeros 58.5%
+gen 4 [51/100] k= 13 c=0.934 alpha=-0.142 beta=+0.156 | loss 4.3266 size 446.5 MB zeros 27.6%
+gen 4 [52/100] k=147 c=0.876 alpha=-0.009 beta=+0.105 | loss 3.0740 size 630.9 MB zeros 5.6%
+gen 4 [53/100] k= 33 c=0.885 alpha=-0.710 beta=+0.697 | loss 8.0475 size 421.0 MB zeros 53.8%
+gen 4 [54/100] k= 34 c=0.837 alpha=-0.040 beta=+0.019 | loss 3.1367 size 541.4 MB zeros 9.8%
+gen 4 [55/100] k=  5 c=0.885 alpha=-0.129 beta=+0.057 | loss 12.5893 size 349.7 MB zeros 64.3%
+gen 4 [56/100] k= 27 c=0.981 alpha=-0.617 beta=+0.201 | loss 17.8273 size 467.2 MB zeros 33.2%
+gen 4 [57/100] k= 37 c=0.726 alpha=-0.076 beta=+0.659 | loss 15.3996 size 507.1 MB zeros 29.4%
+gen 4 [58/100] k= 67 c=0.953 alpha=-0.157 beta=+0.036 | loss 3.0956 size 586.1 MB zeros 9.4%
+gen 4 [59/100] k= 38 c=0.866 alpha=-0.763 beta=+0.934 | loss 15.2308 size 419.7 MB zeros 62.0%
+gen 4 [60/100] k=122 c=0.955 alpha=-0.572 beta=+0.570 | loss 5.7712 size 489.4 MB zeros 45.2%
+gen 4 [61/100] k=159 c=0.964 alpha=-0.146 beta=+0.146 | loss 3.0926 size 630.4 MB zeros 12.4%
+gen 4 [62/100] k=163 c=0.941 alpha=-0.169 beta=+0.015 | loss 3.0797 size 630.9 MB zeros 8.3%
+gen 4 [63/100] k=130 c=0.811 alpha=-0.054 beta=+0.038 | loss 3.0839 size 630.9 MB zeros 4.1%
+gen 4 [64/100] k= 22 c=0.753 alpha=-0.130 beta=+0.685 | loss 15.4003 size 466.7 MB zeros 33.4%
+gen 4 [65/100] k=  6 c=0.751 alpha=-0.779 beta=+0.774 | loss 11.9412 size 369.2 MB zeros 61.7%
+gen 4 [66/100] k=  8 c=0.869 alpha=-0.037 beta=+0.698 | loss 10.7853 size 383.0 MB zeros 51.3%
+gen 4 [67/100] k=121 c=0.992 alpha=-0.745 beta=+0.966 | loss 15.1999 size 435.9 MB zeros 62.3%
+gen 4 [68/100] k= 29 c=0.876 alpha=-0.013 beta=+0.698 | loss 15.3310 size 468.5 MB zeros 32.6%
+gen 4 [69/100] k= 38 c=0.950 alpha=-0.148 beta=+0.058 | loss 3.1326 size 541.4 MB zeros 11.6%
+gen 4 [70/100] k= 16 c=0.791 alpha=-0.881 beta=+0.873 | loss 10.5025 size 382.5 MB zeros 63.8%
+gen 4 [71/100] k= 22 c=0.834 alpha=-0.782 beta=+0.020 | loss 17.8303 size 458.8 MB zeros 36.9%
+gen 4 [72/100] k=136 c=0.935 alpha=-0.610 beta=+0.633 | loss 7.0565 size 501.8 MB zeros 48.6%
+gen 4 [73/100] k= 25 c=0.760 alpha=-0.533 beta=+0.629 | loss 6.2400 size 438.9 MB zeros 45.8%
+gen 4 [74/100] k=252 c=0.845 alpha=-0.040 beta=+0.031 | loss 3.0796 size 630.9 MB zeros 3.1%
+gen 4 [75/100] k= 32 c=0.867 alpha=-0.618 beta=+0.615 | loss 7.0881 size 433.5 MB zeros 48.2%
+gen 4 [76/100] k= 26 c=0.844 alpha=-0.177 beta=+0.968 | loss 15.3994 size 446.9 MB zeros 42.3%
+gen 4 [77/100] k= 13 c=0.848 alpha=-0.792 beta=+0.772 | loss 10.2634 size 391.7 MB zeros 58.7%
+gen 4 [78/100] k=156 c=0.960 alpha=-0.145 beta=+0.271 | loss 3.1786 size 612.9 MB zeros 17.5%
+gen 4 [79/100] k= 18 c=0.978 alpha=-0.672 beta=+0.611 | loss 7.4784 size 429.4 MB zeros 50.1%
+gen 4 [80/100] k=  6 c=0.767 alpha=-0.703 beta=+0.924 | loss 13.8104 size 366.2 MB zeros 63.9%
+gen 4 [81/100] k= 43 c=0.868 alpha=-0.745 beta=+0.919 | loss 14.3793 size 422.1 MB zeros 61.1%
+gen 4 [82/100] k=  4 c=0.773 alpha=-0.772 beta=+0.772 | loss 18.6942 size 329.5 MB zeros 86.9%
+gen 4 [83/100] k= 78 c=0.818 alpha=-0.395 beta=+0.023 | loss 3.2799 size 573.8 MB zeros 18.2%
+gen 4 [84/100] k=  6 c=0.769 alpha=-0.845 beta=+0.911 | loss 12.2320 size 363.2 MB zeros 66.1%
+gen 4 [85/100] k=  8 c=0.935 alpha=-0.230 beta=+0.204 | loss 12.2021 size 385.0 MB zeros 49.9%
+gen 4 [86/100] k=  9 c=0.987 alpha=-0.778 beta=+0.500 | loss 17.9052 size 382.6 MB zeros 51.6%
+gen 4 [87/100] k=  6 c=0.727 alpha=-0.041 beta=+0.033 | loss 12.5738 size 376.8 MB zeros 56.0%
+gen 4 [88/100] k= 31 c=0.866 alpha=-0.698 beta=+0.407 | loss 18.2214 size 444.2 MB zeros 43.5%
+gen 4 [89/100] k=241 c=0.959 alpha=-0.139 beta=+0.170 | loss 3.1006 size 628.8 MB zeros 13.1%
+gen 4 [90/100] k= 92 c=0.748 alpha=-0.019 beta=+0.005 | loss 3.1145 size 586.1 MB zeros 3.1%
+gen 4 [91/100] k=  3 c=0.889 alpha=-0.911 beta=+0.943 | loss 17.1323 size 321.7 MB zeros 91.1%
+gen 4 [92/100] k= 14 c=0.754 alpha=-0.102 beta=+0.409 | loss 4.2689 size 445.6 MB zeros 28.5%
+gen 4 [93/100] k= 42 c=0.964 alpha=-0.750 beta=+0.837 | loss 8.6244 size 427.5 MB zeros 59.1%
+gen 4 [94/100] k=172 c=0.945 alpha=-0.035 beta=+0.115 | loss 3.0596 size 630.9 MB zeros 6.4%
+gen 4 [95/100] k= 43 c=0.851 alpha=-0.709 beta=+0.005 | loss 17.8754 size 503.3 MB zeros 30.9%
+gen 4 [96/100] k=172 c=0.983 alpha=-0.416 beta=+0.147 | loss 3.3639 size 592.5 MB zeros 23.2%
+gen 4 [97/100] k= 46 c=0.859 alpha=-0.912 beta=+0.973 | loss 10.6714 size 406.1 MB zeros 67.1%
+gen 4 [98/100] k=  5 c=0.729 alpha=-0.112 beta=+0.037 | loss 12.6853 size 357.0 MB zeros 56.1%
+gen 4 [99/100] k= 47 c=0.761 alpha=-0.017 beta=+0.698 | loss 15.3973 size 506.0 MB zeros 29.9%
+gen 4 [100/100] k= 28 c=0.979 alpha=-0.617 beta=+0.611 | loss 7.0610 size 433.8 MB zeros 48.1%
+=== generation 4/10 done in 194s (1 from cache), Pareto front has 37 points, best loss 3.0586, smallest 321.7 MB
+gen 5 [1/100] k= 27 c=0.988 alpha=-0.405 beta=+0.414 | loss 4.0522 size 466.1 MB zeros 33.7%
+gen 5 [2/100] k= 17 c=0.823 alpha=-0.777 beta=+0.802 | loss 8.6659 size 391.2 MB zeros 59.0%
+gen 5 [3/100] k= 32 c=0.882 alpha=-0.688 beta=+0.679 | loss 8.0327 size 423.8 MB zeros 52.6%
+gen 5 [4/100] k=  9 c=0.743 alpha=-0.239 beta=+0.137 | loss 5.4500 size 408.6 MB zeros 32.3%
+gen 5 [5/100] k= 15 c=0.988 alpha=-0.312 beta=+0.500 | loss 4.8783 size 434.7 MB zeros 34.7%
+gen 5 [6/100] k=  4 c=0.773 alpha=-0.884 beta=+0.884 | loss 18.7325 size 329.5 MB zeros 86.9%
+gen 5 [7/100] k= 33 c=0.966 alpha=-0.036 beta=+0.024 | loss 3.1471 size 516.3 MB zeros 11.2%
+gen 5 [8/100] k= 54 c=0.801 alpha=-0.152 beta=+0.005 | loss 3.1224 size 541.4 MB zeros 9.4%
+gen 5 [9/100] k=  3 c=0.891 alpha=-0.777 beta=+0.772 | loss 16.0930 size 321.7 MB zeros 91.2%
+gen 5 [10/100] k=244 c=0.769 alpha=-0.145 beta=+0.885 | loss 15.4616 size 538.8 MB zeros 38.2%
+gen 5 [11/100] k=  7 c=0.877 alpha=-0.147 beta=+0.148 | loss 11.4200 size 388.3 MB zeros 47.4%
+gen 5 [12/100] k= 35 c=0.847 alpha=-0.146 beta=+0.045 | loss 3.1414 size 541.4 MB zeros 11.2%
+gen 5 [13/100] k= 85 c=0.810 alpha=-0.106 beta=+0.116 | loss 3.0930 size 586.1 MB zeros 9.5%
+gen 5 [14/100] k= 83 c=0.749 alpha=-0.953 beta=+0.941 | loss 10.7645 size 420.1 MB zeros 67.3%
+gen 5 [15/100] k=116 c=0.985 alpha=-0.239 beta=+0.167 | loss 3.1594 size 577.3 MB zeros 17.1%
+gen 5 [16/100] k=  4 c=0.785 alpha=-0.772 beta=+0.772 | loss 17.2640 size 329.1 MB zeros 87.4%
+gen 5 [17/100] k= 18 c=0.950 alpha=-0.148 beta=+0.173 | loss 3.5732 size 491.8 MB zeros 21.5%
+gen 5 [18/100] k=120 c=0.872 alpha=-0.056 beta=+0.020 | loss 3.0668 size 586.2 MB zeros 3.9%
+gen 5 [20/100] k=249 c=0.871 alpha=-0.029 beta=+0.029 | loss 3.0752 size 630.9 MB zeros 2.5%
+gen 5 [21/100] k= 16 c=0.791 alpha=-0.881 beta=+0.799 | loss 10.5421 size 386.2 MB zeros 61.8%
+gen 5 [22/100] k=  4 c=0.769 alpha=-0.711 beta=+0.933 | loss 19.4821 size 329.7 MB zeros 86.7%
+gen 5 [23/100] k=  6 c=0.727 alpha=-0.036 beta=+0.004 | loss 12.4005 size 376.8 MB zeros 56.0%
+gen 5 [24/100] k= 17 c=0.875 alpha=-0.155 beta=+0.741 | loss 15.5612 size 428.6 MB zeros 38.0%
+gen 5 [25/100] k=  3 c=0.885 alpha=-0.911 beta=+0.870 | loss 17.1490 size 321.8 MB zeros 91.0%
+gen 5 [26/100] k=  9 c=0.727 alpha=-0.186 beta=+0.049 | loss 5.3202 size 409.4 MB zeros 31.7%
+gen 5 [27/100] k=237 c=0.921 alpha=-0.040 beta=+0.066 | loss 3.0597 size 630.9 MB zeros 4.6%
+gen 5 [28/100] k= 52 c=0.980 alpha=-0.005 beta=+0.010 | loss 3.0977 size 541.4 MB zeros 7.4%
+gen 5 [29/100] k= 25 c=0.757 alpha=-0.035 beta=+0.831 | loss 15.4097 size 459.7 MB zeros 36.5%
+gen 5 [30/100] k=163 c=0.947 alpha=-0.139 beta=+0.111 | loss 3.0900 size 630.9 MB zeros 10.6%
+gen 5 [31/100] k= 66 c=0.953 alpha=-0.043 beta=+0.041 | loss 3.0683 size 586.1 MB zeros 5.6%
+gen 5 [32/100] k= 17 c=0.823 alpha=-0.710 beta=+0.723 | loss 8.2343 size 398.9 MB zeros 54.7%
+gen 5 [33/100] k= 15 c=0.751 alpha=-0.771 beta=+0.752 | loss 9.5353 size 394.0 MB zeros 57.4%
+gen 5 [34/100] k=  3 c=0.869 alpha=-0.911 beta=+0.929 | loss 16.5858 size 322.0 MB zeros 90.5%
+gen 5 [35/100] k= 18 c=0.933 alpha=-0.129 beta=+0.076 | loss 3.5573 size 492.2 MB zeros 21.1%
+gen 5 [36/100] k= 16 c=0.807 alpha=-0.881 beta=+0.867 | loss 11.1639 size 382.8 MB zeros 63.6%
+gen 5 [37/100] k=  3 c=0.769 alpha=-0.907 beta=+0.884 | loss 19.4835 size 323.7 MB zeros 86.7%
+gen 5 [38/100] k=  9 c=0.811 alpha=-0.202 beta=+0.106 | loss 5.6695 size 405.1 MB zeros 34.9%
+gen 5 [39/100] k=  4 c=0.773 alpha=-0.718 beta=+0.823 | loss 18.6942 size 329.5 MB zeros 86.9%
+gen 5 [40/100] k= 25 c=0.761 alpha=-0.812 beta=+0.004 | loss 17.8990 size 460.9 MB zeros 36.0%
+gen 5 [41/100] k= 54 c=0.847 alpha=-0.019 beta=+0.038 | loss 3.1204 size 541.4 MB zeros 6.1%
+gen 5 [42/100] k=  5 c=0.831 alpha=-0.777 beta=+0.777 | loss 12.1501 size 350.4 MB zeros 63.6%
+gen 5 [43/100] k= 24 c=0.848 alpha=-0.772 beta=+0.769 | loss 8.7624 size 412.0 MB zeros 57.8%
+gen 5 [44/100] k= 53 c=0.959 alpha=-0.688 beta=+0.924 | loss 15.1687 size 426.4 MB zeros 59.5%
+gen 5 [45/100] k= 37 c=0.872 alpha=-0.135 beta=+0.019 | loss 3.1404 size 541.4 MB zeros 10.6%
+gen 5 [46/100] k= 33 c=0.722 alpha=-0.030 beta=+0.040 | loss 3.2195 size 522.5 MB zeros 8.4%
+gen 5 [47/100] k=  4 c=0.763 alpha=-0.159 beta=+0.099 | loss 19.6332 size 329.9 MB zeros 86.4%
+gen 5 [48/100] k= 28 c=0.999 alpha=-0.281 beta=+0.064 | loss 3.3361 size 495.6 MB zeros 19.1%
+gen 5 [49/100] k=  8 c=0.751 alpha=-0.337 beta=+0.421 | loss 8.2473 size 395.6 MB zeros 41.9%
+gen 5 [50/100] k= 25 c=0.760 alpha=-0.132 beta=+0.637 | loss 15.3163 size 471.6 MB zeros 31.2%
+gen 5 [51/100] k= 27 c=0.978 alpha=-0.280 beta=+0.384 | loss 3.7100 size 479.1 MB zeros 27.9%
+gen 5 [52/100] k= 13 c=0.848 alpha=-0.772 beta=+0.777 | loss 9.8611 size 392.5 MB zeros 58.2%
+gen 5 [53/100] k=236 c=0.845 alpha=-0.052 beta=+0.040 | loss 3.0775 size 630.9 MB zeros 3.9%
+gen 5 [54/100] k= 28 c=0.978 alpha=-0.617 beta=+0.617 | loss 7.4031 size 433.4 MB zeros 48.3%
+gen 5 [55/100] k= 18 c=0.986 alpha=-0.193 beta=+0.193 | loss 3.7070 size 490.8 MB zeros 22.3%
+gen 5 [56/100] k= 32 c=0.726 alpha=-0.113 beta=+0.148 | loss 3.2199 size 496.7 MB zeros 11.9%
+gen 5 [57/100] k= 32 c=0.956 alpha=-0.946 beta=+0.911 | loss 9.8859 size 392.9 MB zeros 66.4%
+gen 5 [58/100] k= 16 c=0.846 alpha=-0.015 beta=+0.017 | loss 3.5948 size 450.8 MB zeros 21.8%
+gen 5 [59/100] k= 19 c=0.744 alpha=-0.124 beta=+0.074 | loss 3.3588 size 496.4 MB zeros 15.2%
+gen 5 [60/100] k=  6 c=0.863 alpha=-0.880 beta=+0.068 | loss 13.3944 size 364.2 MB zeros 65.3%
+gen 5 [61/100] k= 16 c=0.850 alpha=-0.845 beta=+0.772 | loss 10.1085 size 389.2 MB zeros 60.1%
+gen 5 [62/100] k= 66 c=0.958 alpha=-0.710 beta=+0.703 | loss 8.0706 size 461.8 MB zeros 54.0%
+gen 5 [63/100] k= 28 c=0.792 alpha=-0.884 beta=+0.852 | loss 10.1436 size 399.9 MB zeros 63.3%
+gen 5 [64/100] k=  3 c=0.889 alpha=-0.023 beta=+0.156 | loss 17.1323 size 321.7 MB zeros 91.1%
+gen 5 [65/100] k= 25 c=0.760 alpha=-0.640 beta=+0.810 | loss 11.3449 size 418.5 MB zeros 55.0%
+gen 5 [66/100] k=253 c=0.933 alpha=-0.066 beta=+0.041 | loss 3.0628 size 630.9 MB zeros 4.6%
+gen 5 [67/100] k= 39 c=0.848 alpha=-0.143 beta=+0.003 | loss 3.1564 size 541.4 MB zeros 10.5%
+gen 5 [68/100] k=107 c=0.993 alpha=-0.029 beta=+0.060 | loss 3.0714 size 586.2 MB zeros 4.4%
+gen 5 [69/100] k=  8 c=0.751 alpha=-0.777 beta=+0.839 | loss 10.8394 size 370.3 MB zeros 60.8%
+gen 5 [70/100] k=118 c=0.942 alpha=-0.048 beta=+0.040 | loss 3.0719 size 586.2 MB zeros 4.0%
+gen 5 [71/100] k= 10 c=0.834 alpha=-0.790 beta=+0.871 | loss 11.1890 size 386.3 MB zeros 61.7%
+gen 5 [72/100] k= 34 c=0.922 alpha=-0.033 beta=+0.007 | loss 3.1275 size 541.4 MB zeros 10.7%
+gen 5 [73/100] k=  8 c=0.727 alpha=-0.071 beta=+0.036 | loss 8.2774 size 397.4 MB zeros 40.6%
+gen 5 [74/100] k=  5 c=0.853 alpha=-0.684 beta=+0.042 | loss 12.3031 size 351.0 MB zeros 62.8%
+gen 5 [75/100] k= 11 c=0.767 alpha=-0.650 beta=+0.930 | loss 15.5404 size 391.6 MB zeros 58.7%
+gen 5 [76/100] k= 34 c=0.870 alpha=-0.789 beta=+0.759 | loss 8.5702 size 430.3 MB zeros 58.1%
+gen 5 [77/100] k= 11 c=0.845 alpha=-0.129 beta=+0.040 | loss 4.5089 size 443.5 MB zeros 29.7%
+gen 5 [78/100] k= 13 c=0.843 alpha=-0.792 beta=+0.782 | loss 11.0927 size 391.2 MB zeros 58.9%
+gen 5 [79/100] k= 20 c=0.940 alpha=-0.667 beta=+0.000 | loss 17.4487 size 462.4 MB zeros 35.3%
+gen 5 [80/100] k= 35 c=0.955 alpha=-0.659 beta=+0.595 | loss 7.1505 size 454.9 MB zeros 48.9%
+gen 5 [81/100] k=252 c=0.942 alpha=-0.157 beta=+0.036 | loss 3.0746 size 630.9 MB zeros 8.2%
+gen 5 [82/100] k=  4 c=0.852 alpha=-0.777 beta=+0.777 | loss 17.0286 size 326.8 MB zeros 89.9%
+gen 5 [83/100] k=  7 c=0.791 alpha=-0.885 beta=+0.882 | loss 14.1064 size 364.9 MB zeros 64.8%
+gen 5 [84/100] k=128 c=0.988 alpha=-0.202 beta=+0.179 | loss 3.1391 size 580.4 MB zeros 16.1%
+gen 5 [85/100] k= 13 c=0.886 alpha=-0.142 beta=+0.154 | loss 4.0332 size 447.8 MB zeros 26.3%
+gen 5 [86/100] k= 14 c=0.754 alpha=-0.396 beta=+0.333 | loss 4.4926 size 440.7 MB zeros 31.3%
+gen 5 [87/100] k=  6 c=0.885 alpha=-0.884 beta=+0.911 | loss 14.5825 size 360.2 MB zeros 68.4%
+gen 5 [88/100] k= 89 c=0.727 alpha=-0.036 beta=+0.028 | loss 3.1406 size 586.1 MB zeros 3.3%
+gen 5 [89/100] k=119 c=0.871 alpha=-0.086 beta=+0.029 | loss 3.0707 size 586.2 MB zeros 5.2%
+gen 5 [90/100] k=  5 c=0.727 alpha=-0.073 beta=+0.755 | loss 12.1017 size 355.1 MB zeros 58.2%
+gen 5 [91/100] k=249 c=0.942 alpha=-0.047 beta=+0.007 | loss 3.0609 size 630.9 MB zeros 2.7%
+gen 5 [92/100] k= 32 c=0.835 alpha=-0.618 beta=+0.607 | loss 7.0576 size 434.1 MB zeros 48.0%
+gen 5 [93/100] k=  6 c=0.769 alpha=-0.173 beta=+0.189 | loss 12.0251 size 373.6 MB zeros 58.4%
+gen 5 [94/100] k=105 c=0.951 alpha=-0.107 beta=+0.061 | loss 3.1190 size 586.2 MB zeros 7.3%
+gen 5 [95/100] k= 26 c=0.961 alpha=-0.635 beta=+0.626 | loss 7.1149 size 431.3 MB zeros 49.2%
+gen 5 [96/100] k= 32 c=0.724 alpha=-0.701 beta=+0.772 | loss 8.2507 size 416.6 MB zeros 55.8%
+gen 5 [97/100] k= 47 c=0.810 alpha=-0.173 beta=+0.408 | loss 3.4052 size 521.5 MB zeros 24.1%
+gen 5 [98/100] k= 23 c=0.986 alpha=-0.873 beta=+0.845 | loss 9.7663 size 400.9 MB zeros 62.8%
+gen 5 [99/100] k= 18 c=0.848 alpha=-0.541 beta=+0.009 | loss 16.0590 size 471.3 MB zeros 31.3%
+gen 5 [100/100] k=125 c=0.992 alpha=-0.196 beta=+0.167 | loss 3.1292 size 582.9 MB zeros 15.3%
+=== generation 5/10 done in 194s (1 from cache), Pareto front has 45 points, best loss 3.0586, smallest 321.7 MB
+gen 6 [1/100] k=253 c=0.942 alpha=-0.022 beta=+0.042 | loss 3.0620 size 630.9 MB zeros 2.8%
+gen 6 [2/100] k= 17 c=0.836 alpha=-0.766 beta=+0.802 | loss 8.7224 size 391.7 MB zeros 58.6%
+gen 6 [3/100] k=  4 c=0.944 alpha=-0.150 beta=+0.230 | loss 15.7097 size 324.3 MB zeros 92.7%
+gen 6 [4/100] k= 19 c=0.791 alpha=-0.880 beta=+0.862 | loss 11.4928 size 399.5 MB zeros 63.5%
+gen 6 [5/100] k= 33 c=0.936 alpha=-0.036 beta=+0.005 | loss 3.1344 size 517.0 MB zeros 10.9%
+gen 6 [6/100] k= 33 c=0.966 alpha=-0.782 beta=+0.024 | loss 17.8603 size 463.4 MB zeros 34.9%
+gen 6 [7/100] k= 15 c=0.988 alpha=-0.932 beta=+0.877 | loss 10.2085 size 379.9 MB zeros 65.2%
+gen 6 [8/100] k= 29 c=0.852 alpha=-0.245 beta=+0.064 | loss 3.2280 size 496.7 MB zeros 16.1%
+gen 6 [9/100] k=146 c=0.736 alpha=-0.035 beta=+0.115 | loss 3.1253 size 630.9 MB zeros 6.4%
+gen 6 [10/100] k=  8 c=0.769 alpha=-0.898 beta=+0.884 | loss 11.7527 size 364.5 MB zeros 65.1%
+gen 6 [11/100] k=183 c=0.883 alpha=-0.106 beta=+0.017 | loss 3.0687 size 630.9 MB zeros 5.5%
+gen 6 [12/100] k=  9 c=0.813 alpha=-0.149 beta=+0.148 | loss 5.8007 size 405.0 MB zeros 35.0%
+gen 6 [13/100] k=120 c=0.847 alpha=-0.056 beta=+0.020 | loss 3.0846 size 586.2 MB zeros 3.8%
+gen 6 [14/100] k= 53 c=0.941 alpha=-0.173 beta=+0.176 | loss 3.1571 size 541.3 MB zeros 14.9%
+gen 6 [15/100] k=  5 c=0.729 alpha=-0.112 beta=+0.032 | loss 12.6866 size 357.0 MB zeros 56.1%
+gen 6 [16/100] k=235 c=0.760 alpha=-0.088 beta=+0.019 | loss 3.1121 size 630.9 MB zeros 4.6%
+gen 6 [17/100] k= 33 c=0.930 alpha=-0.045 beta=+0.036 | loss 3.1406 size 517.2 MB zeros 10.8%
+gen 6 [18/100] k=  5 c=0.886 alpha=-0.124 beta=+0.057 | loss 12.7858 size 349.6 MB zeros 64.4%
+gen 6 [19/100] k= 11 c=0.723 alpha=-0.729 beta=+0.052 | loss 17.3652 size 423.9 MB zeros 40.7%
+gen 6 [20/100] k=  4 c=0.859 alpha=-0.831 beta=+0.777 | loss 15.7709 size 326.6 MB zeros 90.1%
+gen 6 [21/100] k= 16 c=0.810 alpha=-0.844 beta=+0.771 | loss 10.4426 size 389.3 MB zeros 60.0%
+gen 6 [22/100] k=239 c=0.847 alpha=-0.015 beta=+0.038 | loss 3.0774 size 630.9 MB zeros 2.4%
+gen 6 [23/100] k=237 c=0.919 alpha=-0.040 beta=+0.066 | loss 3.0583 size 630.9 MB zeros 4.6%
+gen 6 [24/100] k= 17 c=0.823 alpha=-0.710 beta=+0.724 | loss 8.2721 size 398.8 MB zeros 54.7%
+gen 6 [25/100] k=  6 c=0.790 alpha=-0.884 beta=+0.884 | loss 11.3997 size 362.6 MB zeros 66.6%
+gen 6 [26/100] k=  8 c=0.885 alpha=-0.036 beta=+0.034 | loss 12.1577 size 387.9 MB zeros 47.7%
+gen 6 [27/100] k=132 c=0.860 alpha=-0.086 beta=+0.029 | loss 3.0665 size 630.9 MB zeros 5.1%
+gen 6 [28/100] k= 25 c=0.845 alpha=-0.129 beta=+0.123 | loss 3.2499 size 496.7 MB zeros 13.3%
+gen 6 [29/100] k=  3 c=0.729 alpha=-0.769 beta=+0.021 | loss 17.8945 size 324.6 MB zeros 84.8%
+gen 6 [30/100] k=  5 c=0.860 alpha=-0.684 beta=+0.042 | loss 12.3182 size 350.7 MB zeros 63.2%
+gen 6 [31/100] k= 19 c=0.744 alpha=-0.124 beta=+0.074 | loss 3.3584 size 496.4 MB zeros 15.2%
+gen 6 [32/100] k= 20 c=0.938 alpha=-0.027 beta=+0.810 | loss 15.4832 size 452.9 MB zeros 39.6%
+gen 6 [33/100] k= 60 c=0.850 alpha=-0.019 beta=+0.005 | loss 3.0906 size 541.4 MB zeros 5.5%
+gen 6 [34/100] k= 47 c=0.727 alpha=-0.239 beta=+0.114 | loss 3.2569 size 541.3 MB zeros 15.0%
+gen 6 [35/100] k= 18 c=0.750 alpha=-0.139 beta=+0.406 | loss 3.8086 size 484.5 MB zeros 25.4%
+gen 6 [36/100] k= 33 c=0.723 alpha=-0.043 beta=+0.041 | loss 3.2171 size 522.5 MB zeros 8.5%
+gen 6 [37/100] k= 13 c=0.981 alpha=-0.772 beta=+0.227 | loss 17.4222 size 418.8 MB zeros 43.5%
+gen 6 [38/100] k=  3 c=0.722 alpha=-0.837 beta=+0.145 | loss 17.4172 size 324.7 MB zeros 84.5%
+gen 6 [39/100] k=247 c=0.899 alpha=-0.030 beta=+0.041 | loss 3.0635 size 630.9 MB zeros 3.1%
+gen 6 [40/100] k=  8 c=0.743 alpha=-0.626 beta=+0.863 | loss 14.8829 size 375.1 MB zeros 57.2%
+gen 6 [41/100] k= 72 c=0.988 alpha=-0.312 beta=+0.500 | loss 4.0114 size 527.3 MB zeros 33.1%
+gen 6 [42/100] k=  6 c=0.814 alpha=-0.209 beta=+0.016 | loss 12.8053 size 370.4 MB zeros 60.8%
+gen 6 [43/100] k= 18 c=0.984 alpha=-0.434 beta=+0.420 | loss 4.6835 size 461.8 MB zeros 35.6%
+gen 6 [44/100] k= 21 c=0.831 alpha=-0.777 beta=+0.058 | loss 17.8537 size 459.2 MB zeros 36.8%
+gen 6 [45/100] k= 35 c=0.928 alpha=-0.078 beta=+0.291 | loss 3.2694 size 539.1 MB zeros 17.3%
+gen 6 [46/100] k=  9 c=0.916 alpha=-0.039 beta=+0.106 | loss 6.7102 size 400.0 MB zeros 38.7%
+gen 6 [47/100] k=  3 c=0.889 alpha=-0.049 beta=+0.177 | loss 17.1323 size 321.7 MB zeros 91.1%
+gen 6 [48/100] k=  5 c=0.715 alpha=-0.157 beta=+0.755 | loss 11.8196 size 355.5 MB zeros 57.8%
+gen 6 [49/100] k= 15 c=0.912 alpha=-0.911 beta=+0.943 | loss 11.0828 size 377.9 MB zeros 66.4%
+gen 6 [50/100] k= 18 c=0.753 alpha=-0.102 beta=+0.427 | loss 3.8296 size 482.8 MB zeros 26.2%
+gen 6 [51/100] k=  8 c=0.727 alpha=-0.036 beta=+0.036 | loss 8.2654 size 397.4 MB zeros 40.6%
+gen 6 [52/100] k=  8 c=0.751 alpha=-0.035 beta=+0.901 | loss 14.8239 size 379.9 MB zeros 53.7%
+gen 6 [53/100] k= 16 c=0.807 alpha=-0.264 beta=+0.489 | loss 4.5469 size 439.4 MB zeros 32.0%
+gen 6 [54/100] k=  5 c=0.728 alpha=-0.675 beta=+0.120 | loss 12.0898 size 356.3 MB zeros 56.9%
+gen 6 [55/100] k= 26 c=0.937 alpha=-0.036 beta=+0.037 | loss 3.2453 size 496.6 MB zeros 14.4%
+gen 6 [56/100] k=  3 c=0.727 alpha=-0.058 beta=+0.036 | loss 18.5102 size 324.6 MB zeros 84.7%
+gen 6 [57/100] k=119 c=0.949 alpha=-0.086 beta=+0.029 | loss 3.0615 size 586.2 MB zeros 5.3%
+gen 6 [58/100] k= 16 c=0.800 alpha=-0.162 beta=+0.054 | loss 3.6389 size 451.2 MB zeros 20.7%
+gen 6 [59/100] k= 16 c=0.871 alpha=-0.015 beta=+0.014 | loss 3.6943 size 450.5 MB zeros 22.5%
+gen 6 [60/100] k=  3 c=0.891 alpha=-0.777 beta=+0.770 | loss 16.0932 size 321.7 MB zeros 91.2%
+gen 6 [61/100] k=  3 c=0.861 alpha=-0.911 beta=+0.939 | loss 15.6409 size 322.1 MB zeros 90.2%
+gen 6 [62/100] k= 34 c=0.864 alpha=-0.531 beta=+0.659 | loss 6.9178 size 460.7 MB zeros 46.7%
+gen 6 [63/100] k= 67 c=0.953 alpha=-0.158 beta=+0.036 | loss 3.0965 size 586.1 MB zeros 9.5%
+gen 6 [64/100] k= 19 c=0.747 alpha=-0.129 beta=+0.074 | loss 3.3611 size 496.4 MB zeros 15.3%
+gen 6 [65/100] k=  8 c=0.845 alpha=-0.144 beta=+0.830 | loss 14.5751 size 379.3 MB zeros 54.2%
+gen 6 [66/100] k= 79 c=0.741 alpha=-0.059 beta=+0.090 | loss 3.1252 size 586.1 MB zeros 6.6%
+gen 6 [67/100] k= 41 c=0.850 alpha=-0.174 beta=+0.409 | loss 3.4214 size 521.0 MB zeros 24.3%
+gen 6 [68/100] k= 54 c=0.961 alpha=-0.043 beta=+0.167 | loss 3.1284 size 541.4 MB zeros 10.7%
+gen 6 [69/100] k= 66 c=0.955 alpha=-0.043 beta=+0.038 | loss 3.0714 size 586.1 MB zeros 5.6%
+gen 6 [70/100] k= 17 c=0.823 alpha=-0.777 beta=+0.801 | loss 8.6480 size 391.2 MB zeros 58.9%
+gen 6 [71/100] k= 16 c=0.770 alpha=-0.881 beta=+0.873 | loss 10.7156 size 382.5 MB zeros 63.8%
+gen 6 [72/100] k=  3 c=0.731 alpha=-0.927 beta=+0.842 | loss 18.1739 size 324.5 MB zeros 84.9%
+gen 6 [73/100] k=  3 c=0.734 alpha=-0.073 beta=+0.755 | loss 18.1615 size 324.4 MB zeros 85.0%
+gen 6 [74/100] k= 11 c=0.834 alpha=-0.790 beta=+0.680 | loss 10.7677 size 396.4 MB zeros 56.0%
+gen 6 [75/100] k=  5 c=0.828 alpha=-0.777 beta=+0.777 | loss 12.0839 size 350.4 MB zeros 63.5%
+gen 6 [76/100] k= 13 c=0.848 alpha=-0.134 beta=+0.860 | loss 15.5947 size 417.7 MB zeros 44.1%
+gen 6 [77/100] k= 40 c=0.930 alpha=-0.036 beta=+0.036 | loss 3.1172 size 541.4 MB zeros 9.2%
+gen 6 [78/100] k= 67 c=0.953 alpha=-0.157 beta=+0.036 | loss 3.0970 size 586.1 MB zeros 9.4%
+gen 6 [79/100] k=239 c=0.827 alpha=-0.806 beta=+0.040 | loss 17.9059 size 562.3 MB zeros 31.7%
+gen 6 [80/100] k= 34 c=0.889 alpha=-0.023 beta=+0.156 | loss 3.1401 size 541.4 MB zeros 12.2%
+gen 6 [81/100] k=  9 c=0.810 alpha=-0.173 beta=+0.411 | loss 5.7620 size 403.6 MB zeros 36.1%
+gen 6 [82/100] k= 13 c=0.954 alpha=-0.413 beta=+0.171 | loss 4.6867 size 439.7 MB zeros 31.8%
+gen 6 [83/100] k=250 c=0.941 alpha=-0.057 beta=+0.040 | loss 3.0582 size 630.9 MB zeros 4.2%
+gen 6 [84/100] k= 18 c=0.854 alpha=-0.193 beta=+0.762 | loss 15.5166 size 455.0 MB zeros 38.6%
+gen 6 [85/100] k=  5 c=0.751 alpha=-0.337 beta=+0.421 | loss 14.3981 size 355.9 MB zeros 57.4%
+gen 6 [86/100] k= 32 c=0.894 alpha=-0.113 beta=+0.843 | loss 15.3899 size 459.3 MB zeros 36.7%
+gen 6 [87/100] k=116 c=0.864 alpha=-0.056 beta=+0.015 | loss 3.0724 size 586.2 MB zeros 3.9%
+gen 6 [88/100] k= 32 c=0.747 alpha=-0.738 beta=+0.662 | loss 8.6080 size 421.6 MB zeros 53.6%
+gen 6 [89/100] k= 20 c=0.958 alpha=-0.045 beta=+0.041 | loss 3.4881 size 494.0 MB zeros 19.4%
+gen 6 [90/100] k=  6 c=0.751 alpha=-0.772 beta=+0.867 | loss 10.7082 size 366.8 MB zeros 63.5%
+gen 6 [91/100] k=  7 c=0.769 alpha=-0.845 beta=+0.904 | loss 11.4819 size 365.6 MB zeros 64.3%
+gen 6 [92/100] k= 10 c=0.727 alpha=-0.186 beta=+0.769 | loss 15.1313 size 416.3 MB zeros 44.9%
+gen 6 [93/100] k=163 c=0.760 alpha=-0.477 beta=+0.604 | loss 5.2125 size 521.9 MB zeros 43.0%
+gen 6 [94/100] k=237 c=0.816 alpha=-0.203 beta=+0.048 | loss 3.1166 size 630.9 MB zeros 10.6%
+gen 6 [95/100] k=  8 c=0.823 alpha=-0.710 beta=+0.723 | loss 10.2854 size 376.4 MB zeros 56.3%
+gen 6 [96/100] k= 10 c=0.831 alpha=-0.703 beta=+0.777 | loss 8.8608 size 395.3 MB zeros 56.7%
+gen 6 [97/100] k= 19 c=0.745 alpha=-0.769 beta=+0.107 | loss 17.8419 size 459.8 MB zeros 36.5%
+gen 6 [98/100] k= 52 c=0.975 alpha=-0.005 beta=+0.000 | loss 3.1000 size 541.4 MB zeros 7.3%
+gen 6 [99/100] k= 32 c=0.724 alpha=-0.775 beta=+0.772 | loss 8.7642 size 411.7 MB zeros 58.0%
+gen 6 [100/100] k= 10 c=0.833 alpha=-0.146 beta=+0.764 | loss 14.8040 size 412.8 MB zeros 46.9%
+=== generation 6/10 done in 196s (0 from cache), Pareto front has 58 points, best loss 3.0582, smallest 321.7 MB
+gen 7 [1/100] k=  5 c=0.821 alpha=-0.709 beta=+0.120 | loss 12.0075 size 352.2 MB zeros 61.5%
+gen 7 [2/100] k= 15 c=0.700 alpha=-0.157 beta=+0.778 | loss 15.4699 size 428.1 MB zeros 38.3%
+gen 7 [3/100] k=118 c=0.850 alpha=-0.015 beta=+0.005 | loss 3.0791 size 586.2 MB zeros 2.8%
+gen 7 [4/100] k=  3 c=0.891 alpha=-0.777 beta=+0.702 | loss 16.0932 size 321.7 MB zeros 91.2%
+gen 7 [5/100] k= 33 c=0.735 alpha=-0.036 beta=+0.030 | loss 3.1900 size 522.2 MB zeros 8.6%
+gen 7 [6/100] k=  8 c=0.728 alpha=-0.228 beta=+0.879 | loss 14.8192 size 381.4 MB zeros 52.6%
+gen 7 [7/100] k=132 c=0.812 alpha=-0.036 beta=+0.018 | loss 3.0861 size 630.9 MB zeros 2.8%
+gen 7 [8/100] k=  5 c=0.853 alpha=-0.846 beta=+0.227 | loss 11.6781 size 349.6 MB zeros 64.4%
+gen 7 [9/100] k= 13 c=0.803 alpha=-0.844 beta=+0.036 | loss 17.4767 size 419.7 MB zeros 43.0%
+gen 7 [10/100] k= 33 c=0.936 alpha=-0.036 beta=+0.024 | loss 3.1335 size 517.0 MB zeros 10.9%
+gen 7 [11/100] k=  3 c=0.855 alpha=-0.884 beta=+0.884 | loss 16.5192 size 322.2 MB zeros 90.0%
+gen 7 [12/100] k= 16 c=0.982 alpha=-0.758 beta=+0.775 | loss 8.9550 size 393.3 MB zeros 57.8%
+gen 7 [13/100] k= 16 c=0.857 alpha=-0.899 beta=+0.759 | loss 11.2248 size 387.3 MB zeros 61.1%
+gen 7 [14/100] k= 17 c=0.823 alpha=-0.777 beta=+0.084 | loss 17.6778 size 427.8 MB zeros 38.5%
+gen 7 [15/100] k= 38 c=0.950 alpha=-0.148 beta=+0.037 | loss 3.1320 size 541.4 MB zeros 11.6%
+gen 7 [16/100] k= 10 c=0.898 alpha=-0.790 beta=+0.797 | loss 9.9630 size 389.6 MB zeros 59.8%
+gen 7 [17/100] k=  4 c=0.886 alpha=-0.150 beta=+0.076 | loss 16.9351 size 325.8 MB zeros 91.0%
+gen 7 [18/100] k= 13 c=0.727 alpha=-0.186 beta=+0.037 | loss 3.9615 size 450.7 MB zeros 21.9%
+gen 7 [19/100] k= 18 c=0.731 alpha=-0.143 beta=+0.155 | loss 3.4470 size 495.8 MB zeros 16.9%
+gen 7 [20/100] k= 10 c=0.770 alpha=-0.674 beta=+0.777 | loss 9.5882 size 397.0 MB zeros 55.7%
+gen 7 [21/100] k= 42 c=0.769 alpha=-0.884 beta=+0.884 | loss 10.3040 size 414.0 MB zeros 64.1%
+gen 7 [22/100] k=238 c=0.791 alpha=-0.095 beta=+0.862 | loss 15.4590 size 548.5 MB zeros 35.5%
+gen 7 [23/100] k=  4 c=0.815 alpha=-0.056 beta=+0.109 | loss 18.1008 size 328.0 MB zeros 88.6%
+gen 7 [24/100] k=165 c=0.757 alpha=-0.057 beta=+0.115 | loss 3.1138 size 630.9 MB zeros 7.3%
+gen 7 [25/100] k=234 c=0.941 alpha=-0.087 beta=+0.029 | loss 3.0576 size 630.9 MB zeros 5.0%
+gen 7 [26/100] k=  7 c=0.729 alpha=-0.675 beta=+0.100 | loss 8.0931 size 388.7 MB zeros 47.1%
+gen 7 [27/100] k=  4 c=0.828 alpha=-0.805 beta=+0.777 | loss 16.4712 size 327.6 MB zeros 89.0%
+gen 7 [28/100] k=  8 c=0.742 alpha=-0.587 beta=+0.490 | loss 8.1320 size 390.0 MB zeros 46.2%
+gen 7 [29/100] k= 34 c=0.938 alpha=-0.036 beta=+0.001 | loss 3.1304 size 541.4 MB zeros 10.9%
+gen 7 [30/100] k= 20 c=0.958 alpha=-0.045 beta=+0.058 | loss 3.4880 size 494.0 MB zeros 19.4%
+gen 7 [31/100] k= 39 c=0.940 alpha=-0.122 beta=+0.006 | loss 3.1251 size 541.4 MB zeros 10.3%
+gen 7 [32/100] k=  8 c=0.715 alpha=-0.157 beta=+0.823 | loss 14.7343 size 383.8 MB zeros 50.8%
+gen 7 [33/100] k=  9 c=0.727 alpha=-0.127 beta=+0.036 | loss 5.3172 size 409.4 MB zeros 31.7%
+gen 7 [34/100] k=  6 c=0.811 alpha=-0.884 beta=+0.884 | loss 11.9141 size 362.3 MB zeros 66.8%
+gen 7 [35/100] k= 16 c=0.801 alpha=-0.015 beta=+0.073 | loss 3.6372 size 451.2 MB zeros 20.7%
+gen 7 [36/100] k=  3 c=0.864 alpha=-0.911 beta=+0.939 | loss 15.5964 size 322.1 MB zeros 90.3%
+gen 7 [37/100] k= 17 c=0.823 alpha=-0.702 beta=+0.156 | loss 17.5537 size 431.7 MB zeros 36.3%
+gen 7 [38/100] k=  3 c=0.860 alpha=-0.684 beta=+0.042 | loss 15.5084 size 322.1 MB zeros 90.2%
+gen 7 [39/100] k=  5 c=0.831 alpha=-0.777 beta=+0.714 | loss 12.3837 size 350.9 MB zeros 62.9%
+gen 7 [40/100] k= 10 c=0.832 alpha=-0.266 beta=+0.398 | loss 5.7537 size 431.5 MB zeros 36.4%
+gen 7 [41/100] k=132 c=0.860 alpha=-0.130 beta=+0.029 | loss 3.0770 size 630.9 MB zeros 6.9%
+gen 7 [42/100] k= 25 c=0.990 alpha=-0.849 beta=+0.500 | loss 18.2790 size 426.7 MB zeros 51.3%
+gen 7 [43/100] k= 66 c=0.961 alpha=-0.043 beta=+0.116 | loss 3.0762 size 586.1 MB zeros 7.9%
+gen 7 [44/100] k=172 c=0.946 alpha=-0.039 beta=+0.115 | loss 3.0620 size 630.9 MB zeros 6.6%
+gen 7 [45/100] k= 34 c=0.901 alpha=-0.762 beta=+0.772 | loss 8.5293 size 431.5 MB zeros 57.6%
+gen 7 [46/100] k= 23 c=0.716 alpha=-0.675 beta=+0.723 | loss 8.0199 size 421.7 MB zeros 53.5%
+gen 7 [47/100] k=  5 c=0.754 alpha=-0.102 beta=+0.386 | loss 13.7413 size 355.7 MB zeros 57.6%
+gen 7 [48/100] k= 62 c=0.953 alpha=-0.086 beta=+0.029 | loss 3.1001 size 541.4 MB zeros 6.9%
+gen 7 [49/100] k= 17 c=0.823 alpha=-0.777 beta=+0.838 | loss 9.3210 size 389.4 MB zeros 60.0%
+gen 7 [50/100] k= 19 c=0.939 alpha=-0.075 beta=+0.074 | loss 3.4624 size 494.3 MB zeros 19.0%
+gen 7 [51/100] k=  9 c=0.750 alpha=-0.756 beta=+0.077 | loss 17.7605 size 391.6 MB zeros 45.0%
+gen 7 [52/100] k= 19 c=0.907 alpha=-0.090 beta=+0.107 | loss 3.3876 size 494.8 MB zeros 18.4%
+gen 7 [53/100] k=  7 c=0.769 alpha=-0.683 beta=+0.891 | loss 15.0070 size 371.9 MB zeros 59.6%
+gen 7 [54/100] k=251 c=0.947 alpha=-0.057 beta=+0.779 | loss 15.4387 size 562.5 MB zeros 31.6%
+gen 7 [55/100] k=  6 c=0.790 alpha=-0.911 beta=+0.816 | loss 13.3749 size 363.7 MB zeros 65.8%
+gen 7 [56/100] k=  5 c=0.851 alpha=-0.331 beta=+0.501 | loss 12.6194 size 351.1 MB zeros 62.7%
+gen 7 [57/100] k=  8 c=0.727 alpha=-0.036 beta=+0.026 | loss 8.2669 size 397.4 MB zeros 40.6%
+gen 7 [58/100] k= 16 c=0.784 alpha=-0.845 beta=+0.873 | loss 10.6243 size 384.2 MB zeros 62.9%
+gen 7 [59/100] k=  5 c=0.811 alpha=-0.684 beta=+0.783 | loss 11.8158 size 351.6 MB zeros 62.1%
+gen 7 [60/100] k= 10 c=0.922 alpha=-0.033 beta=+0.007 | loss 6.9737 size 427.0 MB zeros 38.9%
+gen 7 [61/100] k=  3 c=0.827 alpha=-0.736 beta=+0.770 | loss 16.7858 size 322.7 MB zeros 89.0%
+gen 7 [62/100] k=  5 c=0.944 alpha=-0.180 beta=+0.211 | loss 13.6910 size 347.1 MB zeros 67.1%
+gen 7 [63/100] k= 13 c=0.801 alpha=-0.148 beta=+0.148 | loss 3.9447 size 449.6 MB zeros 23.9%
+gen 7 [64/100] k=  9 c=0.844 alpha=-0.239 beta=+0.000 | loss 6.5583 size 403.5 MB zeros 36.1%
+gen 7 [65/100] k=  8 c=0.821 alpha=-0.898 beta=+0.884 | loss 10.8933 size 364.3 MB zeros 65.3%
+gen 7 [66/100] k=  8 c=0.751 alpha=-0.777 beta=+0.770 | loss 10.4628 size 372.7 MB zeros 59.0%
+gen 7 [67/100] k= 26 c=0.934 alpha=-0.910 beta=+0.040 | loss 17.8878 size 452.1 MB zeros 39.9%
+gen 7 [68/100] k=127 c=0.870 alpha=-0.144 beta=+0.021 | loss 3.0884 size 586.2 MB zeros 7.4%
+gen 7 [69/100] k= 21 c=0.943 alpha=-0.374 beta=+0.327 | loss 3.9692 size 475.3 MB zeros 29.6%
+gen 7 [70/100] k=122 c=0.938 alpha=-0.065 beta=+0.040 | loss 3.0575 size 586.2 MB zeros 4.7%
+gen 7 [71/100] k=  8 c=0.748 alpha=-0.345 beta=+0.434 | loss 7.9645 size 395.8 MB zeros 41.9%
+gen 7 [72/100] k=  3 c=0.944 alpha=-0.265 beta=+0.114 | loss 15.7097 size 321.0 MB zeros 92.7%
+gen 7 [73/100] k= 14 c=0.755 alpha=-0.414 beta=+0.839 | loss 15.6238 size 410.3 MB zeros 48.3%
+gen 7 [74/100] k= 60 c=0.848 alpha=-0.019 beta=+0.005 | loss 3.0885 size 541.4 MB zeros 5.5%
+gen 7 [76/100] k= 18 c=0.857 alpha=-0.148 beta=+0.084 | loss 3.4967 size 493.9 MB zeros 19.5%
+gen 7 [77/100] k= 26 c=0.713 alpha=-0.036 beta=+0.040 | loss 3.2226 size 496.7 MB zeros 11.1%
+gen 7 [78/100] k=  7 c=0.769 alpha=-0.845 beta=+0.905 | loss 11.4939 size 365.6 MB zeros 64.3%
+gen 7 [79/100] k=  8 c=0.811 alpha=-0.202 beta=+0.106 | loss 10.4422 size 392.3 MB zeros 44.5%
+gen 7 [80/100] k= 85 c=0.790 alpha=-0.106 beta=+0.106 | loss 3.1093 size 586.1 MB zeros 9.1%
+gen 7 [81/100] k= 16 c=0.702 alpha=-0.150 beta=+0.150 | loss 3.5783 size 451.9 MB zeros 18.3%
+gen 7 [82/100] k=  3 c=0.820 alpha=-0.776 beta=+0.777 | loss 18.4987 size 322.8 MB zeros 88.8%
+gen 7 [83/100] k= 26 c=0.715 alpha=-0.146 beta=+0.719 | loss 15.3148 size 465.1 MB zeros 34.1%
+gen 7 [84/100] k=  3 c=0.813 alpha=-0.149 beta=+0.148 | loss 17.4385 size 322.9 MB zeros 88.5%
+gen 7 [85/100] k= 14 c=0.753 alpha=-0.163 beta=+0.333 | loss 4.0830 size 449.1 MB zeros 25.9%
+gen 7 [86/100] k= 17 c=0.753 alpha=-0.772 beta=+0.779 | loss 9.3360 size 392.6 MB zeros 58.2%
+gen 7 [87/100] k=  5 c=0.747 alpha=-0.086 beta=+0.117 | loss 12.5865 size 356.1 MB zeros 57.1%
+gen 7 [88/100] k= 60 c=0.850 alpha=-0.019 beta=+0.034 | loss 3.0915 size 541.4 MB zeros 5.5%
+gen 7 [89/100] k= 24 c=0.848 alpha=-0.308 beta=+0.772 | loss 15.3136 size 447.4 MB zeros 42.0%
+gen 7 [90/100] k=  9 c=0.727 alpha=-0.239 beta=+0.039 | loss 5.3197 size 409.4 MB zeros 31.7%
+gen 7 [91/100] k= 31 c=0.915 alpha=-0.035 beta=+0.277 | loss 3.2514 size 496.5 MB zeros 17.4%
+gen 7 [92/100] k=  3 c=0.923 alpha=-0.051 beta=+0.007 | loss 16.2442 size 321.3 MB zeros 92.1%
+gen 7 [93/100] k=  8 c=0.727 alpha=-0.150 beta=+0.777 | loss 14.5751 size 385.0 MB zeros 49.9%
+gen 7 [94/100] k= 16 c=0.835 alpha=-0.844 beta=+0.771 | loss 10.0725 size 389.3 MB zeros 60.0%
+gen 7 [95/100] k= 15 c=0.988 alpha=-0.151 beta=+0.173 | loss 3.9687 size 448.6 MB zeros 25.2%
+gen 7 [96/100] k=  9 c=0.886 alpha=-0.101 beta=+0.028 | loss 6.7158 size 401.4 MB zeros 37.7%
+gen 7 [97/100] k= 10 c=0.823 alpha=-0.793 beta=+0.036 | loss 17.7970 size 411.7 MB zeros 47.5%
+gen 7 [98/100] k= 60 c=0.851 alpha=-0.019 beta=+0.005 | loss 3.0909 size 541.4 MB zeros 5.5%
+gen 7 [99/100] k= 15 c=0.944 alpha=-0.312 beta=+0.500 | loss 4.7869 size 435.0 MB zeros 34.5%
+gen 7 [100/100] k=  5 c=0.812 alpha=-0.171 beta=+0.457 | loss 11.9034 size 352.9 MB zeros 60.7%
+=== generation 7/10 done in 195s (1 from cache), Pareto front has 62 points, best loss 3.0575, smallest 321.0 MB
+gen 8 [1/100] k=132 c=0.943 alpha=-0.085 beta=+0.029 | loss 3.0628 size 630.9 MB zeros 5.1%
+gen 8 [2/100] k= 16 c=0.850 alpha=-0.845 beta=+0.868 | loss 10.6039 size 384.4 MB zeros 62.7%
+gen 8 [3/100] k=  8 c=0.833 alpha=-0.106 beta=+0.106 | loss 9.7913 size 391.0 MB zeros 45.4%
+gen 8 [4/100] k=120 c=0.871 alpha=-0.047 beta=+0.021 | loss 3.0664 size 586.2 MB zeros 3.5%
+gen 8 [5/100] k= 16 c=0.944 alpha=-0.149 beta=+0.173 | loss 3.8815 size 449.4 MB zeros 24.2%
+gen 8 [6/100] k=  9 c=0.813 alpha=-0.149 beta=+0.165 | loss 5.7990 size 405.0 MB zeros 35.0%
+gen 8 [7/100] k= 16 c=0.702 alpha=-0.547 beta=+0.168 | loss 16.7504 size 441.1 MB zeros 31.1%
+gen 8 [8/100] k= 14 c=0.936 alpha=-0.190 beta=+0.443 | loss 4.6418 size 438.5 MB zeros 32.5%
+gen 8 [9/100] k= 61 c=0.752 alpha=-0.391 beta=+0.327 | loss 3.6728 size 506.7 MB zeros 29.6%
+gen 8 [10/100] k=  5 c=0.747 alpha=-0.180 beta=+0.896 | loss 13.5674 size 351.8 MB zeros 61.9%
+gen 8 [11/100] k= 15 c=0.988 alpha=-0.184 beta=+0.497 | loss 4.7533 size 437.7 MB zeros 33.0%
+gen 8 [12/100] k=  6 c=0.790 alpha=-0.085 beta=+0.896 | loss 12.0103 size 367.0 MB zeros 63.3%
+gen 8 [13/100] k=  3 c=0.861 alpha=-0.893 beta=+0.920 | loss 15.6409 size 322.1 MB zeros 90.2%
+gen 8 [14/100] k= 18 c=0.857 alpha=-0.151 beta=+0.099 | loss 3.4963 size 493.9 MB zeros 19.5%
+gen 8 [15/100] k= 18 c=0.804 alpha=-0.148 beta=+0.172 | loss 3.4299 size 494.8 MB zeros 18.4%
+gen 8 [16/100] k=  4 c=0.828 alpha=-0.016 beta=+0.777 | loss 16.4707 size 327.6 MB zeros 89.0%
+gen 8 [17/100] k= 14 c=0.749 alpha=-0.820 beta=+0.745 | loss 10.0828 size 391.8 MB zeros 58.6%
+gen 8 [18/100] k= 14 c=0.821 alpha=-0.139 beta=+0.400 | loss 4.2511 size 444.3 MB zeros 29.3%
+gen 8 [19/100] k= 66 c=0.961 alpha=-0.743 beta=+0.116 | loss 17.9138 size 527.0 MB zeros 33.2%
+gen 8 [20/100] k= 60 c=0.839 alpha=-0.139 beta=+0.158 | loss 3.1217 size 541.4 MB zeros 12.7%
+gen 8 [21/100] k= 22 c=0.767 alpha=-0.898 beta=+0.835 | loss 9.8832 size 400.1 MB zeros 63.2%
+gen 8 [22/100] k=234 c=0.894 alpha=-0.087 beta=+0.029 | loss 3.0593 size 630.9 MB zeros 5.0%
+gen 8 [23/100] k= 32 c=0.726 alpha=-0.113 beta=+0.148 | loss 3.2194 size 496.7 MB zeros 11.9%
+gen 8 [24/100] k=  6 c=0.729 alpha=-0.675 beta=+0.100 | loss 12.1627 size 375.5 MB zeros 57.0%
+gen 8 [25/100] k=  5 c=0.748 alpha=-0.339 beta=+0.471 | loss 12.8430 size 356.1 MB zeros 57.2%
+gen 8 [26/100] k= 41 c=0.811 alpha=-0.136 beta=+0.318 | loss 3.2995 size 534.5 MB zeros 19.2%
+gen 8 [27/100] k= 15 c=0.989 alpha=-0.151 beta=+0.173 | loss 3.9627 size 448.6 MB zeros 25.2%
+gen 8 [28/100] k=  3 c=0.944 alpha=-0.684 beta=+0.091 | loss 15.7133 size 321.0 MB zeros 92.7%
+gen 8 [29/100] k=  3 c=0.888 alpha=-0.048 beta=+0.001 | loss 16.9214 size 321.7 MB zeros 91.1%
+gen 8 [30/100] k= 65 c=0.961 alpha=-0.046 beta=+0.116 | loss 3.0764 size 565.0 MB zeros 7.9%
+gen 8 [31/100] k=  5 c=0.969 alpha=-0.659 beta=+0.090 | loss 16.9385 size 346.1 MB zeros 68.3%
+gen 8 [32/100] k= 60 c=0.848 alpha=-0.019 beta=+0.012 | loss 3.0884 size 541.4 MB zeros 5.5%
+gen 8 [33/100] k=  8 c=0.748 alpha=-0.345 beta=+0.547 | loss 8.4254 size 392.8 MB zeros 44.1%
+gen 8 [34/100] k= 13 c=0.792 alpha=-0.485 beta=+0.171 | loss 4.6278 size 439.9 MB zeros 31.7%
+gen 8 [35/100] k=  6 c=0.793 alpha=-0.844 beta=+0.227 | loss 12.7857 size 368.3 MB zeros 62.3%
+gen 8 [36/100] k=  3 c=0.765 alpha=-0.604 beta=+0.490 | loss 19.0888 size 323.8 MB zeros 86.5%
+gen 8 [37/100] k=  7 c=0.916 alpha=-0.019 beta=+0.106 | loss 11.6037 size 386.2 MB zeros 49.0%
+gen 8 [38/100] k= 10 c=0.865 alpha=-0.885 beta=+0.939 | loss 10.4419 size 378.7 MB zeros 65.9%
+gen 8 [39/100] k=  8 c=0.751 alpha=-0.349 beta=+0.500 | loss 8.3814 size 394.2 MB zeros 43.1%
+gen 8 [40/100] k=245 c=0.936 alpha=-0.149 beta=+0.029 | loss 3.0752 size 630.9 MB zeros 7.6%
+gen 8 [41/100] k=  9 c=0.760 alpha=-0.261 beta=+0.036 | loss 5.4566 size 407.7 MB zeros 32.9%
+gen 8 [42/100] k=120 c=0.822 alpha=-0.056 beta=+0.020 | loss 3.0870 size 586.2 MB zeros 3.8%
+gen 8 [43/100] k=  9 c=0.772 alpha=-0.216 beta=+0.505 | loss 6.0240 size 401.1 MB zeros 37.9%
+gen 8 [44/100] k= 33 c=0.966 alpha=-0.027 beta=+0.024 | loss 3.1475 size 516.3 MB zeros 11.2%
+gen 8 [45/100] k=  7 c=0.769 alpha=-0.845 beta=+0.853 | loss 10.8968 size 367.3 MB zeros 63.0%
+gen 8 [46/100] k=  9 c=0.727 alpha=-0.239 beta=+0.879 | loss 15.4107 size 387.7 MB zeros 47.9%
+gen 8 [47/100] k= 16 c=0.852 alpha=-0.089 beta=+0.017 | loss 3.6267 size 450.7 MB zeros 22.0%
+gen 8 [48/100] k=  5 c=0.853 alpha=-0.846 beta=+0.172 | loss 11.6781 size 349.6 MB zeros 64.4%
+gen 8 [49/100] k= 96 c=0.944 alpha=-0.250 beta=+0.500 | loss 3.6531 size 535.1 MB zeros 30.6%
+gen 8 [50/100] k=  3 c=0.861 alpha=-0.684 beta=+0.060 | loss 15.4090 size 322.1 MB zeros 90.2%
+gen 8 [51/100] k= 15 c=0.801 alpha=-0.148 beta=+0.046 | loss 3.6613 size 451.2 MB zeros 20.7%
+gen 8 [52/100] k= 41 c=0.792 alpha=-0.173 beta=+0.398 | loss 3.4415 size 522.4 MB zeros 23.8%
+gen 8 [53/100] k=  8 c=0.742 alpha=-0.226 beta=+0.472 | loss 8.0498 size 395.3 MB zeros 42.2%
+gen 8 [54/100] k= 67 c=0.754 alpha=-0.368 beta=+0.004 | loss 3.2944 size 576.7 MB zeros 17.3%
+gen 8 [55/100] k= 37 c=0.852 alpha=-0.012 beta=+0.005 | loss 3.1225 size 541.4 MB zeros 8.9%
+gen 8 [56/100] k= 13 c=0.948 alpha=-0.744 beta=+0.128 | loss 17.3946 size 421.1 MB zeros 42.2%
+gen 8 [57/100] k= 13 c=0.835 alpha=-0.965 beta=+0.774 | loss 18.4993 size 383.6 MB zeros 63.2%
+gen 8 [58/100] k= 34 c=0.886 alpha=-0.842 beta=+0.022 | loss 17.8827 size 489.3 MB zeros 36.1%
+gen 8 [59/100] k=  3 c=0.891 alpha=-0.790 beta=+0.772 | loss 16.0928 size 321.7 MB zeros 91.2%
+gen 8 [60/100] k=  3 c=0.944 alpha=-0.289 beta=+0.114 | loss 15.7097 size 321.0 MB zeros 92.7%
+gen 8 [61/100] k=  9 c=0.957 alpha=-0.222 beta=+0.107 | loss 7.6201 size 398.0 MB zeros 40.2%
+gen 8 [62/100] k= 35 c=0.936 alpha=-0.812 beta=+0.036 | loss 17.8801 size 491.5 MB zeros 35.2%
+gen 8 [63/100] k=  9 c=0.742 alpha=-0.205 beta=+0.015 | loss 5.4420 size 408.7 MB zeros 32.3%
+gen 8 [64/100] k= 17 c=0.757 alpha=-0.739 beta=+0.838 | loss 9.4786 size 391.4 MB zeros 58.9%
+gen 8 [65/100] k=  8 c=0.751 alpha=-0.079 beta=+0.839 | loss 14.6734 size 382.0 MB zeros 52.1%
+gen 8 [66/100] k= 12 c=0.943 alpha=-0.022 beta=+0.005 | loss 5.0721 size 438.1 MB zeros 32.7%
+gen 8 [67/100] k= 20 c=0.960 alpha=-0.045 beta=+0.041 | loss 3.4933 size 493.9 MB zeros 19.4%
+gen 8 [68/100] k=147 c=0.938 alpha=-0.062 beta=+0.040 | loss 3.0606 size 630.9 MB zeros 4.5%
+gen 8 [69/100] k=  3 c=0.921 alpha=-0.073 beta=+0.007 | loss 16.4152 size 321.3 MB zeros 92.1%
+gen 8 [70/100] k=  9 c=0.709 alpha=-0.127 beta=+0.036 | loss 5.0566 size 410.4 MB zeros 31.0%
+gen 8 [71/100] k=  5 c=0.887 alpha=-0.131 beta=+0.014 | loss 12.5784 size 349.6 MB zeros 64.4%
+gen 8 [72/100] k= 14 c=0.754 alpha=-0.396 beta=+0.119 | loss 4.2540 size 446.5 MB zeros 28.1%
+gen 8 [73/100] k= 60 c=0.850 alpha=-0.019 beta=+0.001 | loss 3.0905 size 541.4 MB zeros 5.5%
+gen 8 [74/100] k= 14 c=0.751 alpha=-0.163 beta=+0.282 | loss 4.0016 size 450.1 MB zeros 24.2%
+gen 8 [75/100] k= 15 c=0.854 alpha=-0.151 beta=+0.170 | loss 3.6818 size 450.7 MB zeros 22.0%
+gen 8 [76/100] k=  3 c=0.922 alpha=-0.105 beta=+0.029 | loss 16.3540 size 321.3 MB zeros 92.1%
+gen 8 [77/100] k=  6 c=0.944 alpha=-0.178 beta=+0.315 | loss 13.6931 size 361.8 MB zeros 67.1%
+gen 8 [78/100] k=  7 c=0.729 alpha=-0.281 beta=+0.114 | loss 8.5039 size 397.3 MB zeros 40.7%
+gen 8 [79/100] k=  4 c=0.751 alpha=-0.789 beta=+0.842 | loss 17.7073 size 330.4 MB zeros 85.8%
+gen 8 [80/100] k=  9 c=0.813 alpha=-0.220 beta=+0.148 | loss 5.8008 size 405.0 MB zeros 35.0%
+gen 8 [81/100] k= 38 c=0.949 alpha=-0.148 beta=+0.037 | loss 3.1334 size 541.4 MB zeros 11.6%
+gen 8 [82/100] k= 16 c=0.957 alpha=-0.884 beta=+0.862 | loss 10.1175 size 382.8 MB zeros 63.6%
+gen 8 [83/100] k=  7 c=0.837 alpha=-0.884 beta=+0.911 | loss 11.9223 size 363.9 MB zeros 65.6%
+gen 8 [84/100] k=  8 c=0.861 alpha=-0.893 beta=+0.939 | loss 12.4818 size 362.6 MB zeros 66.6%
+gen 8 [85/100] k=122 c=0.938 alpha=-0.066 beta=+0.040 | loss 3.0587 size 586.2 MB zeros 4.7%
+gen 8 [86/100] k= 16 c=0.850 alpha=-0.845 beta=+0.793 | loss 9.5162 size 388.1 MB zeros 60.7%
+gen 8 [87/100] k=  8 c=0.768 alpha=-0.898 beta=+0.869 | loss 11.9597 size 365.0 MB zeros 64.8%
+gen 8 [88/100] k= 16 c=0.987 alpha=-0.744 beta=+0.839 | loss 8.8877 size 390.8 MB zeros 59.2%
+gen 8 [89/100] k=  6 c=0.888 alpha=-0.036 beta=+0.085 | loss 12.8206 size 365.4 MB zeros 64.5%
+gen 8 [90/100] k= 16 c=0.807 alpha=-0.151 beta=+0.489 | loss 4.2751 size 442.3 MB zeros 30.4%
+gen 8 [91/100] k=  8 c=0.872 alpha=-0.769 beta=+0.725 | loss 12.0755 size 373.9 MB zeros 58.2%
+gen 8 [92/100] k= 14 c=0.865 alpha=-0.404 beta=+0.000 | loss 4.2031 size 442.8 MB zeros 30.1%
+gen 8 [93/100] k= 16 c=0.801 alpha=-0.334 beta=+0.148 | loss 3.8597 size 450.1 MB zeros 24.8%
+gen 8 [94/100] k=  9 c=0.810 alpha=-0.271 beta=+0.402 | loss 5.7457 size 403.8 MB zeros 35.9%
+gen 8 [95/100] k=  6 c=0.751 alpha=-0.772 beta=+0.102 | loss 12.7545 size 372.2 MB zeros 59.4%
+gen 8 [96/100] k=  8 c=0.727 alpha=-0.744 beta=+0.839 | loss 10.2086 size 371.6 MB zeros 59.9%
+gen 8 [97/100] k= 14 c=0.843 alpha=-0.019 beta=+0.005 | loss 3.9244 size 448.7 MB zeros 25.1%
+gen 8 [98/100] k=  9 c=0.754 alpha=-0.127 beta=+0.036 | loss 5.3892 size 408.0 MB zeros 32.7%
+gen 8 [99/100] k=  7 c=0.743 alpha=-0.675 beta=+0.129 | loss 9.1862 size 388.3 MB zeros 47.5%
+gen 8 [100/100] k= 64 c=0.921 alpha=-0.039 beta=+0.106 | loss 3.0732 size 541.4 MB zeros 7.5%
+=== generation 8/10 done in 197s (0 from cache), Pareto front has 80 points, best loss 3.0575, smallest 321.0 MB
+gen 9 [1/100] k=  9 c=0.772 alpha=-0.852 beta=+0.510 | loss 17.6233 size 381.3 MB zeros 52.7%
+gen 9 [2/100] k=  8 c=0.955 alpha=-0.043 beta=+0.038 | loss 12.6538 size 383.9 MB zeros 50.7%
+gen 9 [3/100] k=  3 c=0.860 alpha=-0.711 beta=+0.042 | loss 15.5084 size 322.1 MB zeros 90.2%
+gen 9 [4/100] k=  3 c=0.943 alpha=-0.290 beta=+0.028 | loss 16.5707 size 321.0 MB zeros 92.7%
+gen 9 [5/100] k= 17 c=0.957 alpha=-0.170 beta=+0.107 | loss 3.6394 size 458.0 MB zeros 21.6%
+gen 9 [6/100] k=  5 c=0.887 alpha=-0.799 beta=+0.011 | loss 12.3261 size 349.0 MB zeros 65.1%
+gen 9 [7/100] k= 26 c=1.000 alpha=-0.281 beta=+0.064 | loss 3.3469 size 495.0 MB zeros 19.8%
+gen 9 [8/100] k= 33 c=0.936 alpha=-0.051 beta=+0.024 | loss 3.1332 size 517.0 MB zeros 10.9%
+gen 9 [9/100] k=  4 c=0.709 alpha=-0.127 beta=+0.036 | loss 17.5089 size 332.3 MB zeros 83.8%
+gen 9 [10/100] k= 23 c=0.748 alpha=-0.404 beta=+0.044 | loss 3.5454 size 490.1 MB zeros 22.9%
+gen 9 [12/100] k= 18 c=0.903 alpha=-0.262 beta=+0.173 | loss 3.6440 size 491.5 MB zeros 22.2%
+gen 9 [13/100] k=  5 c=0.702 alpha=-0.251 beta=+0.150 | loss 13.3574 size 358.4 MB zeros 54.6%
+gen 9 [14/100] k= 25 c=0.790 alpha=-0.884 beta=+0.689 | loss 18.0002 size 410.5 MB zeros 58.5%
+gen 9 [15/100] k= 11 c=0.929 alpha=-0.396 beta=+0.344 | loss 5.0328 size 435.1 MB zeros 34.4%
+gen 9 [16/100] k=  5 c=0.944 alpha=-0.170 beta=+0.211 | loss 13.6939 size 347.1 MB zeros 67.1%
+gen 9 [17/100] k=  7 c=0.716 alpha=-0.017 beta=+0.036 | loss 8.5449 size 398.2 MB zeros 40.1%
+gen 9 [18/100] k= 17 c=0.823 alpha=-0.759 beta=+0.838 | loss 8.9529 size 390.3 MB zeros 59.5%
+gen 9 [19/100] k= 14 c=0.929 alpha=-0.061 beta=+0.440 | loss 4.5725 size 438.9 MB zeros 32.3%
+gen 9 [20/100] k=  9 c=0.819 alpha=-0.197 beta=+0.464 | loss 6.1098 size 401.4 MB zeros 37.7%
+gen 9 [21/100] k= 63 c=0.921 alpha=-0.194 beta=+0.106 | loss 3.1151 size 541.4 MB zeros 12.9%
+gen 9 [22/100] k=234 c=0.941 alpha=-0.087 beta=+0.029 | loss 3.0569 size 630.9 MB zeros 5.0%
+gen 9 [23/100] k=  3 c=0.956 alpha=-0.673 beta=+0.022 | loss 14.7461 size 320.9 MB zeros 93.0%
+gen 9 [24/100] k= 65 c=0.961 alpha=-0.056 beta=+0.118 | loss 3.0804 size 564.5 MB zeros 8.1%
+gen 9 [25/100] k=  5 c=0.718 alpha=-0.758 beta=+0.129 | loss 12.2644 size 355.4 MB zeros 57.9%
+gen 9 [26/100] k=  5 c=0.846 alpha=-0.178 beta=+0.057 | loss 12.3130 size 351.4 MB zeros 62.4%
+gen 9 [27/100] k= 24 c=0.785 alpha=-0.214 beta=+0.192 | loss 3.3369 size 496.4 MB zeros 18.1%
+gen 9 [28/100] k= 52 c=0.950 alpha=-0.125 beta=+0.119 | loss 3.1111 size 541.4 MB zeros 10.8%
+gen 9 [29/100] k=  5 c=0.938 alpha=-0.715 beta=+0.102 | loss 14.7747 size 347.4 MB zeros 66.9%
+gen 9 [30/100] k= 37 c=0.937 alpha=-0.036 beta=+0.011 | loss 3.1147 size 541.4 MB zeros 9.7%
+gen 9 [31/100] k=  4 c=0.742 alpha=-0.587 beta=+0.490 | loss 18.2087 size 330.8 MB zeros 85.4%
+gen 9 [32/100] k= 14 c=0.843 alpha=-0.019 beta=+0.022 | loss 3.9246 size 448.7 MB zeros 25.1%
+gen 9 [33/100] k=  9 c=0.959 alpha=-0.222 beta=+0.107 | loss 8.1156 size 397.9 MB zeros 40.3%
+gen 9 [34/100] k= 66 c=0.955 alpha=-0.344 beta=+0.038 | loss 3.2145 size 577.4 MB zeros 17.1%
+gen 9 [35/100] k= 15 c=0.723 alpha=-0.030 beta=+0.148 | loss 3.6420 size 451.8 MB zeros 18.8%
+gen 9 [36/100] k= 65 c=0.939 alpha=-0.684 beta=+0.061 | loss 17.9124 size 507.6 MB zeros 29.3%
+gen 9 [37/100] k= 14 c=0.754 alpha=-0.171 beta=+0.065 | loss 3.9351 size 450.4 MB zeros 22.6%
+gen 9 [38/100] k=  3 c=0.905 alpha=-0.265 beta=+0.021 | loss 16.3053 size 321.5 MB zeros 91.6%
+gen 9 [39/100] k=233 c=0.923 alpha=-0.068 beta=+0.032 | loss 3.0588 size 630.9 MB zeros 4.3%
+gen 9 [40/100] k=  5 c=0.944 alpha=-0.183 beta=+0.067 | loss 13.6932 size 347.1 MB zeros 67.1%
+gen 9 [41/100] k=  8 c=0.748 alpha=-0.265 beta=+0.598 | loss 8.4728 size 391.0 MB zeros 45.4%
+gen 9 [42/100] k=  4 c=0.857 alpha=-0.684 beta=+0.042 | loss 16.1329 size 326.6 MB zeros 90.1%
+gen 9 [43/100] k=  9 c=0.728 alpha=-0.239 beta=+0.002 | loss 5.3156 size 409.4 MB zeros 31.7%
+gen 9 [44/100] k=  4 c=0.944 alpha=-0.707 beta=+0.111 | loss 15.7097 size 324.3 MB zeros 92.7%
+gen 9 [45/100] k=  9 c=0.810 alpha=-0.277 beta=+0.402 | loss 5.7468 size 403.8 MB zeros 35.9%
+gen 9 [46/100] k=  8 c=0.853 alpha=-0.837 beta=+0.227 | loss 18.2365 size 378.8 MB zeros 54.5%
+gen 9 [47/100] k= 70 c=0.988 alpha=-0.184 beta=+0.103 | loss 3.1049 size 586.1 MB zeros 12.4%
+gen 9 [48/100] k=  9 c=0.803 alpha=-0.174 beta=+0.177 | loss 5.9871 size 405.6 MB zeros 34.6%
+gen 9 [49/100] k=  5 c=0.887 alpha=-0.131 beta=+0.015 | loss 12.5780 size 349.6 MB zeros 64.4%
+gen 9 [50/100] k=  3 c=0.853 alpha=-0.210 beta=+0.167 | loss 16.7666 size 322.2 MB zeros 89.9%
+gen 9 [51/100] k= 67 c=0.916 alpha=-0.014 beta=+0.086 | loss 3.0783 size 586.1 MB zeros 6.5%
+gen 9 [52/100] k=  5 c=0.878 alpha=-0.003 beta=+0.057 | loss 12.2145 size 350.0 MB zeros 64.0%
+gen 9 [53/100] k=  9 c=0.888 alpha=-0.101 beta=+0.114 | loss 6.6494 size 401.3 MB zeros 37.7%
+gen 9 [54/100] k=  9 c=0.850 alpha=-0.837 beta=+0.729 | loss 11.6709 size 372.7 MB zeros 59.1%
+gen 9 [55/100] k=  5 c=0.853 alpha=-0.208 beta=+0.214 | loss 12.3992 size 351.1 MB zeros 62.8%
+gen 9 [56/100] k= 29 c=0.727 alpha=-0.036 beta=+0.197 | loss 3.2514 size 496.7 MB zeros 13.3%
+gen 9 [57/100] k=  9 c=0.727 alpha=-0.249 beta=+0.116 | loss 5.3180 size 409.4 MB zeros 31.7%
+gen 9 [58/100] k= 37 c=0.926 alpha=-0.148 beta=+0.397 | loss 3.4273 size 524.5 MB zeros 22.9%
+gen 9 [59/100] k=  6 c=0.729 alpha=-0.675 beta=+0.160 | loss 12.1627 size 375.5 MB zeros 57.0%
+gen 9 [60/100] k=  3 c=0.950 alpha=-0.303 beta=+0.114 | loss 15.4862 size 321.0 MB zeros 92.8%
+gen 9 [61/100] k= 16 c=0.727 alpha=-0.744 beta=+0.839 | loss 9.4015 size 391.0 MB zeros 59.0%
+gen 9 [62/100] k=124 c=0.763 alpha=-0.065 beta=+0.029 | loss 3.1035 size 586.2 MB zeros 4.2%
+gen 9 [63/100] k=  8 c=0.742 alpha=-0.524 beta=+0.531 | loss 8.3932 size 391.0 MB zeros 45.4%
+gen 9 [64/100] k= 53 c=0.990 alpha=-0.125 beta=+0.002 | loss 3.1025 size 541.4 MB zeros 9.1%
+gen 9 [65/100] k= 23 c=0.857 alpha=-0.015 beta=+0.028 | loss 3.2632 size 496.6 MB zeros 14.4%
+gen 9 [66/100] k=122 c=0.938 alpha=-0.195 beta=+0.044 | loss 3.0913 size 586.2 MB zeros 10.2%
+gen 9 [67/100] k= 16 c=0.718 alpha=-0.148 beta=+0.156 | loss 3.5712 size 451.8 MB zeros 18.7%
+gen 9 [68/100] k=  9 c=0.810 alpha=-0.033 beta=+0.411 | loss 5.7615 size 403.6 MB zeros 36.1%
+gen 9 [69/100] k= 25 c=0.835 alpha=-0.182 beta=+0.084 | loss 3.2604 size 496.7 MB zeros 14.7%
+gen 9 [70/100] k= 33 c=0.968 alpha=-0.048 beta=+0.051 | loss 3.1531 size 516.2 MB zeros 11.3%
+gen 9 [71/100] k= 15 c=0.875 alpha=-0.151 beta=+0.168 | loss 3.8060 size 450.4 MB zeros 22.6%
+gen 9 [72/100] k=  9 c=0.923 alpha=-0.039 beta=+0.106 | loss 7.0747 size 399.6 MB zeros 39.0%
+gen 9 [73/100] k= 19 c=0.871 alpha=-0.120 beta=+0.012 | loss 3.3697 size 495.2 MB zeros 17.7%
+gen 9 [74/100] k= 18 c=0.965 alpha=-0.150 beta=+0.485 | loss 4.1914 size 472.7 MB zeros 30.7%
+gen 9 [75/100] k=  3 c=0.871 alpha=-0.921 beta=+0.859 | loss 16.9898 size 322.0 MB zeros 90.5%
+gen 9 [76/100] k=125 c=0.729 alpha=-0.031 beta=+0.039 | loss 3.1457 size 586.2 MB zeros 3.2%
+gen 9 [77/100] k= 17 c=0.988 alpha=-0.932 beta=+0.887 | loss 11.0228 size 379.5 MB zeros 65.5%
+gen 9 [78/100] k= 15 c=0.933 alpha=-0.157 beta=+0.076 | loss 3.8058 size 449.6 MB zeros 23.9%
+gen 9 [79/100] k= 20 c=0.832 alpha=-0.845 beta=+0.789 | loss 9.4536 size 406.1 MB zeros 60.5%
+gen 9 [80/100] k=  9 c=0.884 alpha=-0.101 beta=+0.087 | loss 6.8132 size 401.5 MB zeros 37.6%
+gen 9 [81/100] k= 14 c=0.754 alpha=-0.101 beta=+0.404 | loss 4.2574 size 445.9 MB zeros 28.3%
+gen 9 [82/100] k= 34 c=0.989 alpha=-0.381 beta=+0.500 | loss 4.2391 size 490.0 MB zeros 35.8%
+gen 9 [83/100] k=  3 c=0.861 alpha=-0.039 beta=+0.106 | loss 15.7371 size 322.1 MB zeros 90.2%
+gen 9 [84/100] k=  9 c=0.709 alpha=-0.388 beta=+0.334 | loss 5.2416 size 407.2 MB zeros 33.4%
+gen 9 [85/100] k= 16 c=0.760 alpha=-0.260 beta=+0.036 | loss 3.6938 size 451.3 MB zeros 21.7%
+gen 9 [86/100] k=123 c=0.941 alpha=-0.067 beta=+0.029 | loss 3.0636 size 586.2 MB zeros 4.4%
+gen 9 [87/100] k= 33 c=0.966 alpha=-0.033 beta=+0.138 | loss 3.1482 size 514.3 MB zeros 12.1%
+gen 9 [88/100] k= 24 c=0.757 alpha=-0.342 beta=+0.399 | loss 3.8775 size 472.7 MB zeros 30.7%
+gen 9 [90/100] k= 60 c=0.847 alpha=-0.019 beta=+0.178 | loss 3.1088 size 541.4 MB zeros 10.3%
+gen 9 [91/100] k=  3 c=0.945 alpha=-0.269 beta=+0.091 | loss 15.5195 size 321.0 MB zeros 92.7%
+gen 9 [92/100] k= 14 c=0.923 alpha=-0.239 beta=+0.443 | loss 4.6042 size 438.8 MB zeros 32.3%
+gen 9 [93/100] k= 15 c=0.702 alpha=-0.092 beta=+0.150 | loss 3.6378 size 451.9 MB zeros 18.3%
+gen 9 [94/100] k= 11 c=0.961 alpha=-0.046 beta=+0.539 | loss 5.7494 size 427.2 MB zeros 38.8%
+gen 9 [95/100] k=  5 c=0.853 alpha=-0.844 beta=+0.404 | loss 11.8434 size 349.6 MB zeros 64.4%
+gen 9 [96/100] k= 19 c=0.905 alpha=-0.090 beta=+0.116 | loss 3.3908 size 494.8 MB zeros 18.4%
+gen 9 [97/100] k= 16 c=0.983 alpha=-0.051 beta=+0.502 | loss 4.7417 size 437.5 MB zeros 33.1%
+gen 9 [98/100] k= 31 c=0.939 alpha=-0.036 beta=+0.000 | loss 3.1468 size 496.7 MB zeros 11.7%
+gen 9 [99/100] k= 33 c=0.936 alpha=-0.312 beta=+0.024 | loss 3.2458 size 500.0 MB zeros 18.5%
+gen 9 [100/100] k= 34 c=0.854 alpha=-0.822 beta=+0.187 | loss 17.9003 size 482.7 MB zeros 38.5%
+=== generation 9/10 done in 192s (2 from cache), Pareto front has 81 points, best loss 3.0569, smallest 320.9 MB
+gen 10 [1/100] k= 26 c=0.953 alpha=-0.036 beta=+0.029 | loss 3.2550 size 496.6 MB zeros 14.7%
+gen 10 [2/100] k=  9 c=0.872 alpha=-0.216 beta=+0.517 | loss 7.1035 size 397.7 MB zeros 40.5%
+gen 10 [3/100] k= 16 c=0.954 alpha=-0.849 beta=+0.789 | loss 10.0447 size 388.1 MB zeros 60.7%
+gen 10 [4/100] k= 14 c=0.903 alpha=-0.461 beta=+0.000 | loss 4.7600 size 438.3 MB zeros 32.6%
+gen 10 [5/100] k=  7 c=0.928 alpha=-0.718 beta=+0.220 | loss 10.8845 size 380.4 MB zeros 53.3%
+gen 10 [6/100] k= 19 c=0.906 alpha=-0.264 beta=+0.040 | loss 3.4961 size 493.4 MB zeros 20.9%
+gen 10 [7/100] k=  9 c=0.751 alpha=-0.744 beta=+0.840 | loss 11.1498 size 372.2 MB zeros 59.4%
+gen 10 [8/100] k= 36 c=1.000 alpha=-0.281 beta=+0.064 | loss 3.2306 size 539.0 MB zeros 17.3%
+gen 10 [9/100] k=  7 c=0.823 alpha=-0.708 beta=+0.736 | loss 10.5719 size 376.0 MB zeros 56.6%
+gen 10 [10/100] k= 32 c=0.801 alpha=-0.226 beta=+0.489 | loss 3.6715 size 475.7 MB zeros 29.4%
+gen 10 [11/100] k= 34 c=0.938 alpha=-0.032 beta=+0.031 | loss 3.1304 size 541.4 MB zeros 10.9%
+gen 10 [12/100] k=  8 c=0.806 alpha=-0.886 beta=+0.884 | loss 11.2704 size 364.8 MB zeros 64.9%
+gen 10 [13/100] k= 35 c=0.930 alpha=-0.074 beta=+0.075 | loss 3.1303 size 541.4 MB zeros 10.2%
+gen 10 [14/100] k= 10 c=0.944 alpha=-0.033 beta=+0.067 | loss 7.6241 size 425.6 MB zeros 39.7%
+gen 10 [15/100] k=  6 c=0.932 alpha=-0.928 beta=+0.874 | loss 15.9131 size 358.9 MB zeros 69.4%
+gen 10 [16/100] k=  5 c=0.852 alpha=-0.142 beta=+0.160 | loss 12.3460 size 351.1 MB zeros 62.7%
+gen 10 [17/100] k= 15 c=0.997 alpha=-0.378 beta=+0.500 | loss 4.9877 size 430.8 MB zeros 36.8%
+gen 10 [18/100] k= 17 c=0.822 alpha=-0.907 beta=+0.838 | loss 9.9034 size 383.0 MB zeros 63.5%
+gen 10 [19/100] k= 16 c=0.999 alpha=-0.787 beta=+0.867 | loss 9.7212 size 387.3 MB zeros 61.1%
+gen 10 [20/100] k= 18 c=0.967 alpha=-0.045 beta=+0.041 | loss 3.6459 size 491.4 MB zeros 21.8%
+gen 10 [21/100] k=  3 c=0.945 alpha=-0.303 beta=+0.114 | loss 15.5867 size 321.0 MB zeros 92.7%
+gen 10 [22/100] k= 64 c=0.987 alpha=-0.044 beta=+0.021 | loss 3.0985 size 541.4 MB zeros 6.0%
+gen 10 [23/100] k=  5 c=0.730 alpha=-0.180 beta=+0.207 | loss 13.0936 size 357.0 MB zeros 56.2%
+gen 10 [24/100] k= 16 c=0.702 alpha=-0.134 beta=+0.129 | loss 3.5778 size 451.9 MB zeros 18.3%
+gen 10 [25/100] k= 35 c=0.936 alpha=-0.051 beta=+0.029 | loss 3.1260 size 541.4 MB zeros 10.3%
+gen 10 [26/100] k=  5 c=0.807 alpha=-0.799 beta=+0.002 | loss 11.1085 size 351.7 MB zeros 62.0%
+gen 10 [27/100] k=  8 c=0.745 alpha=-0.185 beta=+0.472 | loss 8.0774 size 395.2 MB zeros 42.3%
+gen 10 [28/100] k=  8 c=0.750 alpha=-0.345 beta=+0.434 | loss 8.2283 size 395.5 MB zeros 42.0%
+gen 10 [29/100] k= 22 c=0.729 alpha=-0.845 beta=+0.793 | loss 9.7906 size 405.8 MB zeros 60.6%
+gen 10 [30/100] k=  3 c=0.752 alpha=-0.772 beta=+0.036 | loss 17.8367 size 324.1 MB zeros 85.9%
+gen 10 [31/100] k=  7 c=0.939 alpha=-0.075 beta=+0.074 | loss 12.4131 size 384.9 MB zeros 50.0%
+gen 10 [32/100] k= 26 c=1.000 alpha=-0.287 beta=+0.125 | loss 3.3489 size 494.8 MB zeros 20.0%
+gen 10 [33/100] k= 37 c=0.807 alpha=-0.151 beta=+0.489 | loss 6.4721 size 515.4 MB zeros 26.4%
+gen 10 [34/100] k=  8 c=0.849 alpha=-0.744 beta=+0.823 | loss 10.7543 size 371.5 MB zeros 59.9%
+gen 10 [35/100] k= 14 c=0.754 alpha=-0.101 beta=+0.020 | loss 3.9352 size 450.4 MB zeros 22.6%
+gen 10 [36/100] k= 16 c=0.957 alpha=-0.870 beta=+0.827 | loss 9.9459 size 385.2 MB zeros 62.3%
+gen 10 [37/100] k= 18 c=0.944 alpha=-0.180 beta=+0.081 | loss 3.5791 size 492.0 MB zeros 21.4%
+gen 10 [38/100] k=  9 c=0.747 alpha=-0.021 beta=+0.037 | loss 5.4543 size 408.4 MB zeros 32.4%
+gen 10 [39/100] k=  5 c=0.860 alpha=-0.846 beta=+0.172 | loss 11.4488 size 349.3 MB zeros 64.7%
+gen 10 [40/100] k= 66 c=0.955 alpha=-0.422 beta=+0.329 | loss 3.7022 size 534.1 MB zeros 30.9%
+gen 10 [41/100] k= 25 c=0.939 alpha=-0.088 beta=+0.040 | loss 3.2400 size 496.6 MB zeros 14.5%
+gen 10 [42/100] k=  9 c=0.709 alpha=-0.150 beta=+0.334 | loss 5.1058 size 409.6 MB zeros 31.5%
+gen 10 [43/100] k=  9 c=0.865 alpha=-0.681 beta=+0.701 | loss 9.0538 size 379.5 MB zeros 54.0%
+gen 10 [44/100] k= 15 c=0.803 alpha=-0.803 beta=+0.510 | loss 17.9452 size 406.2 MB zeros 50.5%
+gen 10 [45/100] k=234 c=0.719 alpha=-0.087 beta=+0.025 | loss 3.1371 size 630.9 MB zeros 4.8%
+gen 10 [46/100] k=  5 c=0.787 alpha=-0.799 beta=+0.020 | loss 11.5108 size 352.4 MB zeros 61.3%
+gen 10 [47/100] k=  3 c=0.852 alpha=-0.629 beta=+0.032 | loss 17.0650 size 322.3 MB zeros 89.9%
+gen 10 [48/100] k= 15 c=0.988 alpha=-0.932 beta=+0.861 | loss 9.7736 size 380.7 MB zeros 64.8%
+gen 10 [49/100] k= 15 c=0.738 alpha=-0.147 beta=+0.076 | loss 3.6888 size 451.7 MB zeros 19.2%
+gen 10 [50/100] k=  9 c=0.727 alpha=-0.039 beta=+0.184 | loss 5.3175 size 409.4 MB zeros 31.7%
+gen 10 [51/100] k= 15 c=0.791 alpha=-0.845 beta=+0.953 | loss 11.0461 size 380.6 MB zeros 64.8%
+gen 10 [52/100] k= 14 c=0.738 alpha=-0.396 beta=+0.333 | loss 4.4527 size 440.8 MB zeros 31.2%
+gen 10 [53/100] k=227 c=0.959 alpha=-0.059 beta=+0.053 | loss 3.0555 size 630.9 MB zeros 4.8%
+gen 10 [54/100] k=  8 c=0.731 alpha=-0.676 beta=+0.070 | loss 8.1196 size 388.6 MB zeros 47.2%
+gen 10 [55/100] k=  8 c=0.738 alpha=-0.264 beta=+0.472 | loss 8.0655 size 395.6 MB zeros 42.0%
+gen 10 [56/100] k= 11 c=0.929 alpha=-0.400 beta=+0.319 | loss 5.0612 size 435.5 MB zeros 34.2%
+gen 10 [57/100] k= 32 c=0.939 alpha=-0.037 beta=+0.001 | loss 3.1443 size 496.7 MB zeros 11.7%
+gen 10 [58/100] k=  9 c=0.769 alpha=-0.182 beta=+0.411 | loss 5.6756 size 405.0 MB zeros 35.0%
+gen 10 [59/100] k= 26 c=0.757 alpha=-0.062 beta=+0.051 | loss 3.1913 size 496.7 MB zeros 11.7%
+gen 10 [60/100] k= 13 c=0.878 alpha=-0.844 beta=+0.398 | loss 17.3586 size 410.5 MB zeros 48.1%
+gen 10 [61/100] k= 31 c=0.915 alpha=-0.007 beta=+0.277 | loss 3.2515 size 496.5 MB zeros 17.4%
+gen 10 [62/100] k=  5 c=0.916 alpha=-0.101 beta=+0.114 | loss 14.0517 size 348.3 MB zeros 65.8%
+gen 10 [63/100] k= 31 c=0.701 alpha=-0.148 beta=+0.173 | loss 3.2761 size 496.7 MB zeros 14.1%
+gen 10 [64/100] k=  5 c=0.892 alpha=-0.157 beta=+0.029 | loss 12.2557 size 349.3 MB zeros 64.7%
+gen 10 [65/100] k=  6 c=0.794 alpha=-0.884 beta=+0.884 | loss 11.5956 size 362.5 MB zeros 66.6%
+gen 10 [66/100] k= 17 c=0.956 alpha=-0.184 beta=+0.518 | loss 4.3526 size 439.8 MB zeros 31.8%
+gen 10 [67/100] k= 10 c=0.968 alpha=-0.587 beta=+0.493 | loss 7.7702 size 414.4 MB zeros 46.0%
+gen 10 [68/100] k=  8 c=0.754 alpha=-0.101 beta=+0.404 | loss 8.1855 size 395.7 MB zeros 41.9%
+gen 10 [69/100] k=233 c=0.941 alpha=-0.129 beta=+0.024 | loss 3.0718 size 630.9 MB zeros 6.6%
+gen 10 [70/100] k= 35 c=0.890 alpha=-0.271 beta=+0.332 | loss 3.4923 size 518.3 MB zeros 25.3%
+gen 10 [71/100] k= 15 c=0.984 alpha=-0.966 beta=+0.877 | loss 9.3518 size 378.4 MB zeros 66.1%
+gen 10 [72/100] k=  9 c=0.809 alpha=-0.202 beta=+0.106 | loss 5.6987 size 405.2 MB zeros 34.8%
+gen 10 [73/100] k= 10 c=0.821 alpha=-0.675 beta=+0.100 | loss 17.4298 size 417.8 MB zeros 44.1%
+gen 10 [74/100] k=  3 c=0.860 alpha=-0.684 beta=+0.897 | loss 15.9593 size 322.1 MB zeros 90.2%
+gen 10 [75/100] k= 21 c=0.957 alpha=-0.217 beta=+0.107 | loss 3.3793 size 495.1 MB zeros 18.8%
+gen 10 [76/100] k=  7 c=0.887 alpha=-0.125 beta=+0.014 | loss 11.5411 size 387.8 MB zeros 47.8%
+gen 10 [77/100] k=  5 c=0.731 alpha=-0.845 beta=+0.421 | loss 13.0473 size 353.3 MB zeros 60.3%
+gen 10 [78/100] k=  9 c=0.888 alpha=-0.074 beta=+0.114 | loss 6.6515 size 401.3 MB zeros 37.7%
+gen 10 [79/100] k= 59 c=0.914 alpha=-0.239 beta=+0.443 | loss 3.5407 size 510.7 MB zeros 28.1%
+gen 10 [80/100] k=  3 c=0.956 alpha=-0.673 beta=+0.408 | loss 14.7461 size 320.9 MB zeros 93.0%
+gen 10 [81/100] k=  8 c=0.793 alpha=-0.256 beta=+0.107 | loss 8.7198 size 393.3 MB zeros 43.7%
+gen 10 [82/100] k=  4 c=0.885 alpha=-0.129 beta=+0.204 | loss 17.1482 size 325.8 MB zeros 91.0%
+gen 10 [83/100] k=122 c=0.942 alpha=-0.750 beta=+0.859 | loss 8.8740 size 443.9 MB zeros 59.7%
+gen 10 [84/100] k= 23 c=0.747 alpha=-0.404 beta=+0.044 | loss 3.5442 size 490.1 MB zeros 22.9%
+gen 10 [85/100] k= 11 c=0.930 alpha=-0.020 beta=+0.053 | loss 4.9400 size 438.9 MB zeros 32.3%
+gen 10 [86/100] k=122 c=0.953 alpha=-0.066 beta=+0.040 | loss 3.0634 size 586.2 MB zeros 4.7%
+gen 10 [87/100] k=234 c=0.997 alpha=-0.074 beta=+0.029 | loss 3.0591 size 630.9 MB zeros 4.4%
+gen 10 [88/100] k= 15 c=0.718 alpha=-0.386 beta=+0.127 | loss 4.1057 size 449.9 MB zeros 25.5%
+gen 10 [89/100] k=  7 c=0.743 alpha=-0.831 beta=+0.129 | loss 18.2213 size 382.6 MB zeros 51.7%
+gen 10 [90/100] k=  9 c=0.810 alpha=-0.013 beta=+0.399 | loss 5.7064 size 403.9 MB zeros 35.8%
+gen 10 [91/100] k= 17 c=0.988 alpha=-0.157 beta=+0.775 | loss 15.5796 size 424.6 MB zeros 40.3%
+gen 10 [92/100] k= 10 c=0.950 alpha=-0.148 beta=+0.266 | loss 7.5690 size 425.2 MB zeros 39.9%
+gen 10 [93/100] k= 16 c=0.702 alpha=-0.150 beta=+0.158 | loss 3.5780 size 451.9 MB zeros 18.3%
+gen 10 [94/100] k= 20 c=0.851 alpha=-0.777 beta=+0.739 | loss 8.6073 size 413.7 MB zeros 57.1%
+gen 10 [95/100] k=  7 c=0.859 alpha=-0.825 beta=+0.404 | loss 18.1195 size 379.0 MB zeros 54.3%
+gen 10 [96/100] k=  8 c=0.756 alpha=-0.744 beta=+0.810 | loss 10.2228 size 372.5 MB zeros 59.2%
+gen 10 [97/100] k=  9 c=0.728 alpha=-0.239 beta=+0.001 | loss 5.3170 size 409.4 MB zeros 31.7%
+gen 10 [98/100] k= 16 c=0.877 alpha=-0.049 beta=+0.148 | loss 3.7289 size 450.4 MB zeros 22.6%
+gen 10 [99/100] k=  9 c=0.822 alpha=-0.837 beta=+0.829 | loss 10.1131 size 369.0 MB zeros 61.8%
+gen 10 [100/100] k=  5 c=0.887 alpha=-0.150 beta=+0.015 | loss 12.5784 size 349.6 MB zeros 64.4%
+=== generation 10/10 done in 197s (0 from cache), Pareto front has 88 points, best loss 3.0555, smallest 320.9 MB
+{"k": 3, "c": 0.9558908102153683, "alpha": -0.6734709255471683, "beta": 0.022334525839091, "calib_loss": 14.746110455614614, "size_mb": 320.8842405, "eval_loss": 14.641861185649972, "size_ratio": 0.32476007795903933, "target_bits_per_weight": 1.0836942791502118, "zero_frac": 0.9299271580063816}
+{"k": 3, "c": 0.9558908102153683, "alpha": -0.6734709255471683, "beta": 0.40798211674700696, "calib_loss": 14.746110455614614, "size_mb": 320.8842405, "eval_loss": 14.641861185649972, "size_ratio": 0.32476007795903933, "target_bits_per_weight": 1.0836942791502118, "zero_frac": 0.9299271580063816}
+{"k": 5, "c": 0.944121093457984, "alpha": -0.17986199871754485, "beta": 0.21057409983016812, "calib_loss": 13.691041709623962, "size_mb": 347.14851375, "eval_loss": 13.01995581126283, "size_ratio": 0.3513415872750368, "target_bits_per_weight": 1.670889891460265, "zero_frac": 0.671373284867395}
+{"k": 5, "c": 0.8870644585934012, "alpha": -0.7986615527561076, "beta": 0.011462859796998043, "calib_loss": 12.326079158838892, "size_mb": 348.98427625, "eval_loss": 11.59722396239041, "size_ratio": 0.35319952324498444, "target_bits_per_weight": 1.7119324009933752, "zero_frac": 0.6508520301008399}
+{"k": 5, "c": 0.8923764978646889, "alpha": -0.15732240628102254, "beta": 0.029299832018110122, "calib_loss": 12.255727877947825, "size_mb": 349.32742175, "eval_loss": 12.11410116753154, "size_ratio": 0.3535468134676443, "target_bits_per_weight": 1.7196041735973986, "zero_frac": 0.6470161437988281}
+{"k": 5, "c": 0.8603901832222975, "alpha": -0.8460333458595505, "beta": 0.1715698367666213, "calib_loss": 11.448796813905181, "size_mb": 349.3362535, "eval_loss": 11.582566157813645, "size_ratio": 0.35355575189295946, "target_bits_per_weight": 1.7198016267993075, "zero_frac": 0.6469174171978738}
+{"k": 5, "c": 0.8071479947142836, "alpha": -0.7986615527561076, "beta": 0.00246951855077851, "calib_loss": 11.108465021306818, "size_mb": 351.73627075, "eval_loss": 11.14225985321015, "size_ratio": 0.3559847580292488, "target_bits_per_weight": 1.7734592926807893, "zero_frac": 0.6200885842571329}
+{"k": 6, "c": 0.7688968089996565, "alpha": -0.8841457113668172, "beta": 0.8841457113668172, "calib_loss": 11.046136253856611, "size_mb": 362.899691, "eval_loss": 10.984601987538566, "size_ratio": 0.3672830169435239, "target_bits_per_weight": 2.0230421129163805, "zero_frac": 0.6635339534326351}
+{"k": 8, "c": 0.8213392179845052, "alpha": -0.8981557915291334, "beta": 0.8841457113668172, "calib_loss": 10.893306251145528, "size_mb": 364.339789625, "eval_loss": 10.81092388492409, "size_ratio": 0.3687405099665373, "target_bits_per_weight": 2.0552386860271077, "zero_frac": 0.6528067704085465}
+{"k": 6, "c": 0.7505228945786286, "alpha": -0.7721083991043806, "beta": 0.8668775923877586, "calib_loss": 10.708211978975745, "size_mb": 366.75249125, "eval_loss": 10.351787130853648, "size_ratio": 0.37118235368751895, "target_bits_per_weight": 2.109179939018501, "zero_frac": 0.6348213447319282}
+{"k": 9, "c": 0.8217953629966644, "alpha": -0.8365354717586267, "beta": 0.8294427676507836, "calib_loss": 10.113147963060545, "size_mb": 368.99823575, "eval_loss": 9.83885230160412, "size_ratio": 0.37345522367253176, "target_bits_per_weight": 2.1593884981595552, "zero_frac": 0.6180926703708076}
+{"k": 15, "c": 0.9843556345877635, "alpha": -0.9661767842002935, "beta": 0.8773118809646132, "calib_loss": 9.351779911641618, "size_mb": 378.4356565, "eval_loss": 9.314235981841474, "size_ratio": 0.3830066354019659, "target_bits_per_weight": 2.370382802215688, "zero_frac": 0.6608321947929187}
+{"k": 9, "c": 0.8648639596434996, "alpha": -0.6807892906288628, "beta": 0.7010134508609147, "calib_loss": 9.053846610955828, "size_mb": 379.4868575, "eval_loss": 8.539777813535748, "size_ratio": 0.38407053345497927, "target_bits_per_weight": 2.3938847133091516, "zero_frac": 0.539927265320942}
+{"k": 8, "c": 0.7310440423464313, "alpha": -0.6763592263970011, "beta": 0.06995302298206746, "calib_loss": 8.119562740083547, "size_mb": 388.619360375, "eval_loss": 8.77827477478445, "size_ratio": 0.393313344323549, "target_bits_per_weight": 2.5980619074224114, "zero_frac": 0.4718656966101119}
+{"k": 7, "c": 0.729358545127749, "alpha": -0.6750242615987952, "beta": 0.10047547638292478, "calib_loss": 8.093106714511547, "size_mb": 388.726670375, "eval_loss": 8.724781979796706, "size_ratio": 0.3934219504798111, "target_bits_per_weight": 2.6004610585642385, "zero_frac": 0.47106347555642597}
+{"k": 8, "c": 0.7450386462933933, "alpha": -0.18517006594633606, "beta": 0.47158658113160334, "calib_loss": 8.077425034747678, "size_mb": 395.21650175, "eval_loss": 7.26179125535057, "size_ratio": 0.3999901700346322, "target_bits_per_weight": 2.7455555171756956, "zero_frac": 0.422701160025684}
+{"k": 8, "c": 0.7423175568925543, "alpha": -0.22619706764142242, "beta": 0.47154877750389596, "calib_loss": 8.049767278855846, "size_mb": 395.336258375, "eval_loss": 7.294309644055856, "size_ratio": 0.4001113731538957, "target_bits_per_weight": 2.748232940003112, "zero_frac": 0.4218086857498784}
+{"k": 8, "c": 0.7483519694594146, "alpha": -0.34517962245513, "beta": 0.4338370542707998, "calib_loss": 7.96450086726005, "size_mb": 395.759964875, "eval_loss": 7.251261393229167, "size_ratio": 0.40054019744192354, "target_bits_per_weight": 2.757705831003713, "zero_frac": 0.41865105541634473}
+{"k": 9, "c": 0.872279803291941, "alpha": -0.2155879015109458, "beta": 0.5172854450446855, "calib_loss": 7.103482213770772, "size_mb": 397.6571645, "eval_loss": 6.669084267415842, "size_ratio": 0.40246031261230025, "target_bits_per_weight": 2.8001219026334994, "zero_frac": 0.4045148688794929}
+{"k": 9, "c": 0.9230400218907476, "alpha": -0.03918535999699303, "beta": 0.10648601239926252, "calib_loss": 7.074666341145833, "size_mb": 399.64671725, "eval_loss": 6.780203885463442, "size_ratio": 0.4044738964055923, "target_bits_per_weight": 2.844602731557993, "zero_frac": 0.3896879259046617}
+{"k": 9, "c": 0.915604405488608, "alpha": -0.03918535999699303, "beta": 0.10648601239926252, "calib_loss": 6.710200066440616, "size_mb": 399.9969065, "eval_loss": 6.45267800548326, "size_ratio": 0.40482831545700226, "target_bits_per_weight": 2.8524319826901614, "zero_frac": 0.3870781755272722}
+{"k": 9, "c": 0.7724959647394205, "alpha": -0.2155879015109458, "beta": 0.5045825390675196, "calib_loss": 6.0239705284320015, "size_mb": 401.14165475, "eval_loss": 5.8106051656624205, "size_ratio": 0.405986890681308, "target_bits_per_weight": 2.8780253483698917, "zero_frac": 0.37854705363402874}
+{"k": 9, "c": 0.8098412525757591, "alpha": -0.03333336825115614, "beta": 0.41059808295747646, "calib_loss": 5.761526158128666, "size_mb": 403.552057625, "eval_loss": 5.541315132804863, "size_ratio": 0.4084264078865716, "target_bits_per_weight": 2.9319152077475747, "zero_frac": 0.3605837671748011}
+{"k": 9, "c": 0.8099041143636111, "alpha": -0.27712530391493956, "beta": 0.4019966634687163, "calib_loss": 5.746836851535771, "size_mb": 403.81111175, "eval_loss": 5.540465935700567, "size_ratio": 0.4086885910268203, "target_bits_per_weight": 2.9377069326547476, "zero_frac": 0.3586531922057435}
+{"k": 9, "c": 0.8099041143636111, "alpha": -0.2714837076470007, "beta": 0.4019966634687163, "calib_loss": 5.745655167953476, "size_mb": 403.811161625, "eval_loss": 5.53974731087335, "size_ratio": 0.4086886415042413, "target_bits_per_weight": 2.9377080477201023, "zero_frac": 0.35865282051729197}
+{"k": 9, "c": 0.8098412525757591, "alpha": -0.013031426539970761, "beta": 0.3986992478974103, "calib_loss": 5.70643975191685, "size_mb": 403.908257, "eval_loss": 5.499611102241225, "size_ratio": 0.4087869096569724, "target_bits_per_weight": 2.9398788284469437, "zero_frac": 0.3579292269416781}
+{"k": 9, "c": 0.7685048229102202, "alpha": -0.18235196222209502, "beta": 0.41059808295747646, "calib_loss": 5.6756433093536165, "size_mb": 405.01219775, "eval_loss": 5.450392722151263, "size_ratio": 0.4099041844831637, "target_bits_per_weight": 2.964559852683937, "zero_frac": 0.34970221886268027}
+{"k": 9, "c": 0.8111379118104607, "alpha": -0.20165170310864933, "beta": 0.10641953187138287, "calib_loss": 5.669512766430688, "size_mb": 405.14251925, "eval_loss": 5.472918423739347, "size_ratio": 0.4100360800864934, "target_bits_per_weight": 2.9674734765356714, "zero_frac": 0.34873101091210224}
+{"k": 9, "c": 0.8111379118104607, "alpha": -0.20165170310864933, "beta": 0.10641953187138287, "calib_loss": 5.669512766430688, "size_mb": 405.14251925, "eval_loss": 5.471873591955339, "size_ratio": 0.4100360800864934, "target_bits_per_weight": 2.9674734765356714, "zero_frac": 0.34873101091210224}
+{"k": 9, "c": 0.7086448135246061, "alpha": -0.3875868974113096, "beta": 0.33384607134088284, "calib_loss": 5.241555968104686, "size_mb": 407.16554225, "eval_loss": 4.92789736661044, "size_ratio": 0.4120835384040761, "target_bits_per_weight": 3.01270260653653, "zero_frac": 0.3336546342451494}
+{"k": 9, "c": 0.7086448135246061, "alpha": -0.14973953555527586, "beta": 0.33384607134088284, "calib_loss": 5.105780011398002, "size_mb": 409.635764, "eval_loss": 4.83641392324677, "size_ratio": 0.4145835970135487, "target_bits_per_weight": 3.0679298484718407, "zero_frac": 0.3152455536000458}
+{"k": 9, "c": 0.7086448135246061, "alpha": -0.12744208623384523, "beta": 0.036162710494696215, "calib_loss": 5.0565554263654695, "size_mb": 410.39304275, "eval_loss": 4.790793880339591, "size_ratio": 0.4153500226426276, "target_bits_per_weight": 3.0848604810106885, "zero_frac": 0.3096020094204298}
+{"k": 15, "c": 0.9967077159377455, "alpha": -0.3782718117154381, "beta": 0.49952460405377985, "calib_loss": 4.9877202396635205, "size_mb": 430.7837685, "eval_loss": 4.7236004901188675, "size_ratio": 0.4359870401349572, "target_bits_per_weight": 3.540740016615871, "zero_frac": 0.3682428911928729}
+{"k": 15, "c": 0.9879283806312971, "alpha": -0.31181095129179925, "beta": 0.49952460405377985, "calib_loss": 4.878314274613575, "size_mb": 434.663091, "eval_loss": 4.578516433432421, "size_ratio": 0.43991321948102036, "target_bits_per_weight": 3.6274708059681204, "zero_frac": 0.34656019385481057}
+{"k": 15, "c": 0.9441176544626497, "alpha": -0.31181095129179925, "beta": 0.49952460405377985, "calib_loss": 4.786907535377718, "size_mb": 435.026027, "eval_loss": 4.514519192722652, "size_ratio": 0.44028053924552635, "target_bits_per_weight": 3.6355850387405564, "zero_frac": 0.3445316356617016}
+{"k": 16, "c": 0.9831455933961493, "alpha": -0.05136510978640385, "beta": 0.5016825257317319, "calib_loss": 4.741721055374817, "size_mb": 437.49812, "eval_loss": 4.49460765133855, "size_ratio": 0.44278249170710876, "target_bits_per_weight": 3.6908541165865385, "zero_frac": 0.3307162442050137}
+{"k": 14, "c": 0.9363412908166888, "alpha": -0.19001214145592282, "beta": 0.44317916704340315, "calib_loss": 4.641821897624175, "size_mb": 438.477633, "eval_loss": 4.294003610620284, "size_ratio": 0.44377383586831226, "target_bits_per_weight": 3.7127532847198372, "zero_frac": 0.3252376961620736}
+{"k": 14, "c": 0.9227924968243298, "alpha": -0.2390844930592384, "beta": 0.44317916704340315, "calib_loss": 4.604195483851876, "size_mb": 438.824725, "eval_loss": 4.291873242032376, "size_ratio": 0.44412512025922946, "target_bits_per_weight": 3.7205132900140225, "zero_frac": 0.3232976948385274}
+{"k": 14, "c": 0.928647245934158, "alpha": -0.06135265276922558, "beta": 0.4396668375716314, "calib_loss": 4.5724836332707115, "size_mb": 438.9006125, "eval_loss": 4.268726807535568, "size_ratio": 0.4442019243751864, "target_bits_per_weight": 3.722209922035972, "zero_frac": 0.32287353683304}
+{"k": 16, "c": 0.8068322694346098, "alpha": -0.263802800718353, "beta": 0.4893936986055536, "calib_loss": 4.546938540998442, "size_mb": 439.4397655, "eval_loss": 4.30290690521807, "size_ratio": 0.4447475895971338, "target_bits_per_weight": 3.734263873536945, "zero_frac": 0.3198638049674121}
+{"k": 17, "c": 0.9562969114394229, "alpha": -0.1835869171997111, "beta": 0.5179392694416105, "calib_loss": 4.352616982259592, "size_mb": 439.8484265, "eval_loss": 4.127637831463259, "size_ratio": 0.44516118665634746, "target_bits_per_weight": 3.743400389283568, "zero_frac": 0.31758155403556404}
+{"k": 16, "c": 0.8068322694346098, "alpha": -0.15137162978119367, "beta": 0.4893936986055536, "calib_loss": 4.275064030234299, "size_mb": 442.3162615, "eval_loss": 4.038422980732698, "size_ratio": 0.44765882968718385, "target_bits_per_weight": 3.79857427017156, "zero_frac": 0.3037862058087583}
+{"k": 14, "c": 0.8646571167996474, "alpha": -0.40403439074076597, "beta": 0.00018176464704836026, "calib_loss": 4.203122225674716, "size_mb": 442.829962, "eval_loss": 3.9027665288334137, "size_ratio": 0.4481787349781624, "target_bits_per_weight": 3.8100591750372024, "zero_frac": 0.30091122358273237}
+{"k": 17, "c": 0.7544495228789572, "alpha": -0.261230198626901, "beta": 0.3996286334311523, "calib_loss": 4.137223408718612, "size_mb": 446.344598, "eval_loss": 3.817906018925552, "size_ratio": 0.4517358229161026, "target_bits_per_weight": 3.8886365953382556, "zero_frac": 0.2812725025218922}
+{"k": 13, "c": 0.8855547427335958, "alpha": -0.14211050900028555, "beta": 0.15377813730505094, "calib_loss": 4.033187612643573, "size_mb": 447.77612, "eval_loss": 3.7085286622406333, "size_ratio": 0.4531846357203577, "target_bits_per_weight": 3.9206414191277474, "zero_frac": 0.26257803780691963}
+{"k": 15, "c": 0.9886709630191679, "alpha": -0.15136712410082787, "beta": 0.17308216593640563, "calib_loss": 3.9627099060476234, "size_mb": 448.640925, "eval_loss": 3.6526309970769946, "size_ratio": 0.4540598863676994, "target_bits_per_weight": 3.939976037552942, "zero_frac": 0.252189700507419}
+{"k": 14, "c": 0.843129615013685, "alpha": -0.019170805802608215, "beta": 0.0054298341287004614, "calib_loss": 3.9244422949886975, "size_mb": 448.73302, "eval_loss": 3.5963598943059627, "size_ratio": 0.45415309374782203, "target_bits_per_weight": 3.9420350238953756, "zero_frac": 0.2510139353546031}
+{"k": 15, "c": 0.9444596221711048, "alpha": -0.15136712410082787, "beta": 0.17308216593640563, "calib_loss": 3.8812782086235336, "size_mb": 449.421647, "eval_loss": 3.566309238109421, "size_ratio": 0.4548500384087883, "target_bits_per_weight": 3.9574307955228365, "zero_frac": 0.24179385118868763}
+{"k": 15, "c": 0.933022590589129, "alpha": -0.15673358649603808, "beta": 0.07553417027549117, "calib_loss": 3.8057881613514173, "size_mb": 449.611124, "eval_loss": 3.5155069196445616, "size_ratio": 0.4550418040286753, "target_bits_per_weight": 3.961666970724588, "zero_frac": 0.23908048916212368}
+{"k": 16, "c": 0.8767168129238313, "alpha": -0.04875008582256113, "beta": 0.14788637060692328, "calib_loss": 3.7289189462671066, "size_mb": 450.405103, "eval_loss": 3.4448347940006796, "size_ratio": 0.4558453731959739, "target_bits_per_weight": 3.979418118096097, "zero_frac": 0.22587369981702868}
+{"k": 16, "c": 0.8713131475116888, "alpha": -0.014871663746881966, "beta": 0.014143565571543615, "calib_loss": 3.6943030632369562, "size_mb": 450.4676865, "eval_loss": 3.428652572258943, "size_ratio": 0.4559087126180262, "target_bits_per_weight": 3.9808173099280277, "zero_frac": 0.2245533394726205}
+{"k": 15, "c": 0.8537325317344175, "alpha": -0.15136712410082787, "beta": 0.17031046010747697, "calib_loss": 3.6817837563194953, "size_mb": 450.679988, "eval_loss": 3.4362802216500947, "size_ratio": 0.4561235784262796, "target_bits_per_weight": 3.9855637770432693, "zero_frac": 0.2201463356996194}
+{"k": 16, "c": 0.8519182394819422, "alpha": -0.08850293718009855, "beta": 0.017327973436961686, "calib_loss": 3.6267354150438353, "size_mb": 450.699417, "eval_loss": 3.3689469890277524, "size_ratio": 0.4561432421017061, "target_bits_per_weight": 3.9859981550838484, "zero_frac": 0.21976529075985862}
+{"k": 16, "c": 0.8461621734111685, "alpha": -0.014871663746881966, "beta": 0.017327973436961686, "calib_loss": 3.594770832378727, "size_mb": 450.760324, "eval_loss": 3.324377117734967, "size_ratio": 0.456204884773959, "target_bits_per_weight": 3.987359865069826, "zero_frac": 0.21835472749703097}
+{"k": 16, "c": 0.7175768883253386, "alpha": -0.148438989920058, "beta": 0.15560585863526813, "calib_loss": 3.571240258240164, "size_mb": 451.801246, "eval_loss": 3.251966899674193, "size_ratio": 0.45725837967088045, "target_bits_per_weight": 4.010631966503548, "zero_frac": 0.187066893525176}
+{"k": 23, "c": 0.7480923655519806, "alpha": -0.40403439074076597, "beta": 0.044359478427391685, "calib_loss": 3.545378952548418, "size_mb": 490.115423125, "eval_loss": 3.262745578501115, "size_ratio": 0.4960353390212772, "target_bits_per_weight": 4.8672296908312225, "zero_frac": 0.2293083973419972}
+{"k": 23, "c": 0.7465044180670565, "alpha": -0.40403439074076597, "beta": 0.044359478427391685, "calib_loss": 3.544198611381583, "size_mb": 490.144865625, "eval_loss": 3.2618717107838084, "size_ratio": 0.4960651371459231, "target_bits_per_weight": 4.867887942694919, "zero_frac": 0.22917674696925797}
+{"k": 18, "c": 0.8846885570413533, "alpha": -0.12883541050311015, "beta": 0.07381139817566862, "calib_loss": 3.544038058492562, "size_mb": 493.299558375, "eval_loss": 3.2816457589933483, "size_ratio": 0.4992579342176347, "target_bits_per_weight": 4.938418039734111, "zero_frac": 0.20088906480279162}
+{"k": 19, "c": 0.9062949362272779, "alpha": -0.263869253287511, "beta": 0.03967358657570219, "calib_loss": 3.4961287124648703, "size_mb": 493.447452875, "eval_loss": 3.187630303793988, "size_ratio": 0.49940761507847997, "target_bits_per_weight": 4.941724546663054, "zero_frac": 0.20930455805181147}
+{"k": 20, "c": 0.9599720520503026, "alpha": -0.04457814498832835, "beta": 0.04073234254388153, "calib_loss": 3.493262894109314, "size_mb": 493.94274525, "eval_loss": 3.2129097171309873, "size_ratio": 0.499908889899789, "target_bits_per_weight": 4.952797897394761, "zero_frac": 0.19413819085984002}
+{"k": 20, "c": 0.9580826449500265, "alpha": -0.04457814498832835, "beta": 0.058457581333365705, "calib_loss": 3.488032425836617, "size_mb": 493.973809, "eval_loss": 3.2085710676534434, "size_ratio": 0.4999403288568907, "target_bits_per_weight": 4.953492395869105, "zero_frac": 0.19380058316520718}
+{"k": 19, "c": 0.9385540240616466, "alpha": -0.07468605747252174, "beta": 0.07391993447887721, "calib_loss": 3.4624010311659945, "size_mb": 494.30253775, "eval_loss": 3.1790564528658245, "size_ratio": 0.5002730281951662, "target_bits_per_weight": 4.960841850308708, "zero_frac": 0.1900486565334893}
+{"k": 19, "c": 0.90714429138779, "alpha": -0.08965407529740008, "beta": 0.10696150187852627, "calib_loss": 3.387634187849386, "size_mb": 494.785800875, "eval_loss": 3.092316016889854, "size_ratio": 0.5007621284697861, "target_bits_per_weight": 4.971646260691213, "zero_frac": 0.18406808315179288}
+{"k": 26, "c": 0.9999376277564047, "alpha": -0.2869237012215703, "beta": 0.12460929232806696, "calib_loss": 3.3489143021062437, "size_mb": 494.829932875, "eval_loss": 3.0606129442142254, "size_ratio": 0.5008067935232587, "target_bits_per_weight": 4.9726329286456545, "zero_frac": 0.19987687330979567}
+{"k": 26, "c": 0.9999376277564047, "alpha": -0.28075622453868465, "beta": 0.06374752555456756, "calib_loss": 3.346880840998824, "size_mb": 495.0073525, "eval_loss": 3.0599681895266295, "size_ratio": 0.5009863561317455, "target_bits_per_weight": 4.976599534701951, "zero_frac": 0.19754908355601106}
+{"k": 28, "c": 0.9992313227548927, "alpha": -0.28075622453868465, "beta": 0.06374752555456756, "calib_loss": 3.3361000814279387, "size_mb": 495.575807625, "eval_loss": 3.03703745882066, "size_ratio": 0.501561677407803, "target_bits_per_weight": 4.989308599674658, "zero_frac": 0.19114940489604795}
+{"k": 25, "c": 0.9947981431620909, "alpha": -0.07500483887439932, "beta": 0.04015129954706642, "calib_loss": 3.2580532696706226, "size_mb": 496.38590825, "eval_loss": 2.9856606909489933, "size_ratio": 0.5023815629270162, "target_bits_per_weight": 5.007420181442093, "zero_frac": 0.15274323683518629}
+{"k": 25, "c": 0.9947981431620909, "alpha": -0.07500483887439932, "beta": 0.04015129954706642, "calib_loss": 3.2580532696706226, "size_mb": 496.38590825, "eval_loss": 2.985743696971606, "size_ratio": 0.5023815629270162, "target_bits_per_weight": 5.007420181442093, "zero_frac": 0.15274323683518629}
+{"k": 31, "c": 0.9152704053366877, "alpha": -0.03497874506164225, "beta": 0.2774132699376916, "calib_loss": 3.2513507980988057, "size_mb": 496.530060875, "eval_loss": 2.9849014505962472, "size_ratio": 0.5025274567161909, "target_bits_per_weight": 5.010643030522944, "zero_frac": 0.1741740244212168}
+{"k": 25, "c": 0.9389638966580741, "alpha": -0.08768351001059926, "beta": 0.04015129954706642, "calib_loss": 3.2399751098274834, "size_mb": 496.592189125, "eval_loss": 2.972300360745815, "size_ratio": 0.5025903353894533, "target_bits_per_weight": 5.012032044239533, "zero_frac": 0.14451890044159943}
+{"k": 29, "c": 0.8521742488290867, "alpha": -0.24465446243499298, "beta": 0.06447089278303937, "calib_loss": 3.228011354090298, "size_mb": 496.653651625, "eval_loss": 2.9322374032506264, "size_ratio": 0.5026525402713773, "target_bits_per_weight": 5.013406173650162, "zero_frac": 0.1613169408106542}
+{"k": 26, "c": 0.7570251852266852, "alpha": -0.06195828607456655, "beta": 0.050887291941571766, "calib_loss": 3.1912530058173725, "size_mb": 496.662061875, "eval_loss": 2.9292556300307764, "size_ratio": 0.5026610521055559, "target_bits_per_weight": 5.013594203292232, "zero_frac": 0.11731761052058293}
+{"k": 31, "c": 0.938642550962695, "alpha": -0.03606073477192918, "beta": 7.072120717688257e-05, "calib_loss": 3.1467894314554314, "size_mb": 496.663993125, "eval_loss": 2.882548141106599, "size_ratio": 0.5026630066823826, "target_bits_per_weight": 5.013637380634909, "zero_frac": 0.1165505629319411}
+{"k": 32, "c": 0.9385467312496897, "alpha": -0.03676422331378133, "beta": 0.0010611726658967535, "calib_loss": 3.144342685375046, "size_mb": 496.664329125, "eval_loss": 2.8790968953689173, "size_ratio": 0.5026633467407976, "target_bits_per_weight": 5.013644892654139, "zero_frac": 0.1165505629319411}
+{"k": 33, "c": 0.9363412908166888, "alpha": -0.05064067841541453, "beta": 0.023910135334672566, "calib_loss": 3.133234018454454, "size_mb": 517.023963125, "eval_loss": 2.853282522013227, "size_ratio": 0.5232688969378242, "target_bits_per_weight": 5.468829303783375, "zero_frac": 0.10900349879002832}
+{"k": 34, "c": 0.9375195783277659, "alpha": -0.03606073477192918, "beta": 0.0007840159659817658, "calib_loss": 3.1303677227956226, "size_mb": 541.38730825, "eval_loss": 2.850607050712041, "size_ratio": 0.5479265175483259, "target_bits_per_weight": 6.0135254856431, "zero_frac": 0.10916241656292926}
+{"k": 34, "c": 0.9216574521350429, "alpha": -0.03328826927107209, "beta": 0.006887397946895135, "calib_loss": 3.127479262365973, "size_mb": 541.38838825, "eval_loss": 2.84109477679867, "size_ratio": 0.5479276105932309, "target_bits_per_weight": 6.013549631419199, "zero_frac": 0.10733202420748197}
+{"k": 35, "c": 0.9363412908166888, "alpha": -0.05064067841541453, "beta": 0.029047831351889965, "calib_loss": 3.1260085716508583, "size_mb": 541.3909755, "eval_loss": 2.831943679764823, "size_ratio": 0.5479302290936297, "target_bits_per_weight": 6.013607475085136, "zero_frac": 0.10273477742960165}
+{"k": 37, "c": 0.9371816489497125, "alpha": -0.03606073477192918, "beta": 0.011397992375106969, "calib_loss": 3.114722586563722, "size_mb": 541.39363875, "eval_loss": 2.82744191935102, "size_ratio": 0.5479329245120033, "target_bits_per_weight": 6.01366701789828, "zero_frac": 0.09720251900809151}
+{"k": 52, "c": 0.9497361530027035, "alpha": -0.12519492738039772, "beta": 0.1186686767863015, "calib_loss": 3.111104538247266, "size_mb": 541.40488525, "eval_loss": 2.8208823628206523, "size_ratio": 0.5479443068541558, "target_bits_per_weight": 6.01391845814911, "zero_frac": 0.10798815493181949}
+{"k": 52, "c": 0.9798044890735186, "alpha": -0.0054298341287004614, "beta": 0.010406271447634619, "calib_loss": 3.097722774143909, "size_mb": 541.4052985, "eval_loss": 2.807830116965554, "size_ratio": 0.5479447250956438, "target_bits_per_weight": 6.013927697262048, "zero_frac": 0.07353024325527988}
+{"k": 60, "c": 0.8484387436633778, "alpha": -0.019170805802608215, "beta": 0.012113105027423243, "calib_loss": 3.0883798310250947, "size_mb": 541.410752, "eval_loss": 2.8030036038783757, "size_ratio": 0.5479502444663752, "target_bits_per_weight": 6.014049622252747, "zero_frac": 0.055051589798141315}
+{"k": 64, "c": 0.920913534093325, "alpha": -0.03918535999699303, "beta": 0.10648601239926252, "calib_loss": 3.0731718747613486, "size_mb": 541.412096, "eval_loss": 2.7823108065279816, "size_ratio": 0.5479516047000348, "target_bits_per_weight": 6.014079670329671, "zero_frac": 0.07465279268257784}
+{"k": 66, "c": 0.9551366786614724, "alpha": -0.04344656394151025, "beta": 0.038380537125904224, "calib_loss": 3.0713572572053702, "size_mb": 586.14004675, "eval_loss": 2.790354246734291, "size_ratio": 0.5932198071829115, "target_bits_per_weight": 7.014071414933537, "zero_frac": 0.056147120549128605}
+{"k": 66, "c": 0.9534949091745712, "alpha": -0.04344656394151025, "beta": 0.04073234254388153, "calib_loss": 3.0683208029291147, "size_mb": 586.140068625, "eval_loss": 2.785669186947283, "size_ratio": 0.5932198293221311, "target_bits_per_weight": 7.014071903997288, "zero_frac": 0.056060841319325205}
+{"k": 119, "c": 0.9491540242611178, "alpha": -0.08645378114978364, "beta": 0.029119648420256265, "calib_loss": 3.0615139510974156, "size_mb": 586.158896, "eval_loss": 2.779403380751027, "size_ratio": 0.5932388841057604, "target_bits_per_weight": 7.014492831387362, "zero_frac": 0.052672325385795846}
+{"k": 122, "c": 0.9379563118197983, "alpha": -0.06534622070277449, "beta": 0.04015129954706642, "calib_loss": 3.0574736982030486, "size_mb": 586.159904, "eval_loss": 2.768703084071244, "size_ratio": 0.5932399042810051, "target_bits_per_weight": 7.014515367445055, "zero_frac": 0.04698561783675309}
+{"k": 227, "c": 0.9593182402713516, "alpha": -0.059053294994317995, "beta": 0.05344642565853285, "calib_loss": 3.055521706798326, "size_mb": 630.923504, "eval_loss": 2.7692243812836974, "size_ratio": 0.6385441866074762, "target_bits_per_weight": 8.015304129464285, "zero_frac": 0.04822336553217291}
+Done. Pareto set (88 points) written to compress_runs/local_centroid\pareto.json

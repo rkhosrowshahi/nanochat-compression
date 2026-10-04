@@ -1,0 +1,30 @@
+{
+  "args": {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "dtype": "bfloat16",
+    "include_lm_head": false,
+    "offload_originals": "auto",
+    "dataset": "Salesforce/wikitext",
+    "dataset_config": "wikitext-2-raw-v1",
+    "text_field": "text",
+    "calib_split": "train",
+    "eval_split": "test",
+    "seq_len": 1024,
+    "calib_seqs": 8,
+    "eval_seqs": 32,
+    "eval_batch_size": 1,
+    "k_min": 3,
+    "k_max": 256,
+    "c_min": 0.7,
+    "c_max": 1.0,
+    "alpha_min": -1.0,
+    "beta_max": 1.0,
+    "size_mode": "fixed",
+    "pop_size": 100,
+    "n_gen": 50,
+    "seed": 42,
+    "out_dir": "compress_runs/local_50"
+  },
+  "baseline_calib_loss": 3.055829269095949,
+  "baseline_size_mb": 988.065536
+}

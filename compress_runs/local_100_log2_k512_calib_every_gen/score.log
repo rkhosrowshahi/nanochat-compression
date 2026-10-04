@@ -1,0 +1,40 @@
+Generation 100: scoring 33 of 95 front solutions (delta_loss <= 1.0) with 2048-token windows
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|##########| 290/290 [00:00<00:00, 7833.00it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (299078 > 131072). Running this sequence through the model will result in indexing errors
+Test set wikitext2: 146 windows, 299008 tokens
+Test set c4: 256 windows, 524288 tokens
+uncompressed: wikitext2 ppl 14.255, c4 ppl 21.456
+k=17 c=0.998 438.9 MB | wikitext2 ppl 45.150, c4 ppl 58.918 | 203s
+k=17 c=1.000 439.7 MB | wikitext2 ppl 43.581, c4 ppl 56.858 | 203s
+k=18 c=1.000 441.4 MB | wikitext2 ppl 40.940, c4 ppl 53.818 | 202s
+k=17 c=0.966 442.8 MB | wikitext2 ppl 37.834, c4 ppl 50.687 | 202s
+k=17 c=1.000 444.2 MB | wikitext2 ppl 36.484, c4 ppl 49.740 | 202s
+k=17 c=0.942 446.3 MB | wikitext2 ppl 33.044, c4 ppl 46.470 | 202s
+k=17 c=0.966 447.7 MB | wikitext2 ppl 32.444, c4 ppl 45.214 | 202s
+k=17 c=0.863 449.4 MB | wikitext2 ppl 30.279, c4 ppl 40.593 | 202s
+k=16 c=0.848 450.7 MB | wikitext2 ppl 26.251, c4 ppl 38.174 | 202s
+k=17 c=0.853 453.8 MB | wikitext2 ppl 26.849, c4 ppl 36.846 | 202s
+k=17 c=0.850 456.1 MB | wikitext2 ppl 26.387, c4 ppl 35.811 | 202s
+k=17 c=0.861 458.3 MB | wikitext2 ppl 25.520, c4 ppl 34.540 | 202s
+k=17 c=0.848 458.4 MB | wikitext2 ppl 24.520, c4 ppl 33.522 | 202s
+k=17 c=0.848 460.3 MB | wikitext2 ppl 24.206, c4 ppl 32.736 | 202s
+k=17 c=0.848 461.8 MB | wikitext2 ppl 24.281, c4 ppl 32.509 | 202s
+k=33 c=0.986 483.1 MB | wikitext2 ppl 22.341, c4 ppl 32.232 | 202s
+k=33 c=0.966 483.8 MB | wikitext2 ppl 22.072, c4 ppl 32.118 | 202s
+k=33 c=0.966 485.4 MB | wikitext2 ppl 21.641, c4 ppl 31.257 | 202s
+k=33 c=0.966 486.6 MB | wikitext2 ppl 21.127, c4 ppl 30.815 | 202s
+k=31 c=0.913 488.8 MB | wikitext2 ppl 20.168, c4 ppl 29.527 | 203s
+k=31 c=0.913 490.6 MB | wikitext2 ppl 19.526, c4 ppl 28.879 | 202s
+k=31 c=0.913 491.6 MB | wikitext2 ppl 19.235, c4 ppl 28.420 | 202s
+k=31 c=0.913 493.7 MB | wikitext2 ppl 18.757, c4 ppl 27.767 | 202s
+k=31 c=0.913 495.5 MB | wikitext2 ppl 18.206, c4 ppl 27.149 | 202s
+k=25 c=0.996 496.4 MB | wikitext2 ppl 17.605, c4 ppl 26.023 | 202s
+k=27 c=0.866 496.7 MB | wikitext2 ppl 17.235, c4 ppl 24.754 | 202s
+k=32 c=0.865 496.7 MB | wikitext2 ppl 15.717, c4 ppl 23.674 | 202s
+k=35 c=0.985 541.4 MB | wikitext2 ppl 15.403, c4 ppl 23.407 | 202s
+k=64 c=0.994 541.4 MB | wikitext2 ppl 15.215, c4 ppl 22.934 | 202s
+k=58 c=0.973 541.4 MB | wikitext2 ppl 14.691, c4 ppl 22.151 | 202s
+k=70 c=0.991 586.1 MB | wikitext2 ppl 14.456, c4 ppl 21.969 | 202s
+k=110 c=0.997 586.1 MB | wikitext2 ppl 14.454, c4 ppl 21.609 | 202s
+k=142 c=0.999 630.9 MB | wikitext2 ppl 14.366, c4 ppl 21.584 | 202s
+Done. 33 solutions in compress_runs/local_100_log2_k512\test_scores.json

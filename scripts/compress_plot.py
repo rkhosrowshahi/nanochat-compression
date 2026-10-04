@@ -58,6 +58,8 @@ parser.add_argument("--hv", action="store_true", help="plot the hypervolume per 
 parser.add_argument("--last-gen", action="store_true", help="save only the latest generation as a still image (PNG + PDF) instead of the GIF")
 parser.add_argument("--all", action="store_true", help="make every plot (all combinations of the options above)")
 args = parser.parse_args()
+if not os.path.isdir(args.run_dir):
+    sys.exit(f"no such run directory: {args.run_dir!r} (on Linux, write paths with / not \\)")
 for name in ("front.csv", "generations.csv"):
     if not os.path.exists(os.path.join(args.run_dir, name)):
         sys.exit(f"{args.run_dir} has no {name}: it was made by an early version of compress_search "
@@ -127,7 +129,7 @@ if args.with_pop_every_gen:
 bins = args.x == "bins"
 if not args.with_pop_every_gen:  # the population view shows the current generation only
     ax.plot(first[X], first["delta_loss"], "o" if bins else "--", color="gray", mfc="none", label="Initial Pareto front")
-line, = ax.plot([], [], "o" if bins else "o-", label="Pareto front")
+line, = ax.plot([], [], "o" if bins else "o-", color="#2a78d6", label="Pareto front")  # slot 1 of compress_compare
 if args.y == "log":
     ax.set_yscale("symlog", linthresh=0.01)  # linear near 0, log above: shows both +0.001 and +15
 if args.x == "size":
@@ -146,7 +148,7 @@ if args.y == "log":
     ax.set_ylim(-0.005, y_max * 1.5)
 else:
     ax.set_ylim(-0.02 * y_max, y_max * 1.05)
-ax.set_ylabel("Calibration loss")
+ax.set_ylabel(r"Calibration loss ($\Delta$)")
 ax.grid(True, alpha=0.3)
 legend = ax.legend(loc="upper right")
 front_label = next(t for t in legend.get_texts() if t.get_text() == "Pareto front")  # gets the front size per frame
