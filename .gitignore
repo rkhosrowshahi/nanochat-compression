@@ -13,5 +13,5 @@ CLAUDE.md
 wandb/
 
 # Compression search outputs
-compress_runs/
 .venv-eval/
+.rbs/
