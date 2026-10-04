@@ -1,0 +1,33 @@
+# nanochat d34 base model (karpathy/nanochat-d34, 2.22B parameters): the 204 transformer matrices
+# compressed (1.93B weights, 87%); the token embedding and lm_head stay 16-bit. Built with
+# nanochat/gpt_legacy.py (the checkpoint predates the current architecture). c and the pruning
+# bounds are narrowed for d34, which a wide search showed breaks at c < 0.9 or wide pruning.
+# One L4 24 GB: ~10 min warm-up, ~1 h per generation, ~2 h test scoring.
+#   python -m scripts.compress_run configs/compress/d34.yaml --smoke    # first: download + quick check
+#   python -m scripts.compress_run configs/compress/d34.yaml
+model: nanochat:base:d34
+download: karpathy/nanochat-d34          # ~8.6 GB, fetched once
+nanochat_base_dir: ~/.cache/nanochat-d34 # its own dir: the d34 tokenizer never replaces another one
+out_dir: compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0
+eval_batch_size: 2                       # windows per forward pass: 2 fits a 24 GB L4, 8 an 80 GB H100
+
+search:
+  pop_size: 100
+  n_gen: 10
+  seed: 42
+  k_space: log2
+  auto_k_bounds: true
+  c_min: 0.9
+  alpha_min: -0.3
+  beta_max: 0.3
+  max_delta_loss: 1.0
+
+calibration:
+  seqs: 128                # the GPTQ calibration size: 128 x 2048 tokens of C4 train
+  seq_len: 2048
+  every: 0
+
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256

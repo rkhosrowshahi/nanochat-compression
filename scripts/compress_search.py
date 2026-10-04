@@ -454,7 +454,8 @@ print(f"Baseline: calib loss {baseline_loss:.4f} on the first batch, size {compr
 if args.auto_k_bounds:
     # run once and saved: a resumed run must keep the same bounds, since the K gene is scaled to them
     warm_settings = {k: getattr(args, k) for k in ("warmup_min_delta", "warmup_max_delta", "warmup_log_k_range",
-                                                  "warmup_log_k_resolution", "calib_seqs", "seq_len", "data_seed")}
+                                                  "warmup_log_k_resolution", "calib_seqs", "seq_len", "data_seed",
+                                                  "include")}  # compressing more matrices moves the error curve
     warm = json.load(open(out("warmup.json"))) if os.path.exists(out("warmup.json")) else None
     if warm is None or warm["settings"] != warm_settings:
         warm = {"settings": warm_settings, "baseline_loss": baseline_loss, **find_k_bounds(calib_batch(0), baseline_loss)}
@@ -503,7 +504,9 @@ if os.path.exists(ckpt_path):
     with open(ckpt_path, "rb") as f:
         algorithm = dill.load(f)
     algorithm.termination = get_termination("n_gen", args.n_gen)
-    done_gen = algorithm.n_gen - 1
+    done_gen = algorithm.n_gen - 1  # pymoo's counter is one ahead after tell()
+    # a new criterion starts at 0% done, so without this a finished run would get one more generation
+    algorithm.termination.perc = done_gen / args.n_gen
     print(f"Resumed NSGA-II from {ckpt_path} after generation {done_gen}", flush=True)
 else:
     algorithm = NSGA2(pop_size=args.pop_size, sampling=SymmetricPruneSampling(),
@@ -625,6 +628,11 @@ while algorithm.has_next():
 # -----------------------------------------------------------------------------
 # score the final Pareto set on the test sets (never seen by the search)
 
+if args.wikitext_seqs == 0 and args.c4_test_seqs == 0:
+    # no test windows asked for: leave scoring to scripts.compress_score (resumable), and never
+    # overwrite a pareto.json with test scores that an earlier run of this directory wrote
+    print(f"Search done; test scoring skipped (python -m scripts.compress_score --run-dir {args.out_dir})", flush=True)
+    raise SystemExit
 opt = algorithm.opt
 last_gen = algorithm.n_gen - 1
 order = [i for i in np.argsort(opt.get("F")[:, 1]) if opt.get("F")[i, 0] <= args.test_max_delta_loss]

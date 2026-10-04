@@ -1,0 +1,30 @@
+# Qwen2.5-0.5B-Instruct: everything compressed (494.0M weights, 100%): the linear layers and the token
+# embedding, which is the same matrix as lm_head. K range found by the warm-up (it gives [16, 256]).
+# Reproduces compress_runs/local_50_log2_autok_calib_fixed_8x2048_maxdelta1_emb (RTX 3060: ~6.4 h search).
+#   python -m scripts.compress_run configs/compress/qwen_emb.yaml
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/local_50_log2_autok_calib_fixed_8x2048_maxdelta1_emb
+include: [embeddings]
+eval_batch_size: 1
+
+search:
+  pop_size: 100
+  n_gen: 50
+  seed: 42
+  k_space: log2
+  auto_k_bounds: true      # K_min/K_max from the warm-up, not k_min/k_max
+  c_min: 0.7
+  alpha_min: -1.0
+  beta_max: 1.0
+  max_delta_loss: 1.0
+
+calibration:
+  seqs: 8
+  seq_len: 2048
+  every: 0
+  from: compress_runs/local_50_log2_k256_calib_fixed_8x2048_maxdelta1   # the same batch, no download
+
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256

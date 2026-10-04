@@ -1,0 +1,29 @@
+# Qwen2.5-0.5B-Instruct: the 168 linear layers compressed (357.8M weights, 72%); the token embedding,
+# tied to lm_head, stays 16-bit. Reproduces compress_runs/local_50_log2_k256_calib_fixed_8x2048_maxdelta1
+# (RTX 3060 8 GB: ~6.2 h search + ~5.6 h test scoring).
+#   python -m scripts.compress_run configs/compress/qwen.yaml
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/local_50_log2_k256_calib_fixed_8x2048_maxdelta1
+eval_batch_size: 1
+
+search:
+  pop_size: 100
+  n_gen: 50
+  seed: 42
+  k_space: log2
+  k_min: 3
+  k_max: 256
+  c_min: 0.7
+  alpha_min: -1.0
+  beta_max: 1.0
+  max_delta_loss: 1.0      # constraint: calibration delta_loss above this is infeasible
+
+calibration:
+  seqs: 8                  # 8 random C4-train windows of 2048 tokens
+  seq_len: 2048
+  every: 0                 # one fixed batch for the whole run
+
+test:                      # GPTQ protocol: WikiText-2 test (all) and C4 validation (256 windows)
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256
