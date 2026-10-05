@@ -228,3 +228,65 @@ def test_huffman_size_between_entropy_and_fixed():
     stats = comp.apply(Candidate(17, 0.9, -0.2, 0.2), huffman=True)
     comp.restore()
     assert 0 < stats["huffman_bits_per_weight"] < stats["target_bits_per_weight"] + 1
+
+
+def test_dp_merge_is_optimal():
+    """The ECSQ dynamic program finds the best contiguous grouping (checked by brute force)."""
+    import itertools
+    import numpy as np
+    from nanochat.compress import dp_merge
+    rng = np.random.default_rng(0)
+    for _ in range(30):
+        K = int(rng.integers(2, 8))
+        m = rng.integers(1, 100, K).astype(float)
+        c = np.sort(rng.normal(0, 2, K))
+        lam = 10 ** rng.uniform(-2, 1)
+
+        def cost(groups):
+            total = 0.0
+            for g in groups:
+                mu = (m[g] * c[g]).sum() / m[g].sum()
+                total += (m[g] * (c[g] - mu) ** 2).sum() - lam * m[g].sum() * np.log2(m[g].sum() / m.sum())
+            return total
+
+        best = math.inf
+        for cuts in itertools.product([0, 1], repeat=K - 1):
+            bounds = [0] + [i + 1 for i, cut in enumerate(cuts) if cut] + [K]
+            best = min(best, cost([list(range(a, b)) for a, b in zip(bounds, bounds[1:])]))
+        group_of, _ = dp_merge(m, c, lam)
+        assert cost([list(np.flatnonzero(group_of == g)) for g in range(group_of.max() + 1)]) == pytest.approx(best)
+
+
+def test_ecsq_merges_levels_keeps_zeros_and_restores():
+    torch.manual_seed(0)
+    model = TinyLM()
+    before = {n: p.detach().clone() for n, p in model.named_parameters()}
+    comp = GlobalCompressor(model, method="ubq-ecsq")
+    full = comp.apply(Candidate(17, 0.9, -0.2, 0.2, rho=1.0))
+    w_full = model.fc1.weight.detach().clone()
+    comp.restore()
+    merged = comp.apply(Candidate(17, 0.9, -0.2, 0.2, rho=0.3))
+    w_merged = model.fc1.weight.detach().clone()
+    comp.restore()
+    assert full["k_merged"] == full["k_realized"]                 # rho = 1: no merging
+    assert merged["k_merged"] < full["k_merged"]
+    assert merged["size_mb"] <= full["size_mb"]
+    assert merged["sparsity_pct"] == full["sparsity_pct"]         # the zero level is never merged
+    w = before["fc1.weight"]
+    q, scale, _ = compress_weight(w, w.std(dim=1, keepdim=True), Candidate(17, 0.9, -0.2, 0.2))
+    assert (w_full[q == 0] == 0).all() and (w_merged[q == 0] == 0).all()
+    # every weight takes one of the K' values of the global codebook (in row-scale units)
+    assert (w_merged / scale).round(decimals=4).unique().numel() <= merged["k_merged"]
+    for n, p in model.named_parameters():
+        assert torch.equal(p, before[n]), n
+
+
+def test_ecsq_canonical_rho_identifies_duplicates():
+    torch.manual_seed(0)
+    comp = GlobalCompressor(TinyLM(), method="ubq-ecsq")
+    rhos = [comp.canonical_rho(Candidate(33, 0.9, -0.1, 0.1, rho=r)) for r in (0.30, 0.31, 0.32, 1.0)]
+    assert rhos[-1] == 1.0
+    assert len(set(rhos[:3])) < 3            # nearby rhos reach the same merged size
+    k_realized = comp.merge_plan(Candidate(33, 0.9, -0.1, 0.1))[1]
+    assert all(round(r * k_realized) == r * k_realized for r in rhos)  # snapped to a reachable size
+    assert GlobalCompressor(TinyLM()).canonical_rho(Candidate(33, 0.9, -0.1, 0.1, rho=0.3)) == 1.0  # plain ubq

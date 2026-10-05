@@ -39,11 +39,28 @@ v = ceil(log2(number of used nonzero levels)):
 Optionally (apply(huffman=True), for reporting only) the size with the codes Huffman
 coded: sum(count_i * codelength_i) + k_used * (8-bit code length + table entry) + 16*R.
 Every parameter that is not compressed counts 16 bits.
+
+UBQ-ECSQ (method="ubq-ecsq"; ported from moea-compression, utils/compression/ecsq.py and
+moea/ecsq.py): a fifth gene rho merges the grid's levels after steps 1-3:
+    4) each non-empty level gets its global centroid: the mean of w/scale over all weights of all
+       compressed matrices on that level (one codebook for the whole model, in row-scale units)
+    5) entropy-constrained merge: contiguous levels are grouped to minimize J = D + lambda*R
+       (D = added squared error, R = entropy of level occupancy), exactly by dynamic programming;
+       sweeping lambda gives one partition per reachable size (the "ladder"), and the size nearest
+       rho * (non-empty levels) is used (rho = 1: no merge). The zero level (pruned weights and
+       weights rounded to 0) is never merged and stays exactly 0, so the negative and positive
+       levels are merged separately with the same lambda (the same as the full DP with zero
+       forced to stay its own group).
+    Storage: per matrix, codes over its used merged levels and a lookup table of k_used entries
+    of ceil(log2 K') bits pointing into the global codebook, which costs K' fp16 values once.
 """
 
 import heapq
 import math
+from collections import OrderedDict
 from dataclasses import dataclass
+
+import numpy as np
 
 import torch
 import torch.nn as nn
@@ -55,6 +72,94 @@ class Candidate:
     c: float
     alpha: float
     beta: float
+    rho: float = 1.0  # UBQ-ECSQ only: fraction of the non-empty levels kept by the merge (1 = no merge)
+
+
+METHODS = ("ubq", "ubq-ecsq")
+
+
+def dp_merge(counts, centers, lam, n_total=None):
+    """Optimal contiguous grouping of bins under J = D + lam*R (moea-compression's dp_merge;
+    n_total = the population the rate is measured against, default the bins' own).
+    D = sum_g m_g (c_g - c_merged)^2 (between-group squared error; the within-bin error does not
+    change with the grouping), R = sum over merged bins of -m log2(m / N).
+    Returns (group_of_bin, merged_centers)."""
+    m = np.asarray(counts, dtype=np.float64)
+    c = np.asarray(centers, dtype=np.float64)
+    K = len(m)
+    if K == 0:
+        return np.zeros(0, dtype=np.int64), np.zeros(0)
+    N = m.sum() if n_total is None else float(n_total)
+    M = np.concatenate([[0.0], np.cumsum(m)])
+    MC = np.concatenate([[0.0], np.cumsum(m * c)])
+    MC2 = np.concatenate([[0.0], np.cumsum(m * c * c)])
+    dp = np.full(K + 1, np.inf)
+    dp[0] = 0.0
+    parent = np.zeros(K + 1, dtype=np.int64)
+    for j in range(1, K + 1):
+        i = np.arange(j)
+        mm = M[j] - M[i]
+        ss = MC[j] - MC[i]
+        dD = np.maximum((MC2[j] - MC2[i]) - ss * ss / mm, 0.0)  # clip fp noise
+        dR = -mm * np.log2(mm / N)
+        tot = dp[i] + dD + lam * dR
+        k = int(np.argmin(tot))
+        dp[j], parent[j] = tot[k], k
+    groups, j = [], K
+    while j > 0:
+        groups.append((parent[j], j))
+        j = parent[j]
+    groups.reverse()
+    group_of = np.empty(K, dtype=np.int64)
+    merged = np.empty(len(groups), dtype=np.float64)
+    for g, (a, b) in enumerate(groups):
+        group_of[a:b] = g
+        merged[g] = (MC[b] - MC[a]) / (M[b] - M[a])
+    return group_of, merged
+
+
+def ecsq_ladder(counts, sums, k, n_lambdas=160):
+    """{K': plan} for every merged size reachable by the Lagrangian, from the global per-level counts
+    and sums of w/scale (index 0 = level -(k//2)). A plan is (level -> code, code -> value) as numpy
+    arrays: codes are signed (0 = the zero level, -1, -2, ... below it, 1, 2, ... above it), values
+    in row-scale units. The lambda grid is scaled to the data: from 0 (no merge) up to where each
+    side collapses into one group."""
+    counts = np.asarray(counts, dtype=np.float64)
+    sums = np.asarray(sums, dtype=np.float64)
+    zero = k // 2
+    neg = np.flatnonzero(counts[:zero] > 0)
+    pos = zero + 1 + np.flatnonzero(counts[zero + 1:] > 0)
+    centers = np.divide(sums, counts, out=np.zeros_like(sums), where=counts > 0)
+    n_total = counts.sum() - counts[zero]
+    has_zero = counts[zero] > 0
+    # lambda at which merging a whole side into one group beats keeping its levels apart
+    d_all = r_gain = 0.0
+    for side in (neg, pos):
+        if len(side):
+            m, c = counts[side], centers[side]
+            d_all += (m * c * c).sum() - (m * c).sum() ** 2 / m.sum()
+            r_gain += (-m * np.log2(m / n_total)).sum() + m.sum() * np.log2(m.sum() / n_total)
+    lam_hi = 10.0 * max(d_all, 1e-30) / max(r_gain, 1e-12)
+    ladder = {}
+    for lam in np.concatenate([[0.0], np.geomspace(lam_hi * 1e-10, lam_hi, n_lambdas)]):
+        g_neg, v_neg = dp_merge(counts[neg], centers[neg], lam, n_total)
+        g_pos, v_pos = dp_merge(counts[pos], centers[pos], lam, n_total)
+        size = len(v_neg) + len(v_pos) + int(has_zero)
+        if size in ladder:
+            continue
+        code = np.zeros(k, dtype=np.int64)
+        code[neg] = g_neg - len(v_neg)  # most negative group -> -len(v_neg), the one next to zero -> -1
+        code[pos] = g_pos + 1
+        value = np.concatenate([v_neg, [0.0], v_pos])  # indexed by code + len(v_neg)
+        ladder[size] = (code, value, len(v_neg))
+    return dict(sorted(ladder.items()))
+
+
+def nearest_rung(ladder, k_target):
+    """Rung of the ladder closest to k_target (ties -> the larger, i.e. less merged)."""
+    sizes = np.fromiter(ladder.keys(), dtype=np.int64)
+    best = int(sizes[np.argmin(np.abs(sizes - int(k_target)) - 1e-9 * sizes)])
+    return best, ladder[best]
 
 
 INCLUDE_GROUPS = ("lm_head", "embeddings")
@@ -204,8 +309,13 @@ class GlobalCompressor:
     """
 
     def __init__(self, model, include=(), size_mode="fixed", offload="auto", reconstruction="grid",
-                 formats=("dense", "bitmap"), prune=True, exclude=()):
+                 formats=("dense", "bitmap"), prune=True, exclude=(), method="ubq"):
         assert reconstruction in ("grid", "centroid")
+        assert method in METHODS, f"method must be one of {METHODS}"
+        self.method = method
+        self._level_stats = {}            # UBQ-ECSQ: (k, c, alpha, beta) -> global per-level counts and sums
+        self._ladders = OrderedDict()     # and their merge ladders (a few recent ones; each is O(k^2))
+        self._rungs = {}                  # and the merged sizes each ladder reaches (small, all kept)
         assert formats and set(formats) <= set(FORMATS), f"formats must be a subset of {FORMATS}"
         self.model = model
         self.size_mode = size_mode
@@ -238,14 +348,59 @@ class GlobalCompressor:
         self.baseline_bits = 16 * (self.n_target_params + self.rest_params)
 
     @torch.no_grad()
+    def level_stats(self, cand):
+        """UBQ-ECSQ: per grid level, over all compressed weights: (counts, sums of w/scale). Cached."""
+        key = (cand.k, round(cand.c, 9), round(cand.alpha, 9), round(cand.beta, 9))
+        if key not in self._level_stats:
+            counts = sums = 0
+            for (_, m), orig, row_std in zip(self.targets, self.originals, self.row_stds):
+                w0 = orig.to(m.weight.device, non_blocking=True)
+                q, scale, _ = compress_weight(w0, row_std, cand, self.prune)
+                idx = (q + cand.k // 2).long().flatten()
+                counts = counts + torch.bincount(idx, minlength=cand.k).double()
+                sums = sums + torch.bincount(idx, weights=(w0.float() / scale).flatten().double(), minlength=cand.k)
+            self._level_stats[key] = (counts.cpu().numpy(), sums.cpu().numpy())
+        return self._level_stats[key]
+
+    def merge_plan(self, cand):
+        """UBQ-ECSQ: (K' reached, non-empty levels, (level -> code, code -> value, code offset)) for cand."""
+        key = (cand.k, round(cand.c, 9), round(cand.alpha, 9), round(cand.beta, 9))
+        counts, sums = self.level_stats(cand)
+        if key not in self._ladders:
+            self._ladders[key] = ecsq_ladder(counts, sums, cand.k)
+            self._rungs[key] = {size: None for size in self._ladders[key]}
+            if len(self._ladders) > 32:
+                self._ladders.popitem(last=False)
+        self._ladders.move_to_end(key)
+        k_realized = int((counts > 0).sum())
+        k_merged, plan = nearest_rung(self._ladders[key], max(1, round(cand.rho * k_realized)))
+        return k_merged, k_realized, plan
+
+    def canonical_rho(self, cand):
+        """The rho of the merge actually reached (K' / non-empty levels): every rho that leads to the
+        same K' gives the same model, so this identifies duplicates (moea-compression's ECSQRepair)."""
+        if self.method != "ubq-ecsq":
+            return 1.0
+        key = (cand.k, round(cand.c, 9), round(cand.alpha, 9), round(cand.beta, 9))
+        if key not in self._rungs:  # NSGA-II's duplicate check calls this pairwise: keep it a lookup
+            self.merge_plan(cand)
+        k_realized = int((self.level_stats(cand)[0] > 0).sum())
+        k_merged, _ = nearest_rung(self._rungs[key], max(1, round(cand.rho * k_realized)))
+        return k_merged / k_realized
+
+    @torch.no_grad()
     def apply(self, cand, huffman=False):
         """Write the compressed weights for cand into the model. Returns size stats."""
+        if self.method == "ubq-ecsq":
+            return self._apply_merged(cand, huffman)
         bits, zeros, n_pruned, huff_bits = 0.0, 0, 0, 0
         n_format = {f: 0 for f in FORMATS}
         k_used, row_levels, n_rows = [], 0, 0
+        levels_used = torch.zeros(cand.k, dtype=torch.bool)
         for (_, m), orig, row_std in zip(self.targets, self.originals, self.row_stds):
             w0 = orig.to(m.weight.device, non_blocking=True)
             q, scale, pruned = compress_weight(w0, row_std, cand, self.prune)
+            levels_used |= (level_counts(q, cand.k) > 0).cpu()
             matrix_bits, fmt, matrix_k_used = encoded_bits(q, cand, self.size_mode, self.formats, self.reconstruction)
             bits += matrix_bits
             k_used.append(matrix_k_used)
@@ -282,6 +437,71 @@ class GlobalCompressor:
             "k_used_min": min(k_used),
             "k_used_max": max(k_used),
             "k_used_row_mean": row_levels / n_rows,     # levels used within a single row, on average
+            "k_realized": int(levels_used.sum()),       # levels used anywhere in the model
+            "k_merged": int(levels_used.sum()),         # no merging in plain UBQ
+        }
+        if huffman:
+            stats["huffman_size_mb"] = (huff_bits + 16 * self.rest_params) / 8 / 1e6
+            stats["huffman_bits_per_weight"] = huff_bits / n
+        return stats
+
+    @torch.no_grad()
+    def _apply_merged(self, cand, huffman=False):
+        """UBQ-ECSQ: prune, clip, quantize to the K-level grid, then replace each level by its merged
+        group's global centroid (see the module docstring)."""
+        k_merged, k_realized, (level_code, code_value, offset) = self.merge_plan(cand)
+        device = self.targets[0][1].weight.device
+        level_code_t = torch.as_tensor(level_code, device=device)
+        level_value_t = torch.as_tensor(code_value[level_code + offset], device=device, dtype=torch.float32)
+        k_codes = 2 * max(offset, len(code_value) - offset - 1, 1) + 1  # codes fit in [-(k_codes//2), k_codes//2]
+        code_cand = Candidate(k_codes, cand.c, cand.alpha, cand.beta)
+        table_bits = ceil_log2(k_merged)  # a lookup-table entry points into the global codebook
+        bits, zeros, n_pruned, huff_bits = 16.0 * k_merged, 0, 0, 16 * k_merged  # the codebook, once
+        n_format = {f: 0 for f in FORMATS}
+        k_used, row_levels, n_rows = [], 0, 0
+        for (_, m), orig, row_std in zip(self.targets, self.originals, self.row_stds):
+            w0 = orig.to(m.weight.device, non_blocking=True)
+            q, scale, pruned = compress_weight(w0, row_std, cand, self.prune)
+            idx = (q + cand.k // 2).long()
+            codes = level_code_t[idx].float()
+            counts = level_counts(codes, k_codes)
+            matrix_k_used = int((counts > 0).sum())
+            side_bits = 16 * q.shape[0] + matrix_k_used * table_bits
+            if self.size_mode == "fixed":
+                fbits = format_bits(codes, code_cand, counts)
+                fmt = min(self.formats, key=fbits.get)
+                bits += fbits[fmt] + side_bits
+                n_format[fmt] += 1
+            else:
+                p = counts[counts > 0].double() / q.numel()
+                bits += float(-(p * torch.log2(p)).sum()) * q.numel() + side_bits
+            k_used.append(matrix_k_used)
+            used = torch.zeros(q.shape[0], k_codes, dtype=torch.bool, device=q.device)
+            row_levels += int(used.scatter_(1, (codes + k_codes // 2).long(), True).sum())
+            n_rows += q.shape[0]
+            zeros += q.numel() - int(torch.count_nonzero(codes))
+            n_pruned += int(pruned.sum())
+            if huffman:
+                huff_bits += huffman_bits(counts.tolist()) + side_bits + 8 * matrix_k_used
+            m.weight.copy_((level_value_t[idx] * scale).to(m.weight.dtype))
+        total_bits = bits + 16 * self.rest_params
+        n = self.n_target_params
+        stats = {
+            "size_mb": total_bits / 8 / 1e6,
+            "size_ratio": total_bits / self.baseline_bits,
+            "target_bits_per_weight": bits / n,
+            "n_pruned": n_pruned,
+            "n_rounded_zero": zeros - n_pruned,
+            "n_nonzero": n - zeros,
+            "pruned_pct": 100 * n_pruned / n,
+            "sparsity_pct": 100 * zeros / n,
+            **{f"n_{f}_matrices": c for f, c in n_format.items()},
+            "k_used_mean": sum(k_used) / len(k_used),
+            "k_used_min": min(k_used),
+            "k_used_max": max(k_used),
+            "k_used_row_mean": row_levels / n_rows,
+            "k_realized": k_realized,  # non-empty grid levels before merging
+            "k_merged": k_merged,      # after merging (the global codebook size)
         }
         if huffman:
             stats["huffman_size_mb"] = (huff_bits + 16 * self.rest_params) / 8 / 1e6

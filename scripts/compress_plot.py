@@ -29,7 +29,9 @@ Works on a finished or running run.
 
     python -m scripts.compress_plot --run-dir compress_runs/local_100 --all
     -> every plot above: the GIF and the still image for each x-axis (bins only if the run logs
-       the used bins), each y-axis scale and each population view, plus the hypervolume
+       the used bins), each y-axis scale and each population view, plus the hypervolume, and,
+       once the front is scored, its WikiText-2 test and C4 validation perplexities
+       (test_front_wikitext2.png/.pdf, test_front_c4.png/.pdf, each also _ylinear)
 """
 
 import argparse
@@ -74,6 +76,16 @@ if args.all:  # one process per plot, so no matplotlib state carries over betwee
     for flags in runs:
         subprocess.run([sys.executable, "-m", "scripts.compress_plot", "--run-dir", args.run_dir, "--fps", str(args.fps), *flags],
                        check=True)
+    # the final front's test perplexities (WikiText-2 test, C4 validation), when the run is scored
+    scored = any(os.path.exists(os.path.join(args.run_dir, f)) and "wikitext2_ppl" in open(os.path.join(args.run_dir, f)).read()
+                 for f in ("test_scores.json", "pareto.json"))
+    if scored and not front_csv.empty:
+        for metric, y in itertools.product(["wikitext2", "c4"], ["log", "linear"]):
+            out = os.path.join(args.run_dir, f"test_front_{metric}" + ("_ylinear" if y == "linear" else ""))
+            subprocess.run([sys.executable, "-m", "scripts.compress_compare", "--run-dirs", args.run_dir,
+                            "--labels", "Pareto front", "--metric", metric, "--y", y, "--out", out], check=True)
+    elif not front_csv.empty:
+        print("no test-score plots: the final front is not scored yet (python -m scripts.compress_score)")
     if front_csv.empty:
         print("no front plots: no generation has a feasible solution yet (see --max-delta-loss)")
     elif not has_bins:
