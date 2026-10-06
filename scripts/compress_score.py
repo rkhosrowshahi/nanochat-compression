@@ -52,7 +52,7 @@ settings = {"generation": gen, "max_delta_loss": args.max_delta_loss, "seq_len":
             "wikitext_seqs": args.wikitext_seqs, "c4_test_seqs": args.c4_test_seqs}
 results = json.load(open(out_path)) if os.path.exists(out_path) else {"settings": settings, "baseline": None, "pareto": []}
 assert results["settings"] == settings, f"{out_path} was made with different settings: {results['settings']}"
-done = {(p["k_init"], p["c"], p["alpha"], p["beta"]) for p in results["pareto"]}
+done = {(p["k_init"], p["c"], p["alpha"], p["beta"], p.get("rho", 1.0)) for p in results["pareto"]}
 
 
 def save():
@@ -66,7 +66,8 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 model, tokenizer, exclude = compress_models.load(search["model"], search["dtype"], device)
 compressor = GlobalCompressor(model, include_from_config(search), search["size_mode"], search["offload_originals"],
                               search.get("reconstruction", "grid"), formats=search.get("formats", "dense,bitmap").split(","),
-                              prune=not search.get("no_pruning", False), exclude=exclude)
+                              prune=not search.get("no_pruning", False), exclude=exclude,
+                              method=search.get("method", "ubq"))
 test_sets = compress_eval.load_test_sets(tokenizer, args.seq_len, args.wikitext_seqs, args.c4_test_seqs,
                                          cache_key=search["model"])
 for name, tokens in test_sets.items():
@@ -81,16 +82,18 @@ if results["baseline"] is None:
     print("uncompressed: " + ", ".join(f"{n} ppl {results['baseline'][f'{n}_ppl']:.3f}" for n in test_sets), flush=True)
 
 for _, row in selected.iterrows():
-    cand = Candidate(int(row["k_init"]), float(row["c"]), float(row["alpha"]), float(row["beta"]))
-    if (cand.k, cand.c, cand.alpha, cand.beta) in done:
+    rho = float(row["rho"]) if "rho" in row and row["rho"] == row["rho"] else 1.0  # runs from before rho: 1
+    cand = Candidate(int(row["k_init"]), float(row["c"]), float(row["alpha"]), float(row["beta"]), rho)
+    if (cand.k, cand.c, cand.alpha, cand.beta, cand.rho) in done:
         continue
     t0 = time.time()
-    entry = {"k_init": cand.k, "c": cand.c, "alpha": cand.alpha, "beta": cand.beta,
+    entry = {"k_init": cand.k, "c": cand.c, "alpha": cand.alpha, "beta": cand.beta, "rho": cand.rho,
              "calib_delta_loss": float(row["delta_loss"]), "search_size_mb": float(row["size_mb"])}
     try:
         stats = compressor.apply(cand, huffman=True)
         entry.update({key: stats[key] for key in ("size_mb", "size_ratio", "target_bits_per_weight", "huffman_size_mb",
-                                                  "huffman_bits_per_weight", "sparsity_pct", "pruned_pct", "k_used_mean")})
+                                                  "huffman_bits_per_weight", "sparsity_pct", "pruned_pct", "k_used_mean",
+                                                  "k_realized", "k_merged")})
         for name, tokens in test_sets.items():
             loss = compress_eval.eval_loss(model, tokens, args.batch_size)
             entry.update({f"{name}_loss": loss, f"{name}_ppl": math.exp(min(loss, 700.0))})

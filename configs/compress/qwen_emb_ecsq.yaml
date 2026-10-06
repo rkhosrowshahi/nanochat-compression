@@ -1,0 +1,32 @@
+# Qwen2.5-0.5B-Instruct, everything compressed (as qwen_emb.yaml), with the UBQ-ECSQ method: after
+# pruning, clipping and the uniform K-level grid, the levels are merged by entropy-constrained scalar
+# quantization (moea-compression's DP merge) down to rho x the non-empty levels. 5 genes: K, c, rho,
+# alpha, beta. Otherwise the same settings as qwen_emb.yaml, so the two fronts compare directly.
+#   python -m scripts.compress_run configs/compress/qwen_emb_ecsq.yaml
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/local_50_log2_autok_calib_fixed_8x2048_maxdelta1_emb_ecsq
+include: [embeddings]
+eval_batch_size: 1
+
+search:
+  method: ubq-ecsq
+  pop_size: 100
+  n_gen: 50
+  seed: 42
+  k_space: log2
+  auto_k_bounds: true      # K_min/K_max from the warm-up (plain uniform quantization, no merge)
+  c_min: 0.7
+  alpha_min: -1.0
+  beta_max: 1.0
+  rho_min: 0.0             # rho in [0, 1]; 1 = no merging
+  max_delta_loss: 1.0
+
+calibration:
+  seqs: 8
+  seq_len: 2048
+  every: 0                 # the batch is shared through the cache, no download if a run made it
+
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256

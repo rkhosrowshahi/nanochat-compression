@@ -17,7 +17,7 @@ Config keys (anything else is an error, so a typo cannot be silently ignored):
     dtype, offload_originals, eval_batch_size
     search:             compress_search options by name: pop_size, n_gen, seed, k_space, k_min, k_max,
                         auto_k_bounds, warmup_*, c_min, c_max, alpha_min, beta_max, no_pruning,
-                        max_delta_loss, size_mode, formats, reconstruction
+                        max_delta_loss, size_mode, formats, reconstruction, method (ubq | ubq-ecsq), rho_min
     calibration:        seqs, seq_len, every (0 = one fixed batch), from (reuse another run's batch),
                         dataset, config, split, data_seed
     test:               seq_len, wikitext_seqs, c4_seqs, max_delta_loss (default search.max_delta_loss)
@@ -41,7 +41,7 @@ TOP = {"model", "out_dir", "download", "nanochat_base_dir", "include", "dtype", 
        "eval_batch_size", "search", "calibration", "test"}
 SEARCH = {"pop_size", "n_gen", "seed", "k_space", "k_min", "k_max", "auto_k_bounds", "warmup_min_delta",
           "warmup_max_delta", "warmup_log_k_range", "warmup_log_k_resolution", "c_min", "c_max", "alpha_min",
-          "beta_max", "no_pruning", "max_delta_loss", "size_mode", "formats", "reconstruction"}
+          "beta_max", "no_pruning", "max_delta_loss", "size_mode", "formats", "reconstruction", "method", "rho_min"}
 CALIBRATION = {"seqs": "calib_seqs", "seq_len": "seq_len", "every": "calib_every", "from": "calib_from",
                "dataset": "calib_dataset", "config": "calib_config", "split": "calib_split", "data_seed": "data_seed"}
 TEST = {"seq_len": "seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_test_seqs",

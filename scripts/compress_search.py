@@ -146,6 +146,10 @@ parser.add_argument("--max-delta-loss", type=float, default=None,
 parser.add_argument("--size-mode", type=str, default="fixed", choices=["fixed", "entropy"])
 parser.add_argument("--formats", type=str, default="dense,bitmap", help="storage formats for --size-mode fixed, from dense,bitmap,csr; each matrix uses the smallest")
 parser.add_argument("--reconstruction", type=str, default="grid", choices=["grid", "centroid"], help="value of each bin: its center, or the mean of its weights")
+parser.add_argument("--method", type=str, default="ubq", choices=["ubq", "ubq-ecsq"],
+                    help="ubq: uniform quantization + pruning (genes K, c, alpha, beta); ubq-ecsq: then entropy-"
+                         "constrained merging of the levels (5th gene rho, the fraction of levels kept; see nanochat/compress.py)")
+parser.add_argument("--rho-min", type=float, default=0.0, help="ubq-ecsq: rho in [rho-min, 1]")
 # search
 parser.add_argument("--pop-size", type=int, default=100)
 parser.add_argument("--n-gen", type=int, default=10)
@@ -153,11 +157,12 @@ parser.add_argument("--seed", type=int, default=42)
 parser.add_argument("--out-dir", type=str, default="compress_runs/default")
 args = parser.parse_args()
 
-GENES = ["b", "k_init", "c", "alpha", "beta"]  # b: the k gene in bits, k_init = round(2^b): the grid size
+GENES = ["b", "k_init", "c", "alpha", "beta", "rho"]  # b: the k gene in bits, k_init = round(2^b): the grid size;
+# rho: ubq-ecsq's merge ratio as reached (K'/non-empty levels), always 1 with ubq
 STATS = ["loss", "delta_loss", "ppl", "size_mb", "size_ratio", "target_bits_per_weight",
          "n_pruned", "n_rounded_zero", "n_nonzero", "pruned_pct", "sparsity_pct",
          "n_dense_matrices", "n_bitmap_matrices", "n_csr_matrices",
-         "k_used_mean", "k_used_min", "k_used_max", "k_used_row_mean"]
+         "k_used_mean", "k_used_min", "k_used_max", "k_used_row_mean", "k_realized", "k_merged"]
 EVAL_FIELDS = ["gen", "role", *GENES, *STATS, "seconds"]
 POP_FIELDS = ["gen", "rank", "crowding", *GENES, *STATS, "f1_norm", "f2_norm"]
 GEN_FIELDS = ["gen", "batch_baseline_loss", "hypervolume", "front_size", "n_feasible", "n_parents", "n_offspring", "n_reused",
@@ -202,17 +207,22 @@ class SymmetricPruneSampling(FloatRandomSampling):
 
 
 def decode(x):
+    """Genes [k, c, (alpha, beta), (rho)] -> Candidate. With ubq-ecsq, rho is snapped to the merge it
+    actually reaches, so genes that give the same model decode to the same candidate."""
     k_gene = 2.0 ** float(x[0]) if args.k_space == "log2" else float(x[0])
     k = int(np.clip(round(k_gene), args.k_min, args.k_max))
-    if args.no_pruning:
-        return Candidate(k=k, c=float(x[1]), alpha=0.0, beta=0.0)
-    return Candidate(k=k, c=float(x[1]), alpha=float(x[2]), beta=float(x[3]))
+    alpha, beta = (0.0, 0.0) if args.no_pruning else (float(x[2]), float(x[3]))
+    cand = Candidate(k=k, c=float(x[1]), alpha=alpha, beta=beta)
+    if args.method == "ubq-ecsq":
+        cand = Candidate(k, cand.c, alpha, beta, rho=float(np.clip(x[-1], 0.0, 1.0)))
+        cand = Candidate(k, cand.c, alpha, beta, rho=compressor.canonical_rho(cand))
+    return cand
 
 
 def gene_fields(cand, x):
     """The genes as logged: b in bits (log2 of the raw k gene), the decoded grid size k_init, c, alpha, beta."""
     b = float(x[0]) if args.k_space == "log2" else float(np.log2(x[0]))
-    return {"b": b, "k_init": cand.k, "c": cand.c, "alpha": cand.alpha, "beta": cand.beta}
+    return {"b": b, "k_init": cand.k, "c": cand.c, "alpha": cand.alpha, "beta": cand.beta, "rho": cand.rho}
 
 
 def k_to_gene(k):
@@ -220,7 +230,7 @@ def k_to_gene(k):
 
 
 def cache_key(cand):
-    return (cand.k, round(cand.c, 9), round(cand.alpha, 9), round(cand.beta, 9))
+    return (cand.k, round(cand.c, 9), round(cand.alpha, 9), round(cand.beta, 9), round(cand.rho, 9))
 
 
 class DecodedDuplicateElimination(ElementwiseDuplicateElimination):
@@ -413,7 +423,8 @@ except OSError:
 print(f"Loading {args.model} on {device}", flush=True)
 model, tokenizer, exclude = compress_models.load(args.model, args.dtype, device)
 compressor = GlobalCompressor(model, tuple(args.include), args.size_mode, args.offload_originals, args.reconstruction,
-                              formats=args.formats.split(","), prune=not args.no_pruning, exclude=exclude)
+                              formats=args.formats.split(","), prune=not args.no_pruning, exclude=exclude,
+                              method=args.method)
 print(f"Compressing {len(compressor.targets)} matrices, {compressor.n_target_params / 1e6:.1f}M weights "
       f"({compressor.n_target_params / (compressor.n_target_params + compressor.rest_params):.1%} of params), "
       f"originals {'offloaded to CPU' if compressor.offloaded else 'kept on GPU'}", flush=True)
@@ -494,7 +505,7 @@ if os.path.exists(ckpt_path) and os.path.exists(out("config.json")):
     for key, default in (("k_space", "linear"), ("k_min", 3), ("k_max", 256), ("c_min", 0.2), ("c_max", 1.0),
                          ("alpha_min", -1.0), ("beta_max", 1.0), ("no_pruning", False), ("calib_every", 1), ("max_delta_loss", None),
                          ("model", "Qwen/Qwen2.5-0.5B-Instruct"),
-                         ("calib_seqs", 8), ("seq_len", 1024), ("auto_k_bounds", False)):
+                         ("calib_seqs", 8), ("seq_len", 1024), ("auto_k_bounds", False), ("method", "ubq"), ("rho_min", 0.0)):
         assert old.get(key, default) == getattr(args, key), \
             f"this run was started with --{key.replace('_', '-')} {old.get(key, default)}, not {getattr(args, key)}"
     assert sorted(include_from_config(old)) == sorted(args.include), \
@@ -508,7 +519,8 @@ atomic_dump({"args": vars(args), "git_commit": git_commit, "baseline_size_mb": c
 # with a fixed batch every candidate is evaluated once for the whole run.
 # Reloaded on resume, so a half-finished generation does not repeat work.
 cache = {}
-row_key = lambda r: cache_key(Candidate(int(r["k_init"]), float(r["c"]), float(r["alpha"]), float(r["beta"])))
+row_key = lambda r: cache_key(Candidate(int(r["k_init"]), float(r["c"]), float(r["alpha"]), float(r["beta"]),
+                                           float(r.get("rho") or 1.0)))  # runs from before rho: 1
 for r in read_rows(out("evals.csv")):
     assert "k_used_mean" in r, "evals.csv is from an older version of this script, use a new --out-dir"
     cache[(batch_index(int(r["gen"])), row_key(r))] = {f: float(r[f]) for f in STATS}
@@ -519,11 +531,15 @@ if cache:
 
 # the problem only carries the bounds; evaluation happens in the ask/tell loop below,
 # which keeps the model out of the pickled algorithm state
+# genes: [k, c] + [alpha, beta] unless --no-pruning + [rho] with ubq-ecsq
+gene_lower = [k_to_gene(args.k_min - 0.49), args.c_min] + ([] if args.no_pruning else [args.alpha_min, 0.0]) \
+    + ([args.rho_min] if args.method == "ubq-ecsq" else [])
+gene_upper = [k_to_gene(args.k_max + 0.49), args.c_max] + ([] if args.no_pruning else [0.0, args.beta_max]) \
+    + ([1.0] if args.method == "ubq-ecsq" else [])
 problem = Problem(
-    n_var=2 if args.no_pruning else 4, n_obj=2, n_ieq_constr=0 if args.max_delta_loss is None else 1,
+    n_var=len(gene_lower), n_obj=2, n_ieq_constr=0 if args.max_delta_loss is None else 1,
     # the k gene covers [k_min - 0.49, k_max + 0.49] so the end values get their full rounding interval
-    xl=np.array([k_to_gene(args.k_min - 0.49), args.c_min, args.alpha_min, 0.0][:2 if args.no_pruning else 4]),
-    xu=np.array([k_to_gene(args.k_max + 0.49), args.c_max, 0.0, args.beta_max][:2 if args.no_pruning else 4]),
+    xl=np.array(gene_lower), xu=np.array(gene_upper),
 )
 if os.path.exists(ckpt_path):
     with open(ckpt_path, "rb") as f:

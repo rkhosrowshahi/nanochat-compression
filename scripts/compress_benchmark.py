@@ -140,7 +140,7 @@ if todo:
     model = AutoModelForCausalLM.from_pretrained(search["model"], dtype=getattr(torch, search["dtype"])).to(device).eval()
     compressor = GlobalCompressor(model, include_from_config(search), search["size_mode"], search["offload_originals"],
                                   search["reconstruction"], formats=search["formats"].split(","),
-                                  prune=not search.get("no_pruning", False))
+                                  prune=not search.get("no_pruning", False), method=search.get("method", "ubq"))
     lm = HFLM(pretrained=model, tokenizer=tokenizer, batch_size=args.batch_size)  # sees the in-place weight changes
     os.makedirs(samples_dir, exist_ok=True)
 
@@ -152,7 +152,7 @@ if todo:
                                                   "size_ratio", "target_bits_per_weight", "sparsity_pct") if key in p})
         try:
             if p is not None:
-                compressor.apply(Candidate(k_init(p), p["c"], p["alpha"], p["beta"]))
+                compressor.apply(Candidate(k_init(p), p["c"], p["alpha"], p["beta"], p.get("rho", 1.0)))
             out = lm_eval.simple_evaluate(model=lm, tasks=tasks, num_fewshot=args.num_fewshot, limit=args.limit,
                                           log_samples=True, apply_chat_template=args.chat_template,
                                           fewshot_as_multiturn=args.chat_template, random_seed=0, numpy_random_seed=0,

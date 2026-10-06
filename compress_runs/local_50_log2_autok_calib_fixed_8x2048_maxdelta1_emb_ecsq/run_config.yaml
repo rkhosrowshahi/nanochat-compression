@@ -1,0 +1,25 @@
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/local_50_log2_autok_calib_fixed_8x2048_maxdelta1_emb_ecsq
+include:
+- embeddings
+eval_batch_size: 1
+search:
+  method: ubq-ecsq
+  pop_size: 100
+  n_gen: 50
+  seed: 42
+  k_space: log2
+  auto_k_bounds: true
+  c_min: 0.7
+  alpha_min: -1.0
+  beta_max: 1.0
+  rho_min: 0.0
+  max_delta_loss: 1.0
+calibration:
+  seqs: 8
+  seq_len: 2048
+  every: 0
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256
