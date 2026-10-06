@@ -1,0 +1,53 @@
+{
+  "args": {
+    "model": "nanochat:base:d34",
+    "dtype": "bfloat16",
+    "include": [
+      "embeddings",
+      "lm_head"
+    ],
+    "offload_originals": "auto",
+    "calib_dataset": "allenai/c4",
+    "calib_config": "en",
+    "calib_split": "train",
+    "calib_seqs": 128,
+    "calib_every": 0,
+    "wikitext_seqs": 0,
+    "c4_test_seqs": 0,
+    "test_seq_len": 2048,
+    "test_max_delta_loss": 1.0,
+    "text_field": "text",
+    "seq_len": 2048,
+    "data_seed": 0,
+    "calib_from": null,
+    "eval_batch_size": 2,
+    "k_min": 32,
+    "k_max": 512,
+    "k_space": "log2",
+    "auto_k_bounds": true,
+    "warmup_min_delta": 0.4054651081081644,
+    "warmup_max_delta": 0.004987541511038968,
+    "warmup_log_k_range": [
+      1.584962500721156,
+      13.0
+    ],
+    "warmup_log_k_resolution": 0.1,
+    "c_min": 0.9,
+    "c_max": 1.0,
+    "alpha_min": -0.3,
+    "beta_max": 0.3,
+    "no_pruning": false,
+    "max_delta_loss": 1.0,
+    "size_mode": "fixed",
+    "formats": "dense,bitmap",
+    "reconstruction": "grid",
+    "pop_size": 100,
+    "n_gen": 10,
+    "seed": 42,
+    "out_dir": "compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head"
+  },
+  "git_commit": "",
+  "baseline_size_mb": 4434.16576,
+  "n_target_params": 2217082880,
+  "n_other_params": 0
+}
