@@ -1,0 +1,37 @@
+# nanochat d34 with everything compressed (as d34_emb.yaml: the 204 transformer matrices plus the token
+# embedding and lm_head, 2.22B weights, 100%), with the UBQ-ECSQ method: after pruning, clipping and the
+# uniform K-level grid, the levels are merged by entropy-constrained scalar quantization down to
+# rho x the non-empty levels. 5 genes: K, c, rho, alpha, beta. Otherwise the same settings as
+# d34_emb.yaml, so the two fronts compare directly (the d34 counterpart of qwen_emb_ecsq.yaml).
+# One L4 24 GB: ~10 min warm-up, ~1 h per generation, ~2 h test scoring.
+#   python -m scripts.compress_run configs/compress/d34_emb_ecsq.yaml --smoke    # quick check first
+#   python -m scripts.compress_run configs/compress/d34_emb_ecsq.yaml
+model: nanochat:base:d34
+download: karpathy/nanochat-d34          # ~8.6 GB, fetched once
+nanochat_base_dir: ~/.cache/nanochat-d34
+out_dir: compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq
+include: [embeddings, lm_head]
+eval_batch_size: 2                       # 2 fits a 24 GB L4, 8 an 80 GB H100
+
+search:
+  method: ubq-ecsq
+  pop_size: 100
+  n_gen: 10
+  seed: 42
+  k_space: log2
+  auto_k_bounds: true      # K_min/K_max from the warm-up (plain uniform quantization, no merge)
+  c_min: 0.9
+  alpha_min: -0.3
+  beta_max: 0.3
+  rho_min: 0.0             # rho in [0, 1]; 1 = no merging
+  max_delta_loss: 1.0
+
+calibration:
+  seqs: 128                # the GPTQ calibration size: 128 x 2048 tokens of C4 train
+  seq_len: 2048
+  every: 0                 # the batch is shared through the cache, no download if a run made it
+
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256
