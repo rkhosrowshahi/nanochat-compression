@@ -1,0 +1,1271 @@
+=== 2026-10-07 19:12:48  python -m scripts.compress_search --model nanochat:base:d34 --include embeddings lm_head --method ubq-ecsq --pop-size 100 --n-gen 10 --seed 42 --k-space log2 --auto-k-bounds --c-min 0.9 --alpha-min -0.3 --beta-max 0.3 --rho-min 0.0 --max-delta-loss 1.0 --calib-seqs 128 --seq-len 2048 --calib-every 0 --eval-batch-size 2 --wikitext-seqs 0 --c4-test-seqs 0 --out-dir compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq
+Loading nanochat:base:d34 on cuda
+2026-10-07 19:12:55,090 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/main/build/torch29-cxx11-cu128-x86_64-linux/__init__.py "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:12:55,091 - huggingface_hub.utils._http - [33m[1mWARNING[0m - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-07 19:12:55,107 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fmain%2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py=&etag=%223d12edd447e84d6e65c4fa9ab91ae3c3192884c[1m1%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,157 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/models/kernels-community/flash-attn3/revision/main "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,216 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/models/kernels-community/flash-attn3/tree/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0?recursive=true&expand=false "HTTP/1.1 200 OK"
+Fetching 7 files:   0%|                                                                                                                                                 | 0/7 [00:00<?, ?it/s]2026-10-07 19:12:55,271 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build/torch29-cxx11-cu128-x86_64-linux/__init__.py "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:12:55,288 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py=&etag=%223d12edd447e84d6e65c4fa9ab91ae3c3192884c[1m1%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,304 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build/torch29-cxx11-cu128-x86_64-linux/flash_attn_config.py "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:12:55,306 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build/torch29-cxx11-cu128-x86_64-linux/flash_attn_interface.py "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:12:55,308 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build/torch29-cxx11-cu128-x86_64-linux/flash_attn3/__init__.py "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:12:55,309 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build/torch29-cxx11-cu128-x86_64-linux/_ops.py "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:12:55,311 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py=&etag=%223d12edd447e84d6e65c4fa9ab91ae3c3192884c[1m1%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,313 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/models/kernels-community/flash-attn3/xet-read-token/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,313 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build/torch29-cxx11-cu128-x86_64-linux/metadata.json "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:12:55,321 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_config.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_config.py=&etag=%22c4b7130324be2c4cabee7ada7000e170a2a[1m81865%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,323 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_interface.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_interface.py=&etag=%222e2a3cdd3e89cbc59bf6c956454e2776c305e0e[1m5%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,326 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn[1m3%[0m2F__init__.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn[1m3%[0m2F__init__.py=&etag=%2203dbc1afe1cf156661a2b1b22003cd5f599a[1m0309%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,329 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2F_ops.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2F_ops.py=&etag=%221d9ac17ca94ff06dfccb0a48aeefbdf75e28043c%22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,332 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fmetadata.json?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fmetadata.json=&etag=%22e0cc0c4f14abd10162c22499be39c75e6d922f[1m94%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,338 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_config.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_config.py=&etag=%22c4b7130324be2c4cabee7ada7000e170a2a[1m81865%[0m22 "HTTP/1.1 200 OK"
+Fetching 7 files:  29%|███████████████████████████████████████▏                                                                                                 | 2/7 [00:00<00:00, 17.13it/s]2026-10-07 19:12:55,341 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_interface.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn_interface.py=&etag=%222e2a3cdd3e89cbc59bf6c956454e2776c305e0e[1m5%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,344 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn[1m3%[0m2F__init__.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fflash_attn[1m3%[0m2F__init__.py=&etag=%2203dbc1afe1cf156661a2b1b22003cd5f599a[1m0309%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,346 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2F_ops.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2F_ops.py=&etag=%221d9ac17ca94ff06dfccb0a48aeefbdf75e28043c%22 "HTTP/1.1 200 OK"
+2026-10-07 19:12:55,349 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2Fmetadata.json?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fe29f138fc363b396e5d2706c8a5f6fa7d36f41e[1m0%[0m2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2Fmetadata.json=&etag=%22e0cc0c4f14abd10162c22499be39c75e6d922f[1m94%[0m22 "HTTP/1.1 200 OK"
+Fetching 7 files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:10<00:00,  1.68s/it]Fetching 7 files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:10<00:00,  1.54s/it]
+Loaded nanochat:base:d34 step 169150 with the pre-2026 nanochat architecture (nanochat/gpt_legacy.py)
+Compressing 206 matrices, 2217.1M weights (100.0% of params), originals kept on GPU
+Sampling 1 calibration batch(es) of 128 x 2048 tokens from allenai/c4 train...
+2026-10-07 19:13:08,904 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
+2026-10-07 19:13:08,920 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/datasets/allenai/c4/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/README.md?%2Fdatasets%2Fallenai%2Fc[1m4%[0m2Fresolve%2Fmain%2FREADME.md=&etag=%222a750bf152e98e6eb2a14a6c2bd58c940c3cf[1m504%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:13:08,937 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/datasets/allenai/c4/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/README.md?%2Fdatasets%2Fallenai%2Fc[1m4%[0m2Fresolve%2Fmain%2FREADME.md=&etag=%222a750bf152e98e6eb2a14a6c2bd58c940c3cf[1m504%[0m22 "HTTP/1.1 200 OK"
+2026-10-07 19:13:08,980 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/c4.py "HTTP/1.1 404 Not Found"
+2026-10-07 19:13:09,097 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/allenai/c4/allenai/c4.py "HTTP/1.1 404 Not Found"
+2026-10-07 19:13:09,437 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:09,647 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/.huggingface.yaml "HTTP/1.1 404 Not Found"
+2026-10-07 19:13:09,785 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://datasets-server.huggingface.co/info?dataset=allenai/c4 "HTTP/1.1 200 OK"
+2026-10-07 19:13:09,896 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:09,977 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=true&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,026 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,234 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/dataset_infos.json "HTTP/1.1 404 Not Found"
+2026-10-07 19:13:10,558 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,586 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,589 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,590 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,590 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,592 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,597 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,599 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,614 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:10,730 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-07 19:13:11,340 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:11,459 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:11,634 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:12,164 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:12,230 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:12,236 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00705-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:12,325 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:12,342 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:12,459 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:12,460 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/710f84c15f9a5c8d2a5df8472222ee9e36a55619b333796c2eab3b0c538aed42?X-Xet-Cas-Uid=public&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00705-of-01024.json.gz%3B+filename%3D%22c4-train.00705-of-01024.json.gz%[1m22%[0m3B&user_id=public&xip=VU7X-35DSSs&response-content-type=application%2Fgzip&Expires=1791403992&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwLzcxMGY4NGMxNWY5YTVjOGQyYTVkZjg0NzIyMjJlZTllMzZhNTU2MTliMzMzNzk2YzJlYWIzYjBjNTM4YWVkNDJcXD9YLVhldC1DYXMtVWlkPXB1YmxpYyZyZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSomdXNlcl9pZD1wdWJsaWMmeGlwPVZVN1gtMzVEU1NzJnJlc3BvbnNlLWNvbnRlbnQtdHlwZT0qIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTJ9fX1dfQ__&Signature=MEQCICqoPbhr9gsOi0g4sgJ9DYjHVTPbUflWju9Js7z3t[1m5%[0m7EgAiB36do0dvC0nGDd-0JJp9cCoRb67cx2UQ7td1aCi18wBQ__&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:12,961 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00264-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,093 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,099 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,101 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/cf40e292b4f4cc77db59346b4d6a19301e917c3671445111050f0e05e386342e?user_id=public&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00264-of-01024.json.gz%3B+filename%3D%22c4-train.00264-of-01024.json.gz%[1m22%[0m3B&response-content-type=application%2Fgzip&X-Xet-Cas-Uid=public&xip=VU7X-35DSSs&Expires=1791403992&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwL2NmNDBlMjkyYjRmNGNjNzdkYjU5MzQ2YjRkNmExOTMwMWU5MTdjMzY3MTQ0NTExMTA1MGYwZTA1ZTM4NjM0MmVcXD91c2VyX2lkPXB1YmxpYyZyZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSomcmVzcG9uc2UtY29udGVudC10eXBlPSomWC1YZXQtQ2FzLVVpZD1wdWJsaWMmeGlwPVZVN1gtMzVEU1NzIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTJ9fX1dfQ__&Signature=MEQCIB8-AoJMMbEm8LxNlNLfwohIs-CNdsD5djapj0AY2424AiBTUVa0WbRfwtcF4O0CLyWySii9gaoIM8xRf1Gho7J4vg__&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,109 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,118 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,129 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,153 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,154 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00084-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,160 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,184 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,215 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00793-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,218 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00020-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,218 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,219 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00290-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,293 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/8988e8129109f96e8620a7f93f712ea20cf4a4c7813f39d879e5d2da0d0bd6e9?X-Xet-Cas-Uid=public&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00084-of-01024.json.gz%3B+filename%3D%22c4-train.00084-of-01024.json.gz%[1m22%[0m3B&user_id=public&response-content-type=application%2Fgzip&xip=VU7X-35DSSs&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwLzg5ODhlODEyOTEwOWY5NmU4NjIwYTdmOTNmNzEyZWEyMGNmNGE0Yzc4MTNmMzlkODc5ZTVkMmRhMGQwYmQ2ZTlcXD9YLVhldC1DYXMtVWlkPXB1YmxpYyZyZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSomdXNlcl9pZD1wdWJsaWMmcmVzcG9uc2UtY29udGVudC10eXBlPSomeGlwPVZVN1gtMzVEU1NzIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEUCIAtd7Lsg26Iat1VyLw5saw6Y2Qz44iWpwWFCrDSs0OygAiEA6QTQwdYbT[1m5%[0m7EIwqzO[1m9%[0m7Ew7qq1MsZ6Lza%7EPoVJ4bUD4-Bc_&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,318 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/2c48f51cac13a890d0b002f4ed0f8dd025f0e2c740d44276fd5868a2bc784e9e?user_id=public&response-content-type=application%2Fgzip&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00793-of-01024.json.gz%3B+filename%3D%22c4-train.00793-of-01024.json.gz%[1m22%[0m3B&X-Xet-Cas-Uid=public&xip=VU7X-35DSSs&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwLzJjNDhmNTFjYWMxM2E4OTBkMGIwMDJmNGVkMGY4ZGQwMjVmMGUyYzc0MGQ0NDI3NmZkNTg2OGEyYmM3ODRlOWVcXD91c2VyX2lkPXB1YmxpYyZyZXNwb25zZS1jb250ZW50LXR5cGU9KiZyZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSomWC1YZXQtQ2FzLVVpZD1wdWJsaWMmeGlwPVZVN1gtMzVEU1NzIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEQCIG3k-H7j-DZZ3h9Yq6M4JulKIWeOn%7EjyW2o7rmOKZGaDAiAQWXupMgs1Ep05eo6uZLGeaGV92Ww9-MUEto849eeGWg__&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,319 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00217-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,358 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/3b6c76b67a959b4e4467c556e777205c2b0c11ca47c0efa0f6ae86f6d1ba6ab1?user_id=public&response-content-type=application%2Fgzip&xip=VU7X-35DSSs&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00020-of-01024.json.gz%3B+filename%3D%22c4-train.00020-of-01024.json.gz%[1m22%[0m3B&X-Xet-Cas-Uid=public&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwLzNiNmM3NmI2N2E5NTliNGU0NDY3YzU1NmU3NzcyMDVjMmIwYzExY2E0N2MwZWZhMGY2YWU4NmY2ZDFiYTZhYjFcXD91c2VyX2lkPXB1YmxpYyZyZXNwb25zZS1jb250ZW50LXR5cGU9KiZ4aXA9VlU3WC0zNURTU3MmcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qJlgtWGV0LUNhcy1VaWQ9cHVibGljIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEUCIFkcEZWJLV7oNy2-225kQzLgwJYblSCCBFIDIfbdngW1AiEAkImYqN1ivFN33fnKfrnX96rgzE5gHOMyfwbblMsWiZA_&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,365 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/c048de176c98b42f7ca107f768e6273a0cf13980a09ec80ac565e9a258fa4f95?response-content-type=application%2Fgzip&user_id=public&xip=VU7X-35DSSs&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00290-of-01024.json.gz%3B+filename%3D%22c4-train.00290-of-01024.json.gz%[1m22%[0m3B&X-Xet-Cas-Uid=public&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwL2MwNDhkZTE3NmM5OGI0MmY3Y2ExMDdmNzY4ZTYyNzNhMGNmMTM5ODBhMDllYzgwYWM1NjVlOWEyNThmYTRmOTVcXD9yZXNwb25zZS1jb250ZW50LXR5cGU9KiZ1c2VyX2lkPXB1YmxpYyZ4aXA9VlU3WC0zNURTU3MmcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qJlgtWGV0LUNhcy1VaWQ9cHVibGljIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEQCIHJWB08joLuYou-svbI1xF50YAdLSIz9BMhjWAXKg%7EjPAiBxKfSBLDRBs7WNVA53lCtfdsyXpZCNG%7E%7EAC5E5IvUkPg__&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,366 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00843-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,371 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,375 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/a946d63dd10407ee892a6dc64a14927a347f3e9f9c2546ab8ef2be421fcf84ee?X-Xet-Cas-Uid=public&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00217-of-01024.json.gz%3B+filename%3D%22c4-train.00217-of-01024.json.gz%[1m22%[0m3B&response-content-type=application%2Fgzip&user_id=public&xip=VU7X-35DSSs&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwL2E5NDZkNjNkZDEwNDA3ZWU4OTJhNmRjNjRhMTQ5MjdhMzQ3ZjNlOWY5YzI1NDZhYjhlZjJiZTQyMWZjZjg0ZWVcXD9YLVhldC1DYXMtVWlkPXB1YmxpYyZyZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSomcmVzcG9uc2UtY29udGVudC10eXBlPSomdXNlcl9pZD1wdWJsaWMmeGlwPVZVN1gtMzVEU1NzIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEUCIQDuDTlCD2cjtro95Wsgmn%7E7NbNtaXgFsrdb%7ENF8OiHbjgIgBWkRwjJdVBEZn8wCygCj-fPDFXuvKEVdHOkfWDOVg8U_&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,418 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/6d9e3809c7e406251b6651f67b4c02c0942eb2b7e84066510b8e0ca820ab37b4?response-content-type=application%2Fgzip&user_id=public&xip=VU7X-35DSSs&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00843-of-01024.json.gz%3B+filename%3D%22c4-train.00843-of-01024.json.gz%[1m22%[0m3B&X-Xet-Cas-Uid=public&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwLzZkOWUzODA5YzdlNDA2MjUxYjY2NTFmNjdiNGMwMmMwOTQyZWIyYjdlODQwNjY1MTBiOGUwY2E4MjBhYjM3YjRcXD9yZXNwb25zZS1jb250ZW50LXR5cGU9KiZ1c2VyX2lkPXB1YmxpYyZ4aXA9VlU3WC0zNURTU3MmcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qJlgtWGV0LUNhcy1VaWQ9cHVibGljIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEYCIQCmSnkzeJ3X-ctdtXLevplisznWU0ifg4TOYOfU8pauFQIhAKV3sFrGR2PcJL7t98JwNlIZTToGqEiZfGAQ10ZK2DYY&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,422 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00669-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,436 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,483 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/267dc29f7c30b1b07995cea31fad8b19d471689f5f32810858727d4897122e6d?response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00669-of-01024.json.gz%3B+filename%3D%22c4-train.00669-of-01024.json.gz%[1m22%[0m3B&X-Xet-Cas-Uid=public&response-content-type=application%2Fgzip&user_id=public&xip=VU7X-35DSSs&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwLzI2N2RjMjlmN2MzMGIxYjA3OTk1Y2VhMzFmYWQ4YjE5ZDQ3MTY4OWY1ZjMyODEwODU4NzI3ZDQ4OTcxMjJlNmRcXD9yZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSomWC1YZXQtQ2FzLVVpZD1wdWJsaWMmcmVzcG9uc2UtY29udGVudC10eXBlPSomdXNlcl9pZD1wdWJsaWMmeGlwPVZVN1gtMzVEU1NzIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEYCIQDeXkffC2NCoRcfY0gHHYnzKufD6QzSyzfeYkk%7EYUEmKgIhAL6Svu4mMG33oBPn26-1SRNMVy%7ECFBX-m%7EfWwMj1qcGl&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+2026-10-07 19:13:13,550 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-07 19:13:13,605 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-train.00671-of-01024.json.gz "HTTP/1.1 302 Found"
+2026-10-07 19:13:13,645 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/2f99bb95119e2ea7eff59368d1e931c1112cf79c426b09ed9d40a481475dae05?xip=VU7X-35DSSs&response-content-type=application%2Fgzip&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-train.00671-of-01024.json.gz%3B+filename%3D%22c4-train.00671-of-01024.json.gz%[1m22%[0m3B&user_id=public&X-Xet-Cas-Uid=public&Expires=1791403993&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwLzJmOTliYjk1MTE5ZTJlYTdlZmY1OTM2OGQxZTkzMWMxMTEyY2Y3OWM0MjZiMDllZDlkNDBhNDgxNDc1ZGFlMDVcXD94aXA9VlU3WC0zNURTU3MmcmVzcG9uc2UtY29udGVudC10eXBlPSomcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qJnVzZXJfaWQ9cHVibGljJlgtWGV0LUNhcy1VaWQ9cHVibGljIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0MDM5OTN9fX1dfQ__&Signature=MEQCIEF9tb8lAtN98S9XexPGhojkS5SIi93msXqAZc7LNPfjAiBYj8SDqi4MU2jlHId6XS0ZUuK8yWH%7Eh5MxOWTE-Oqmiw__&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+...done in 10s
+Calibration batches from a fresh sample
+Calibration: one fixed batch for the whole run
+Baseline: calib loss 2.6556 on the first batch, size 4434.2 MB, one forward pass over a batch takes 32.4s
+K-bounds warm-up: bisecting log2(K) in [1.585, 13.000] (K_min: delta +0.4055 (ppl +50.00%) exceeded, K_max: delta +0.0050 (ppl +0.50%) reached)
+    log2(K)=1.5850 -> K=3: delta +22.3285 (ppl +497909259090.56%), size 301.7 MB
+    log2(K)=13.0000 -> K=8192: delta -0.0001 (ppl -0.01%), size 3607.0 MB
+    log2(K)=7.2925 -> K=157: delta +0.0291 (ppl +2.95%), size 2218.7 MB
+    log2(K)=4.4387 -> K=22: delta +12.4281 (ppl +24970836.61%), size 1386.8 MB
+    log2(K)=5.8656 -> K=58: delta +0.3992 (ppl +49.06%), size 1664.4 MB
+    log2(K)=5.1522 -> K=36: delta +4.8957 (ppl +13271.12%), size 1664.4 MB
+    log2(K)=5.5089 -> K=46: delta +1.3688 (ppl +293.06%), size 1664.4 MB
+    log2(K)=5.6872 -> K=52: delta +0.7145 (ppl +104.31%), size 1664.4 MB
+    log2(K)=5.7764 -> K=55: delta +0.5352 (ppl +70.78%), size 1664.4 MB
+    log2(K)=9.3882 -> K=670: delta +0.0017 (ppl +0.17%), size 2773.1 MB
+    log2(K)=7.5823 -> K=192: delta +0.0203 (ppl +2.05%), size 2218.7 MB
+    log2(K)=8.4853 -> K=358: delta +0.0050 (ppl +0.50%), size 2495.9 MB
+    log2(K)=8.9367 -> K=490: delta +0.0027 (ppl +0.27%), size 2495.9 MB
+    log2(K)=8.7110 -> K=419: delta +0.0040 (ppl +0.40%), size 2495.9 MB
+    log2(K)=8.5981 -> K=388: delta +0.0048 (ppl +0.48%), size 2495.9 MB
+    log2(K)=8.5417 -> K=373: delta +0.0053 (ppl +0.53%), size 2495.9 MB
+    log2(K)=5.0000 -> K=32: delta +6.7200 (ppl +82779.65%), size 1387.3 MB
+    log2(K)=9.0000 -> K=512: delta +0.0029 (ppl +0.29%), size 2495.9 MB
+K-bounds warm-up result: K_min=32 (delta +6.7200 (ppl +82779.65%)), K_max=512 (delta +0.0029 (ppl +0.29%)), 18 evaluations
+gen 1 initial [1/100] k=273 (used  27.0) c=0.944 alpha=-0.221 beta=+0.221 | loss 13.2515 (delta +10.5958) size 1387.1 MB sparsity 17.4%
+gen 1 initial [2/100] k=479 (used 222.6) c=0.976 alpha=-0.266 beta=+0.266 | loss 9.8607 (delta +7.2050) size 2032.8 MB sparsity 20.9%
+gen 1 initial [3/100] k= 89 (used  39.5) c=0.993 alpha=-0.276 beta=+0.276 | loss 15.4442 (delta +12.7886) size 1581.1 MB sparsity 21.7%
+gen 1 initial [4/100] k= 59 (used  36.0) c=0.955 alpha=-0.151 beta=+0.151 | loss 9.5944 (delta +6.9388) size 1664.4 MB sparsity 12.0%
+gen 1 initial [5/100] k=261 (used 252.4) c=0.935 alpha=-0.156 beta=+0.156 | loss 2.9713 (delta +0.3157) size 2217.3 MB sparsity 12.4%
+gen 1 initial [6/100] k= 54 (used  27.0) c=0.947 alpha=-0.240 beta=+0.240 | loss 14.7335 (delta +12.0778) size 1386.8 MB sparsity 18.9%
+gen 1 initial [7/100] k=251 (used 121.6) c=0.997 alpha=-0.094 beta=+0.094 | loss 2.7662 (delta +0.1106) size 1941.6 MB sparsity 7.5%
+gen 1 initial [8/100] k= 53 (used  27.0) c=0.913 alpha=-0.251 beta=+0.251 | loss 15.3072 (delta +12.6515) size 1386.1 MB sparsity 19.8%
+gen 1 initial [9/100] k=107 (used 102.6) c=0.983 alpha=-0.148 beta=+0.148 | loss 3.0129 (delta +0.3573) size 1941.5 MB sparsity 11.7%
+gen 1 initial [10/100] k=297 (used  45.0) c=0.939 alpha=-0.035 beta=+0.035 | loss 4.1022 (delta +1.4466) size 1664.4 MB sparsity 2.8%
+gen 1 initial [11/100] k= 55 (used  29.0) c=0.901 alpha=-0.022 beta=+0.022 | loss 9.0868 (delta +6.4311) size 1387.3 MB sparsity 5.1%
+gen 1 initial [12/100] k=278 (used  31.0) c=0.946 alpha=-0.253 beta=+0.253 | loss 15.6723 (delta +13.0166) size 1385.5 MB sparsity 19.9%
+gen 1 initial [13/100] k=203 (used 107.0) c=0.947 alpha=-0.017 beta=+0.017 | loss 2.7545 (delta +0.0989) size 1941.6 MB sparsity 1.5%
+gen 1 initial [14/100] k=148 (used  73.0) c=0.956 alpha=-0.084 beta=+0.084 | loss 2.8913 (delta +0.2356) size 1941.6 MB sparsity 6.7%
+gen 1 initial [15/100] k= 57 (used   3.0) c=0.941 alpha=-0.100 beta=+0.100 | loss 14.4483 (delta +11.7927) size 533.7 MB sparsity 8.0%
+gen 1 initial [16/100] k= 69 (used  69.0) c=0.929 alpha=-0.052 beta=+0.052 | loss 2.9168 (delta +0.2612) size 1941.6 MB sparsity 4.4%
+gen 1 initial [17/100] k=201 (used   5.0) c=0.941 alpha=-0.094 beta=+0.094 | loss 15.2445 (delta +12.5889) size 791.5 MB sparsity 7.5%
+gen 1 initial [18/100] k= 41 (used  21.0) c=0.972 alpha=-0.223 beta=+0.223 | loss 13.0054 (delta +10.3498) size 1387.1 MB sparsity 17.6%
+gen 1 initial [19/100] k= 48 (used  15.0) c=0.970 alpha=-0.004 beta=+0.004 | loss 14.8001 (delta +12.1444) size 1110.1 MB sparsity 6.4%
+gen 1 initial [20/100] k=183 (used 175.8) c=0.936 alpha=-0.248 beta=+0.248 | loss 8.6714 (delta +6.0158) size 2063.1 MB sparsity 19.5%
+gen 1 initial [21/100] k=397 (used 353.3) c=0.970 alpha=-0.257 beta=+0.257 | loss 9.7721 (delta +7.1165) size 2269.3 MB sparsity 20.2%
+gen 1 initial [22/100] k=233 (used 224.5) c=0.945 alpha=-0.112 beta=+0.112 | loss 2.7821 (delta +0.1265) size 2218.7 MB sparsity 8.9%
+gen 1 initial [23/100] k=112 (used  21.0) c=0.920 alpha=-0.046 beta=+0.046 | loss 13.5420 (delta +10.8864) size 1387.3 MB sparsity 3.7%
+gen 1 initial [24/100] k=344 (used 174.3) c=0.976 alpha=-0.180 beta=+0.180 | loss 3.2757 (delta +0.6201) size 2178.6 MB sparsity 14.2%
+gen 1 initial [25/100] k=161 (used   7.0) c=0.965 alpha=-0.036 beta=+0.036 | loss 16.7471 (delta +14.0915) size 833.0 MB sparsity 2.9%
+gen 1 initial [26/100] k=125 (used  63.0) c=0.933 alpha=-0.109 beta=+0.109 | loss 3.0386 (delta +0.3830) size 1664.4 MB sparsity 8.7%
+gen 1 initial [27/100] k= 51 (used  25.0) c=0.993 alpha=-0.288 beta=+0.288 | loss 15.3209 (delta +12.6653) size 1350.7 MB sparsity 22.5%
+gen 1 initial [28/100] k= 34 (used   3.0) c=0.996 alpha=-0.299 beta=+0.299 | loss 13.2955 (delta +10.6399) size 491.1 MB sparsity 23.4%
+gen 1 initial [29/100] k=122 (used  60.1) c=0.949 alpha=-0.232 beta=+0.232 | loss 9.5440 (delta +6.8884) size 1636.3 MB sparsity 18.2%
+gen 1 initial [30/100] k= 66 (used   3.0) c=0.933 alpha=-0.093 beta=+0.093 | loss 14.6482 (delta +11.9926) size 535.3 MB sparsity 7.4%
+gen 1 initial [31/100] k=316 (used  35.0) c=0.990 alpha=-0.206 beta=+0.206 | loss 9.3279 (delta +6.6723) size 1663.7 MB sparsity 16.3%
+gen 1 initial [32/100] k=205 (used 116.0) c=0.928 alpha=-0.212 beta=+0.212 | loss 5.5898 (delta +2.9342) size 1894.0 MB sparsity 16.7%
+gen 1 initial [33/100] k= 43 (used  25.0) c=0.992 alpha=-0.116 beta=+0.116 | loss 12.9272 (delta +10.2716) size 1387.3 MB sparsity 9.3%
+gen 1 initial [34/100] k= 89 (used  86.2) c=0.983 alpha=-0.192 beta=+0.192 | loss 4.2315 (delta +1.5759) size 1921.7 MB sparsity 15.2%
+gen 1 initial [35/100] k= 71 (used  13.0) c=0.952 alpha=-0.003 beta=+0.003 | loss 15.0755 (delta +12.4198) size 1110.1 MB sparsity 4.1%
+gen 1 initial [36/100] k= 36 (used  35.0) c=0.944 alpha=-0.063 beta=+0.063 | loss 6.7764 (delta +4.1207) size 1664.4 MB sparsity 8.5%
+gen 1 initial [37/100] k=378 (used 293.8) c=0.989 alpha=-0.158 beta=+0.158 | loss 2.9374 (delta +0.2818) size 2460.4 MB sparsity 12.5%
+gen 1 initial [38/100] k=199 (used  53.0) c=0.937 alpha=-0.049 beta=+0.049 | loss 3.3422 (delta +0.6866) size 1664.4 MB sparsity 3.9%
+gen 1 initial [39/100] k=430 (used  65.0) c=0.924 alpha=-0.050 beta=+0.050 | loss 2.9250 (delta +0.2694) size 1875.7 MB sparsity 4.0%
+gen 1 initial [40/100] k= 52 (used  17.0) c=0.960 alpha=-0.251 beta=+0.251 | loss 16.0762 (delta +13.4205) size 1168.5 MB sparsity 19.7%
+gen 1 initial [41/100] k=275 (used   5.0) c=0.997 alpha=-0.297 beta=+0.297 | loss 14.3992 (delta +11.7436) size 704.2 MB sparsity 23.2%
+gen 1 initial [42/100] k= 60 (used  30.0) c=0.913 alpha=-0.167 beta=+0.167 | loss 11.3447 (delta +8.6891) size 1387.3 MB sparsity 13.2%
+gen 1 initial [43/100] k=218 (used 112.6) c=0.958 alpha=-0.252 beta=+0.252 | loss 9.1097 (delta +6.4540) size 1834.7 MB sparsity 19.8%
+gen 1 initial [44/100] k=247 (used  83.1) c=0.913 alpha=-0.297 beta=+0.297 | loss 10.9991 (delta +8.3435) size 1767.5 MB sparsity 23.3%
+gen 1 initial [45/100] k= 73 (used  21.0) c=0.949 alpha=-0.042 beta=+0.042 | loss 14.1361 (delta +11.4805) size 1387.3 MB sparsity 4.1%
+gen 1 initial [46/100] k=416 (used  43.0) c=0.902 alpha=-0.134 beta=+0.134 | loss 4.5494 (delta +1.8938) size 1664.4 MB sparsity 10.7%
+gen 1 initial [47/100] k= 47 (used  45.0) c=0.942 alpha=-0.118 beta=+0.118 | loss 5.8976 (delta +3.2419) size 1664.4 MB sparsity 9.4%
+gen 1 initial [48/100] k=297 (used  33.0) c=0.947 alpha=-0.024 beta=+0.024 | loss 7.6614 (delta +5.0058) size 1637.8 MB sparsity 1.9%
+gen 1 initial [49/100] k=318 (used 160.1) c=0.980 alpha=-0.227 beta=+0.227 | loss 6.3209 (delta +3.6653) size 2100.0 MB sparsity 17.9%
+gen 1 initial [50/100] k=354 (used 172.7) c=0.960 alpha=-0.130 beta=+0.130 | loss 2.8453 (delta +0.1897) size 2218.6 MB sparsity 10.3%
+gen 1 initial [51/100] k=194 (used  49.0) c=0.987 alpha=-0.141 beta=+0.141 | loss 4.3911 (delta +1.7355) size 1664.4 MB sparsity 11.2%
+gen 1 initial [52/100] k=252 (used 138.0) c=0.982 alpha=-0.045 beta=+0.045 | loss 2.7003 (delta +0.0447) size 2218.7 MB sparsity 3.6%
+gen 1 initial [53/100] k= 47 (used  45.0) c=0.982 alpha=-0.054 beta=+0.054 | loss 3.6881 (delta +1.0325) size 1664.4 MB sparsity 6.5%
+gen 1 initial [54/100] k= 50 (used   3.0) c=0.928 alpha=-0.272 beta=+0.272 | loss 12.9346 (delta +10.2789) size 496.7 MB sparsity 21.4%
+gen 1 initial [55/100] k= 37 (used  21.0) c=0.917 alpha=-0.013 beta=+0.013 | loss 11.8241 (delta +9.1684) size 1387.3 MB sparsity 7.7%
+gen 1 initial [56/100] k= 94 (used  90.0) c=0.932 alpha=-0.070 beta=+0.070 | loss 2.8148 (delta +0.1592) size 1941.6 MB sparsity 5.6%
+gen 1 initial [57/100] k= 36 (used  19.0) c=0.918 alpha=-0.088 beta=+0.088 | loss 12.9060 (delta +10.2503) size 1387.3 MB sparsity 8.4%
+gen 1 initial [58/100] k=101 (used  11.0) c=0.905 alpha=-0.147 beta=+0.147 | loss 15.2946 (delta +12.6390) size 1110.1 MB sparsity 11.7%
+gen 1 initial [59/100] k=322 (used 310.6) c=0.905 alpha=-0.176 beta=+0.176 | loss 3.3095 (delta +0.6539) size 2426.1 MB sparsity 13.9%
+gen 1 initial [60/100] k=391 (used 212.2) c=0.998 alpha=-0.148 beta=+0.148 | loss 2.8976 (delta +0.2420) size 2218.3 MB sparsity 11.7%
+gen 1 initial [61/100] k=277 (used 273.0) c=0.913 alpha=-0.025 beta=+0.025 | loss 2.6871 (delta +0.0315) size 2495.9 MB sparsity 2.0%
+gen 1 initial [62/100] k=115 (used  17.0) c=0.939 alpha=-0.073 beta=+0.073 | loss 16.8638 (delta +14.2082) size 1322.8 MB sparsity 5.8%
+gen 1 initial [63/100] k=119 (used  41.8) c=0.942 alpha=-0.253 beta=+0.253 | loss 11.8356 (delta +9.1800) size 1610.2 MB sparsity 19.9%
+gen 1 initial [64/100] k= 79 (used  77.0) c=0.938 alpha=-0.191 beta=+0.191 | loss 4.5793 (delta +1.9236) size 1923.1 MB sparsity 15.1%
+gen 1 initial [65/100] k=406 (used 389.6) c=0.948 alpha=-0.195 beta=+0.195 | loss 3.6692 (delta +1.0136) size 2389.6 MB sparsity 15.4%
+gen 1 initial [66/100] k=194 (used  49.6) c=0.980 alpha=-0.201 beta=+0.201 | loss 7.3697 (delta +4.7141) size 1663.9 MB sparsity 15.9%
+gen 1 initial [67/100] k=245 (used  31.0) c=0.920 alpha=-0.229 beta=+0.229 | loss 12.9085 (delta +10.2528) size 1387.0 MB sparsity 18.0%
+gen 1 initial [68/100] k=175 (used 161.0) c=0.910 alpha=-0.017 beta=+0.017 | loss 2.7012 (delta +0.0456) size 2218.7 MB sparsity 1.6%
+gen 1 initial [69/100] k= 46 (used  41.0) c=0.996 alpha=-0.110 beta=+0.110 | loss 7.2091 (delta +4.5535) size 1664.4 MB sparsity 8.8%
+gen 1 initial [70/100] k=289 (used  27.0) c=0.995 alpha=-0.162 beta=+0.162 | loss 11.2714 (delta +8.6158) size 1387.3 MB sparsity 12.8%
+gen 1 initial [71/100] k=176 (used  87.0) c=0.917 alpha=-0.102 beta=+0.102 | loss 2.8672 (delta +0.2115) size 1941.6 MB sparsity 8.1%
+gen 1 initial [72/100] k=135 (used  69.3) c=0.976 alpha=-0.253 beta=+0.253 | loss 10.1281 (delta +7.4725) size 1832.3 MB sparsity 19.9%
+gen 1 initial [73/100] k=423 (used 219.1) c=0.912 alpha=-0.145 beta=+0.145 | loss 2.9256 (delta +0.2700) size 2218.4 MB sparsity 11.5%
+gen 1 initial [74/100] k=101 (used  87.0) c=0.977 alpha=-0.231 beta=+0.231 | loss 7.4842 (delta +4.8286) size 1866.4 MB sparsity 18.2%
+gen 1 initial [75/100] k=264 (used  39.8) c=0.927 alpha=-0.256 beta=+0.256 | loss 12.1399 (delta +9.4843) size 1607.2 MB sparsity 20.1%
+gen 1 initial [76/100] k= 48 (used  41.0) c=0.994 alpha=-0.151 beta=+0.151 | loss 7.4869 (delta +4.8313) size 1664.4 MB sparsity 12.0%
+gen 1 initial [77/100] k=147 (used  50.2) c=0.994 alpha=-0.273 beta=+0.273 | loss 10.9903 (delta +8.3347) size 1585.5 MB sparsity 21.4%
+gen 1 initial [78/100] k=494 (used 461.8) c=0.972 alpha=-0.176 beta=+0.176 | loss 3.1376 (delta +0.4819) size 2425.7 MB sparsity 13.9%
+gen 1 initial [79/100] k=186 (used   5.0) c=0.912 alpha=-0.255 beta=+0.255 | loss 14.7119 (delta +12.0563) size 721.9 MB sparsity 20.1%
+gen 1 initial [80/100] k=112 (used  55.0) c=0.983 alpha=-0.102 beta=+0.102 | loss 3.2296 (delta +0.5740) size 1664.4 MB sparsity 8.1%
+gen 1 initial [81/100] k= 73 (used  73.0) c=0.992 alpha=-0.150 beta=+0.150 | loss 3.2970 (delta +0.6414) size 1941.5 MB sparsity 11.9%
+gen 1 initial [82/100] k=366 (used 358.7) c=0.928 alpha=-0.159 beta=+0.159 | loss 3.0012 (delta +0.3456) size 2456.9 MB sparsity 12.6%
+gen 1 initial [83/100] k=202 (used   7.0) c=0.965 alpha=-0.031 beta=+0.031 | loss 17.4247 (delta +14.7691) size 833.0 MB sparsity 2.5%
+gen 1 initial [84/100] k= 62 (used  60.0) c=0.914 alpha=-0.120 beta=+0.120 | loss 3.3854 (delta +0.7298) size 1664.4 MB sparsity 9.5%
+gen 1 initial [85/100] k=196 (used  97.2) c=0.904 alpha=-0.275 beta=+0.275 | loss 11.0991 (delta +8.4435) size 1799.8 MB sparsity 21.6%
+gen 1 initial [86/100] k=295 (used 271.7) c=0.924 alpha=-0.189 beta=+0.189 | loss 3.6418 (delta +0.9862) size 2400.2 MB sparsity 14.9%
+gen 1 initial [87/100] k=419 (used  17.0) c=0.977 alpha=-0.053 beta=+0.053 | loss 17.2191 (delta +14.5635) size 1340.3 MB sparsity 4.2%
+gen 1 initial [88/100] k= 55 (used  29.0) c=0.912 alpha=-0.102 beta=+0.102 | loss 8.3347 (delta +5.6790) size 1387.3 MB sparsity 8.1%
+gen 1 initial [89/100] k=338 (used  87.0) c=0.916 alpha=-0.057 beta=+0.057 | loss 2.7770 (delta +0.1214) size 1941.6 MB sparsity 4.6%
+gen 1 initial [90/100] k=228 (used 115.0) c=0.998 alpha=-0.007 beta=+0.007 | loss 2.7198 (delta +0.0642) size 1941.6 MB sparsity 1.3%
+gen 1 initial [91/100] k= 35 (used   3.0) c=0.988 alpha=-0.278 beta=+0.278 | loss 12.8894 (delta +10.2338) size 495.4 MB sparsity 21.8%
+gen 1 initial [92/100] k= 53 (used  27.0) c=0.998 alpha=-0.134 beta=+0.134 | loss 10.2837 (delta +7.6281) size 1387.3 MB sparsity 10.7%
+gen 1 initial [93/100] k=156 (used  83.8) c=0.915 alpha=-0.092 beta=+0.092 | loss 2.8476 (delta +0.1919) size 1941.6 MB sparsity 7.3%
+gen 1 initial [94/100] k=222 (used 111.5) c=0.965 alpha=-0.180 beta=+0.180 | loss 3.4711 (delta +0.8155) size 1939.6 MB sparsity 14.2%
+gen 1 initial [95/100] k= 97 (used  27.0) c=0.947 alpha=-0.002 beta=+0.002 | loss 10.6058 (delta +7.9501) size 1387.3 MB sparsity 3.0%
+gen 1 initial [96/100] k= 74 (used  27.0) c=0.943 alpha=-0.083 beta=+0.083 | loss 10.6019 (delta +7.9462) size 1387.3 MB sparsity 6.6%
+gen 1 initial [97/100] k= 99 (used   5.0) c=0.922 alpha=-0.211 beta=+0.211 | loss 14.5960 (delta +11.9404) size 740.8 MB sparsity 16.6%
+gen 1 initial [98/100] k=101 (used  53.0) c=0.947 alpha=-0.190 beta=+0.190 | loss 6.0990 (delta +3.4434) size 1664.1 MB sparsity 15.0%
+gen 1 initial [99/100] k=223 (used 208.6) c=0.965 alpha=-0.295 beta=+0.295 | loss 10.8160 (delta +8.1603) size 1984.5 MB sparsity 23.1%
+gen 1 initial [100/100] k=146 (used  74.4) c=0.943 alpha=-0.186 beta=+0.186 | loss 4.4899 (delta +1.8343) size 1930.5 MB sparsity 14.7%
+=== generation 1/10 done in 3872s (0 reused), batch baseline 2.6556, HV 0.25795, front 12 points, 31/100 feasible, best delta loss +0.0315, smallest 1664.4 MB
+gen 2 offspring [1/100] k=297 (used  43.0) c=0.910 alpha=-0.035 beta=+0.013 | loss 4.8627 (delta +2.2071) size 1664.4 MB sparsity 1.9%
+gen 2 offspring [2/100] k= 35 (used   5.0) c=0.943 alpha=-0.087 beta=+0.083 | loss 13.9404 (delta +11.2848) size 785.6 MB sparsity 8.6%
+gen 2 offspring [3/100] k=430 (used  63.0) c=0.936 alpha=-0.050 beta=+0.054 | loss 2.9408 (delta +0.2852) size 1664.4 MB sparsity 4.1%
+gen 2 offspring [4/100] k= 89 (used  87.6) c=0.983 alpha=-0.026 beta=+0.188 | loss 4.2327 (delta +1.5771) size 1941.6 MB sparsity 9.1%
+gen 2 offspring [5/100] k=389 (used 189.6) c=0.961 alpha=-0.130 beta=+0.130 | loss 2.8263 (delta +0.1706) size 2218.6 MB sparsity 10.3%
+gen 2 offspring [6/100] k= 60 (used  30.0) c=0.913 alpha=-0.169 beta=+0.130 | loss 11.7464 (delta +9.0907) size 1387.3 MB sparsity 11.9%
+gen 2 offspring [7/100] k=194 (used  49.0) c=0.943 alpha=-0.118 beta=+0.124 | loss 3.9413 (delta +1.2856) size 1664.4 MB sparsity 9.6%
+gen 2 offspring [8/100] k= 90 (used  81.0) c=0.966 alpha=-0.052 beta=+0.052 | loss 2.8217 (delta +0.1661) size 1941.6 MB sparsity 4.2%
+gen 2 offspring [9/100] k= 50 (used  27.0) c=0.912 alpha=-0.145 beta=+0.145 | loss 10.4598 (delta +7.8042) size 1387.3 MB sparsity 11.5%
+gen 2 offspring [10/100] k=252 (used 125.9) c=0.983 alpha=-0.179 beta=+0.210 | loss 4.3770 (delta +1.7213) size 1918.2 MB sparsity 15.4%
+gen 2 offspring [11/100] k=188 (used  62.5) c=0.980 alpha=-0.201 beta=+0.202 | loss 5.8546 (delta +3.1989) size 1663.9 MB sparsity 15.9%
+gen 2 offspring [12/100] k=111 (used 109.0) c=0.991 alpha=-0.122 beta=+0.130 | loss 2.8838 (delta +0.2282) size 1941.6 MB sparsity 10.0%
+gen 2 offspring [13/100] k=205 (used 190.2) c=0.966 alpha=-0.057 beta=+0.288 | loss 24.0639 (delta +21.4082) size 2192.8 MB sparsity 13.6%
+gen 2 offspring [14/100] k=379 (used  35.0) c=0.994 alpha=-0.158 beta=+0.158 | loss 8.2932 (delta +5.6375) size 1664.4 MB sparsity 12.5%
+gen 2 offspring [15/100] k=387 (used  39.0) c=0.995 alpha=-0.152 beta=+0.162 | loss 8.5891 (delta +5.9334) size 1664.4 MB sparsity 12.4%
+gen 2 offspring [16/100] k= 36 (used  35.0) c=0.918 alpha=-0.088 beta=+0.088 | loss 6.4601 (delta +3.8044) size 1664.4 MB sparsity 8.4%
+gen 2 offspring [17/100] k=127 (used 125.0) c=0.983 alpha=-0.054 beta=+0.046 | loss 2.7191 (delta +0.0635) size 1941.6 MB sparsity 4.0%
+gen 2 offspring [18/100] k=251 (used 123.0) c=0.997 alpha=-0.063 beta=+0.070 | loss 2.7279 (delta +0.0722) size 1941.6 MB sparsity 5.3%
+gen 2 offspring [19/100] k=203 (used 103.0) c=0.972 alpha=-0.028 beta=+0.015 | loss 2.7254 (delta +0.0698) size 1941.6 MB sparsity 1.9%
+gen 2 offspring [20/100] k=113 (used   3.0) c=0.997 alpha=-0.297 beta=+0.294 | loss 13.2716 (delta +10.6159) size 491.8 MB sparsity 23.1%
+gen 2 offspring [21/100] k= 36 (used  35.0) c=0.943 alpha=-0.056 beta=+0.057 | loss 6.7502 (delta +4.0946) size 1664.4 MB sparsity 8.4%
+gen 2 offspring [22/100] k=366 (used 358.7) c=0.928 alpha=-0.160 beta=+0.159 | loss 3.0020 (delta +0.3463) size 2456.7 MB sparsity 12.6%
+gen 2 offspring [23/100] k=173 (used  59.6) c=0.913 alpha=-0.297 beta=+0.297 | loss 11.7495 (delta +9.0938) size 1554.8 MB sparsity 23.3%
+gen 2 offspring [24/100] k=228 (used 117.0) c=0.998 alpha=-0.007 beta=+0.007 | loss 2.7187 (delta +0.0631) size 1941.6 MB sparsity 1.3%
+gen 2 offspring [25/100] k=405 (used  58.6) c=0.986 alpha=-0.045 beta=+0.185 | loss 5.4255 (delta +2.7698) size 1664.4 MB sparsity 9.1%
+gen 2 offspring [26/100] k=194 (used  99.3) c=0.980 alpha=-0.201 beta=+0.107 | loss 3.9056 (delta +1.2500) size 1941.5 MB sparsity 12.2%
+gen 2 offspring [27/100] k=109 (used  56.2) c=0.912 alpha=-0.146 beta=+0.145 | loss 3.8825 (delta +1.2268) size 1664.4 MB sparsity 11.5%
+gen 2 offspring [28/100] k=318 (used 296.8) c=0.996 alpha=-0.114 beta=+0.227 | loss 5.8744 (delta +3.2188) size 2437.5 MB sparsity 13.4%
+gen 2 offspring [29/100] k= 59 (used  31.0) c=0.997 alpha=-0.022 beta=+0.022 | loss 9.1504 (delta +6.4948) size 1387.3 MB sparsity 5.2%
+gen 2 offspring [30/100] k=389 (used  41.0) c=0.902 alpha=-0.134 beta=+0.119 | loss 5.5900 (delta +2.9344) size 1664.4 MB sparsity 10.1%
+gen 2 offspring [31/100] k=226 (used 113.7) c=0.904 alpha=-0.011 beta=+0.280 | loss 24.0830 (delta +21.4274) size 1941.5 MB sparsity 11.6%
+gen 2 offspring [32/100] k=243 (used 238.2) c=0.944 alpha=-0.112 beta=+0.113 | loss 2.7805 (delta +0.1249) size 2218.7 MB sparsity 8.9%
+gen 2 offspring [33/100] k=389 (used 217.2) c=0.998 alpha=-0.190 beta=+0.148 | loss 3.2391 (delta +0.5835) size 2197.4 MB sparsity 13.4%
+gen 2 offspring [34/100] k=242 (used  31.0) c=0.936 alpha=-0.177 beta=+0.175 | loss 9.9003 (delta +7.2446) size 1387.3 MB sparsity 13.9%
+gen 2 offspring [35/100] k=494 (used 479.6) c=0.928 alpha=-0.168 beta=+0.199 | loss 3.5573 (delta +0.9017) size 2411.5 MB sparsity 14.5%
+gen 2 offspring [36/100] k=378 (used 228.5) c=0.989 alpha=-0.158 beta=+0.058 | loss 3.0801 (delta +0.4245) size 2218.7 MB sparsity 8.5%
+gen 2 offspring [37/100] k=177 (used 101.0) c=0.955 alpha=-0.155 beta=+0.145 | loss 3.0746 (delta +0.4189) size 1941.5 MB sparsity 11.9%
+gen 2 offspring [38/100] k=119 (used  39.4) c=0.942 alpha=-0.135 beta=+0.253 | loss 14.7923 (delta +12.1367) size 1664.1 MB sparsity 15.3%
+gen 2 offspring [39/100] k= 95 (used  93.0) c=0.933 alpha=-0.070 beta=+0.070 | loss 2.7998 (delta +0.1442) size 1941.6 MB sparsity 5.6%
+gen 2 offspring [40/100] k=261 (used  31.0) c=0.935 alpha=-0.162 beta=+0.169 | loss 10.3844 (delta +7.7288) size 1387.3 MB sparsity 13.1%
+gen 2 offspring [41/100] k=366 (used 358.8) c=0.928 alpha=-0.156 beta=+0.159 | loss 2.9876 (delta +0.3320) size 2460.5 MB sparsity 12.5%
+gen 2 offspring [42/100] k=428 (used 309.2) c=0.948 alpha=-0.197 beta=+0.195 | loss 3.7596 (delta +1.1039) size 2387.6 MB sparsity 15.5%
+gen 2 offspring [43/100] k=101 (used  99.0) c=0.983 alpha=-0.145 beta=+0.148 | loss 3.0334 (delta +0.3777) size 1941.5 MB sparsity 11.6%
+gen 2 offspring [44/100] k=122 (used  59.8) c=0.947 alpha=-0.184 beta=+0.232 | loss 9.2918 (delta +6.6362) size 1663.5 MB sparsity 16.4%
+gen 2 offspring [45/100] k= 73 (used  71.0) c=0.992 alpha=-0.150 beta=+0.150 | loss 3.3823 (delta +0.7267) size 1941.5 MB sparsity 11.9%
+gen 2 offspring [46/100] k=222 (used 113.3) c=0.982 alpha=-0.179 beta=+0.042 | loss 3.6252 (delta +0.9696) size 1941.6 MB sparsity 8.7%
+gen 2 offspring [47/100] k= 37 (used  25.0) c=0.939 alpha=-0.013 beta=+0.035 | loss 11.6542 (delta +8.9985) size 1387.3 MB sparsity 7.9%
+gen 2 offspring [48/100] k=245 (used  83.7) c=0.920 alpha=-0.226 beta=+0.229 | loss 7.2412 (delta +4.5855) size 1871.4 MB sparsity 17.9%
+gen 2 offspring [49/100] k=183 (used 175.8) c=0.930 alpha=-0.250 beta=+0.244 | loss 8.6820 (delta +6.0264) size 2065.2 MB sparsity 19.4%
+gen 2 offspring [50/100] k=277 (used 269.6) c=0.910 alpha=-0.191 beta=+0.029 | loss 4.0690 (delta +1.4133) size 2495.9 MB sparsity 8.7%
+gen 2 offspring [51/100] k=205 (used 198.1) c=0.927 alpha=-0.212 beta=+0.212 | loss 5.2847 (delta +2.6291) size 2125.9 MB sparsity 16.7%
+gen 2 offspring [52/100] k= 46 (used  41.0) c=0.996 alpha=-0.108 beta=+0.110 | loss 7.1640 (delta +4.5084) size 1664.4 MB sparsity 8.7%
+gen 2 offspring [53/100] k= 47 (used  43.0) c=0.989 alpha=-0.138 beta=+0.118 | loss 7.1882 (delta +4.5325) size 1664.4 MB sparsity 10.2%
+gen 2 offspring [54/100] k=222 (used 110.9) c=0.928 alpha=-0.180 beta=+0.138 | loss 3.3760 (delta +0.7204) size 1941.4 MB sparsity 12.6%
+gen 2 offspring [55/100] k=390 (used 214.8) c=0.998 alpha=-0.141 beta=+0.120 | loss 2.8445 (delta +0.1889) size 2218.6 MB sparsity 10.3%
+gen 2 offspring [56/100] k=344 (used 184.7) c=0.976 alpha=-0.046 beta=+0.016 | loss 2.6818 (delta +0.0262) size 2218.7 MB sparsity 2.5%
+gen 2 offspring [57/100] k=195 (used  51.0) c=0.938 alpha=-0.049 beta=+0.048 | loss 3.2052 (delta +0.5496) size 1664.4 MB sparsity 3.9%
+gen 2 offspring [58/100] k= 59 (used  57.0) c=0.909 alpha=-0.148 beta=+0.148 | loss 3.9630 (delta +1.3074) size 1664.4 MB sparsity 11.8%
+gen 2 offspring [59/100] k=333 (used  84.2) c=0.914 alpha=-0.295 beta=+0.062 | loss 21.4570 (delta +18.8013) size 1940.8 MB sparsity 14.0%
+gen 2 offspring [60/100] k=296 (used 279.0) c=0.949 alpha=-0.024 beta=+0.006 | loss 2.6729 (delta +0.0172) size 2495.9 MB sparsity 1.5%
+gen 2 offspring [61/100] k=292 (used 148.2) c=0.998 alpha=-0.148 beta=+0.148 | loss 2.9282 (delta +0.2725) size 2218.3 MB sparsity 11.7%
+gen 2 offspring [62/100] k= 49 (used  25.0) c=0.994 alpha=-0.151 beta=+0.151 | loss 10.2447 (delta +7.5890) size 1387.3 MB sparsity 12.0%
+gen 2 offspring [63/100] k= 47 (used  25.0) c=0.932 alpha=-0.109 beta=+0.076 | loss 11.1322 (delta +8.4766) size 1387.3 MB sparsity 7.6%
+gen 2 offspring [64/100] k= 94 (used  92.0) c=0.932 alpha=-0.101 beta=+0.111 | loss 2.8745 (delta +0.2188) size 1941.6 MB sparsity 8.4%
+gen 2 offspring [65/100] k=156 (used  83.8) c=0.915 alpha=-0.092 beta=+0.094 | loss 2.8488 (delta +0.1931) size 1941.6 MB sparsity 7.4%
+gen 2 offspring [66/100] k=272 (used  92.2) c=0.983 alpha=-0.102 beta=+0.103 | loss 2.8279 (delta +0.1723) size 1941.6 MB sparsity 8.1%
+gen 2 offspring [67/100] k= 54 (used  27.0) c=0.947 alpha=-0.246 beta=+0.246 | loss 14.9277 (delta +12.2721) size 1386.7 MB sparsity 19.4%
+gen 2 offspring [68/100] k=101 (used  51.8) c=0.949 alpha=-0.190 beta=+0.190 | loss 5.5737 (delta +2.9180) size 1664.1 MB sparsity 15.0%
+gen 2 offspring [69/100] k=249 (used 247.0) c=0.909 alpha=-0.017 beta=+0.017 | loss 2.7033 (delta +0.0477) size 2218.7 MB sparsity 1.4%
+gen 2 offspring [70/100] k=233 (used 222.5) c=0.944 alpha=-0.112 beta=+0.112 | loss 2.7769 (delta +0.1213) size 2218.7 MB sparsity 8.9%
+gen 2 offspring [71/100] k= 94 (used  89.4) c=0.921 alpha=-0.192 beta=+0.057 | loss 4.3936 (delta +1.7380) size 1941.6 MB sparsity 9.9%
+gen 2 offspring [72/100] k=176 (used  58.3) c=0.917 alpha=-0.101 beta=+0.195 | loss 5.4345 (delta +2.7788) size 1664.4 MB sparsity 11.7%
+gen 2 offspring [73/100] k=290 (used 279.0) c=0.924 alpha=-0.189 beta=+0.189 | loss 3.6039 (delta +0.9482) size 2400.2 MB sparsity 14.9%
+gen 2 offspring [74/100] k=295 (used  77.0) c=0.947 alpha=-0.003 beta=+0.015 | loss 2.8068 (delta +0.1512) size 1941.6 MB sparsity 1.1%
+gen 2 offspring [75/100] k= 46 (used  23.0) c=0.986 alpha=-0.223 beta=+0.110 | loss 13.0179 (delta +10.3622) size 1387.3 MB sparsity 13.2%
+gen 2 offspring [76/100] k=310 (used  30.0) c=0.901 alpha=-0.162 beta=+0.162 | loss 9.8999 (delta +7.2443) size 1387.3 MB sparsity 12.8%
+gen 2 offspring [77/100] k= 62 (used  58.0) c=0.914 alpha=-0.169 beta=+0.135 | loss 4.3627 (delta +1.7071) size 1664.4 MB sparsity 12.1%
+gen 2 offspring [78/100] k=198 (used  99.4) c=0.998 alpha=-0.273 beta=+0.006 | loss 18.2648 (delta +15.6092) size 1941.5 MB sparsity 11.5%
+gen 2 offspring [79/100] k= 35 (used  19.0) c=0.945 alpha=-0.063 beta=+0.062 | loss 14.0674 (delta +11.4118) size 1387.3 MB sparsity 8.5%
+gen 2 offspring [80/100] k=102 (used  53.9) c=0.943 alpha=-0.148 beta=+0.190 | loss 5.3478 (delta +2.6922) size 1664.4 MB sparsity 13.4%
+gen 2 offspring [81/100] k=320 (used 290.6) c=0.913 alpha=-0.227 beta=+0.232 | loss 6.9778 (delta +4.3221) size 2322.1 MB sparsity 18.1%
+gen 2 offspring [82/100] k=155 (used 155.0) c=0.969 alpha=-0.021 beta=+0.026 | loss 2.6862 (delta +0.0305) size 2218.7 MB sparsity 2.0%
+gen 2 offspring [83/100] k= 47 (used  44.0) c=0.982 alpha=-0.054 beta=+0.154 | loss 6.5460 (delta +3.8904) size 1664.4 MB sparsity 9.4%
+gen 2 offspring [84/100] k= 62 (used  17.0) c=0.937 alpha=-0.046 beta=+0.049 | loss 17.2354 (delta +14.5798) size 1333.9 MB sparsity 4.8%
+gen 2 offspring [85/100] k= 54 (used  27.0) c=0.998 alpha=-0.252 beta=+0.166 | loss 14.2933 (delta +11.6376) size 1387.2 MB sparsity 16.5%
+gen 2 offspring [86/100] k=124 (used  65.0) c=0.932 alpha=-0.109 beta=+0.109 | loss 3.0365 (delta +0.3809) size 1797.3 MB sparsity 8.7%
+gen 2 offspring [87/100] k=297 (used 235.0) c=0.939 alpha=-0.029 beta=+0.022 | loss 2.6834 (delta +0.0278) size 2218.7 MB sparsity 2.1%
+gen 2 offspring [88/100] k=277 (used 273.0) c=0.913 alpha=-0.029 beta=+0.025 | loss 2.6874 (delta +0.0318) size 2495.9 MB sparsity 2.2%
+gen 2 offspring [89/100] k= 65 (used   3.0) c=0.933 alpha=-0.098 beta=+0.093 | loss 14.6094 (delta +11.9538) size 534.7 MB sparsity 7.6%
+gen 2 offspring [90/100] k=205 (used 112.0) c=0.928 alpha=-0.212 beta=+0.212 | loss 5.5674 (delta +2.9118) size 1894.0 MB sparsity 16.7%
+gen 2 offspring [91/100] k=107 (used 101.0) c=0.977 alpha=-0.233 beta=+0.231 | loss 7.0508 (delta +4.3952) size 1864.2 MB sparsity 18.3%
+gen 2 offspring [92/100] k= 79 (used  76.4) c=0.939 alpha=-0.229 beta=+0.191 | loss 6.4029 (delta +3.7473) size 1896.2 MB sparsity 16.6%
+gen 2 offspring [93/100] k=227 (used 114.5) c=0.965 alpha=-0.046 beta=+0.183 | loss 4.1650 (delta +1.5093) size 1941.6 MB sparsity 9.0%
+gen 2 offspring [94/100] k=251 (used 121.3) c=0.997 alpha=-0.094 beta=+0.062 | loss 2.7580 (delta +0.1024) size 1941.6 MB sparsity 6.2%
+gen 2 offspring [95/100] k= 73 (used  73.0) c=0.989 alpha=-0.152 beta=+0.150 | loss 3.3017 (delta +0.6461) size 1941.5 MB sparsity 12.0%
+gen 2 offspring [96/100] k=112 (used  56.0) c=0.979 alpha=-0.106 beta=+0.102 | loss 3.2020 (delta +0.5463) size 1664.4 MB sparsity 8.3%
+gen 2 offspring [97/100] k=218 (used 108.0) c=0.947 alpha=-0.008 beta=+0.002 | loss 2.7193 (delta +0.0636) size 1941.6 MB sparsity 1.3%
+gen 2 offspring [98/100] k=251 (used  85.6) c=0.997 alpha=-0.094 beta=+0.094 | loss 2.8278 (delta +0.1721) size 1941.6 MB sparsity 7.5%
+gen 2 offspring [99/100] k= 79 (used  77.0) c=0.941 alpha=-0.189 beta=+0.191 | loss 4.4741 (delta +1.8185) size 1924.9 MB sparsity 15.0%
+gen 2 offspring [100/100] k= 99 (used  27.0) c=0.965 alpha=-0.176 beta=+0.180 | loss 10.6624 (delta +8.0068) size 1387.3 MB sparsity 14.1%
+=== generation 2/10 done in 3837s (0 reused), batch baseline 2.6556, HV 0.27318, front 15 points, 72/100 feasible, best delta loss +0.0172, smallest 1664.4 MB
+gen 3 offspring [1/100] k=155 (used 153.0) c=0.905 alpha=-0.017 beta=+0.017 | loss 2.7172 (delta +0.0616) size 2218.7 MB sparsity 1.8%
+gen 3 offspring [2/100] k=391 (used  94.7) c=0.999 alpha=-0.154 beta=+0.148 | loss 3.0479 (delta +0.3922) size 1941.5 MB sparsity 11.9%
+gen 3 offspring [3/100] k=296 (used 257.0) c=0.937 alpha=-0.012 beta=+0.002 | loss 2.6762 (delta +0.0206) size 2473.9 MB sparsity 1.0%
+gen 3 offspring [4/100] k=277 (used 273.4) c=0.933 alpha=-0.110 beta=+0.025 | loss 2.8081 (delta +0.1524) size 2495.9 MB sparsity 5.3%
+gen 3 offspring [5/100] k=412 (used 202.0) c=0.912 alpha=-0.155 beta=+0.138 | loss 2.9628 (delta +0.3071) size 2218.3 MB sparsity 11.6%
+gen 3 offspring [6/100] k= 95 (used  93.0) c=0.991 alpha=-0.124 beta=+0.132 | loss 2.9444 (delta +0.2887) size 1941.6 MB sparsity 10.1%
+gen 3 offspring [7/100] k= 96 (used  94.0) c=0.933 alpha=-0.070 beta=+0.070 | loss 2.7966 (delta +0.1409) size 1941.6 MB sparsity 5.6%
+gen 3 offspring [8/100] k=196 (used  50.4) c=0.938 alpha=-0.049 beta=+0.164 | loss 5.4624 (delta +2.8068) size 1664.4 MB sparsity 8.4%
+gen 3 offspring [9/100] k=243 (used  43.0) c=0.944 alpha=-0.086 beta=+0.051 | loss 4.1969 (delta +1.5412) size 1664.4 MB sparsity 5.4%
+gen 3 offspring [10/100] k= 63 (used  61.0) c=0.914 alpha=-0.169 beta=+0.122 | loss 3.8118 (delta +1.1562) size 1664.4 MB sparsity 11.6%
+gen 3 offspring [11/100] k=251 (used 120.6) c=0.997 alpha=-0.094 beta=+0.094 | loss 2.7666 (delta +0.1110) size 1941.6 MB sparsity 7.5%
+gen 3 offspring [12/100] k=354 (used 181.0) c=0.982 alpha=-0.130 beta=+0.130 | loss 2.8203 (delta +0.1647) size 2218.6 MB sparsity 10.3%
+gen 3 offspring [13/100] k=261 (used 254.2) c=0.935 alpha=-0.064 beta=+0.156 | loss 3.1618 (delta +0.5062) size 2218.7 MB sparsity 8.7%
+gen 3 offspring [14/100] k= 72 (used  71.0) c=0.966 alpha=-0.191 beta=+0.052 | loss 4.9629 (delta +2.3073) size 1941.6 MB sparsity 9.8%
+gen 3 offspring [15/100] k= 61 (used  59.0) c=0.983 alpha=-0.163 beta=+0.148 | loss 4.1703 (delta +1.5147) size 1664.4 MB sparsity 12.3%
+gen 3 offspring [16/100] k=308 (used 168.5) c=0.939 alpha=-0.106 beta=+0.062 | loss 2.7720 (delta +0.1164) size 2218.7 MB sparsity 6.7%
+gen 3 offspring [17/100] k=194 (used  51.0) c=0.943 alpha=-0.118 beta=+0.027 | loss 3.9568 (delta +1.3011) size 1664.4 MB sparsity 5.8%
+gen 3 offspring [18/100] k=338 (used  86.6) c=0.945 alpha=-0.111 beta=+0.057 | loss 2.8956 (delta +0.2400) size 1941.6 MB sparsity 6.7%
+gen 3 offspring [19/100] k=251 (used 121.7) c=0.997 alpha=-0.095 beta=+0.185 | loss 3.6489 (delta +0.9933) size 1941.5 MB sparsity 11.1%
+gen 3 offspring [20/100] k=324 (used 316.2) c=0.913 alpha=-0.025 beta=+0.181 | loss 4.1912 (delta +1.5356) size 2495.9 MB sparsity 8.2%
+gen 3 offspring [21/100] k=146 (used 132.2) c=0.943 alpha=-0.097 beta=+0.186 | loss 3.6669 (delta +1.0112) size 2218.4 MB sparsity 11.2%
+gen 3 offspring [22/100] k=112 (used  56.0) c=0.979 alpha=-0.106 beta=+0.102 | loss 3.2017 (delta +0.5461) size 1664.4 MB sparsity 8.3%
+gen 3 offspring [23/100] k=194 (used  49.0) c=0.949 alpha=-0.118 beta=+0.124 | loss 3.9370 (delta +1.2814) size 1664.4 MB sparsity 9.6%
+gen 3 offspring [24/100] k=366 (used 358.7) c=0.929 alpha=-0.160 beta=+0.159 | loss 3.0091 (delta +0.3535) size 2456.7 MB sparsity 12.6%
+gen 3 offspring [25/100] k=150 (used  76.0) c=0.983 alpha=-0.102 beta=+0.102 | loss 2.8724 (delta +0.2167) size 1941.6 MB sparsity 8.1%
+gen 3 offspring [26/100] k= 76 (used  73.0) c=0.992 alpha=-0.151 beta=+0.150 | loss 3.3159 (delta +0.6603) size 1941.5 MB sparsity 11.9%
+gen 3 offspring [27/100] k=278 (used 269.0) c=0.914 alpha=-0.156 beta=+0.153 | loss 2.9842 (delta +0.3286) size 2465.7 MB sparsity 12.3%
+gen 3 offspring [28/100] k= 73 (used  71.0) c=0.989 alpha=-0.152 beta=+0.149 | loss 3.3770 (delta +0.7213) size 1941.5 MB sparsity 11.9%
+gen 3 offspring [29/100] k=338 (used  47.0) c=0.942 alpha=-0.035 beta=+0.026 | loss 4.3249 (delta +1.6692) size 1664.4 MB sparsity 2.4%
+gen 3 offspring [30/100] k=176 (used 170.4) c=0.917 alpha=-0.111 beta=+0.101 | loss 2.7822 (delta +0.1265) size 2218.7 MB sparsity 8.4%
+gen 3 offspring [31/100] k=142 (used 140.0) c=0.910 alpha=-0.007 beta=+0.017 | loss 2.7145 (delta +0.0589) size 2218.7 MB sparsity 2.0%
+gen 3 offspring [32/100] k=342 (used 165.6) c=0.997 alpha=-0.180 beta=+0.068 | loss 3.4546 (delta +0.7990) size 2218.7 MB sparsity 9.8%
+gen 3 offspring [33/100] k= 77 (used  74.9) c=0.937 alpha=-0.055 beta=+0.190 | loss 5.2065 (delta +2.5508) size 1941.6 MB sparsity 9.7%
+gen 3 offspring [34/100] k=211 (used  55.0) c=0.939 alpha=-0.049 beta=+0.049 | loss 3.1165 (delta +0.4609) size 1664.4 MB sparsity 3.9%
+gen 3 offspring [35/100] k=252 (used 124.9) c=0.997 alpha=-0.063 beta=+0.147 | loss 3.0727 (delta +0.4171) size 1941.6 MB sparsity 8.3%
+gen 3 offspring [36/100] k=148 (used 145.5) c=0.956 alpha=-0.115 beta=+0.084 | loss 2.7920 (delta +0.1364) size 2218.7 MB sparsity 7.9%
+gen 3 offspring [37/100] k= 69 (used  69.0) c=0.929 alpha=-0.016 beta=+0.052 | loss 2.9090 (delta +0.2533) size 1941.6 MB sparsity 4.3%
+gen 3 offspring [38/100] k=107 (used 102.8) c=0.986 alpha=-0.148 beta=+0.141 | loss 3.0198 (delta +0.3642) size 1941.5 MB sparsity 11.5%
+gen 3 offspring [39/100] k=296 (used 282.3) c=0.949 alpha=-0.119 beta=+0.004 | loss 2.8360 (delta +0.1804) size 2495.9 MB sparsity 5.2%
+gen 3 offspring [40/100] k= 59 (used  31.0) c=0.909 alpha=-0.148 beta=+0.148 | loss 9.0267 (delta +6.3711) size 1387.3 MB sparsity 11.8%
+gen 3 offspring [41/100] k=251 (used  65.0) c=0.997 alpha=-0.017 beta=+0.098 | loss 3.1710 (delta +0.5154) size 1865.3 MB sparsity 4.6%
+gen 3 offspring [42/100] k=241 (used 124.6) c=0.985 alpha=-0.180 beta=+0.086 | loss 3.4137 (delta +0.7581) size 1941.6 MB sparsity 10.5%
+gen 3 offspring [43/100] k=366 (used 361.2) c=0.928 alpha=-0.016 beta=+0.167 | loss 3.6229 (delta +0.9672) size 2495.9 MB sparsity 7.2%
+gen 3 offspring [44/100] k=129 (used 112.5) c=0.992 alpha=-0.122 beta=+0.130 | loss 2.8599 (delta +0.2043) size 1941.6 MB sparsity 10.0%
+gen 3 offspring [45/100] k=124 (used  68.7) c=0.931 alpha=-0.109 beta=+0.127 | loss 3.2285 (delta +0.5728) size 1941.6 MB sparsity 9.4%
+gen 3 offspring [46/100] k=175 (used  89.9) c=0.915 alpha=-0.098 beta=+0.094 | loss 2.8153 (delta +0.1596) size 1941.6 MB sparsity 7.6%
+gen 3 offspring [47/100] k=295 (used 151.0) c=0.949 alpha=-0.005 beta=+0.015 | loss 2.6972 (delta +0.0416) size 2218.7 MB sparsity 1.1%
+gen 3 offspring [48/100] k=100 (used  52.0) c=0.910 alpha=-0.191 beta=+0.115 | loss 5.2981 (delta +2.6425) size 1664.4 MB sparsity 12.1%
+gen 3 offspring [49/100] k=223 (used 115.4) c=0.912 alpha=-0.145 beta=+0.170 | loss 3.3660 (delta +0.7103) size 1941.4 MB sparsity 12.5%
+gen 3 offspring [50/100] k=126 (used 124.0) c=0.932 alpha=-0.070 beta=+0.068 | loss 2.7295 (delta +0.0739) size 1941.6 MB sparsity 5.5%
+gen 3 offspring [51/100] k=148 (used  73.0) c=0.957 alpha=-0.082 beta=+0.084 | loss 2.8938 (delta +0.2381) size 1941.6 MB sparsity 6.6%
+gen 3 offspring [52/100] k=175 (used  87.0) c=0.917 alpha=-0.102 beta=+0.102 | loss 2.8692 (delta +0.2135) size 1941.6 MB sparsity 8.1%
+gen 3 offspring [53/100] k=387 (used 217.4) c=0.998 alpha=-0.190 beta=+0.050 | loss 3.7596 (delta +1.1040) size 2218.7 MB sparsity 9.5%
+gen 3 offspring [54/100] k=430 (used 226.9) c=0.936 alpha=-0.050 beta=+0.110 | loss 2.8039 (delta +0.1483) size 2218.7 MB sparsity 6.3%
+gen 3 offspring [55/100] k=110 (used  97.6) c=0.983 alpha=-0.148 beta=+0.148 | loss 3.0370 (delta +0.3814) size 1941.5 MB sparsity 11.7%
+gen 3 offspring [56/100] k=199 (used  53.0) c=0.937 alpha=-0.058 beta=+0.049 | loss 3.3684 (delta +0.7127) size 1664.4 MB sparsity 4.3%
+gen 3 offspring [57/100] k=240 (used  82.5) c=0.983 alpha=-0.102 beta=+0.103 | loss 2.8557 (delta +0.2001) size 1941.6 MB sparsity 8.1%
+gen 3 offspring [58/100] k= 82 (used  41.0) c=0.959 alpha=-0.083 beta=+0.102 | loss 5.5935 (delta +2.9379) size 1664.4 MB sparsity 7.3%
+gen 3 offspring [59/100] k=239 (used 119.0) c=0.996 alpha=-0.150 beta=+0.080 | loss 3.0152 (delta +0.3596) size 1941.6 MB sparsity 9.1%
+gen 3 offspring [60/100] k= 90 (used  87.5) c=0.938 alpha=-0.052 beta=+0.191 | loss 4.7658 (delta +2.1102) size 1941.6 MB sparsity 9.6%
+gen 3 offspring [61/100] k=117 (used 115.0) c=0.914 alpha=-0.120 beta=+0.120 | loss 2.8733 (delta +0.2176) size 1941.6 MB sparsity 9.5%
+gen 3 offspring [62/100] k=119 (used  61.0) c=0.932 alpha=-0.032 beta=+0.109 | loss 3.3806 (delta +0.7250) size 1664.4 MB sparsity 5.7%
+gen 3 offspring [63/100] k=136 (used 133.5) c=0.904 alpha=-0.029 beta=+0.123 | loss 2.9745 (delta +0.3188) size 2218.7 MB sparsity 6.1%
+gen 3 offspring [64/100] k= 73 (used  73.0) c=0.999 alpha=-0.152 beta=+0.150 | loss 3.3389 (delta +0.6832) size 1941.5 MB sparsity 12.0%
+gen 3 offspring [65/100] k=233 (used 229.6) c=0.915 alpha=-0.059 beta=+0.112 | loss 2.8118 (delta +0.1562) size 2218.7 MB sparsity 6.8%
+gen 3 offspring [66/100] k=249 (used 247.0) c=0.919 alpha=-0.017 beta=+0.017 | loss 2.6849 (delta +0.0293) size 2218.7 MB sparsity 1.4%
+gen 3 offspring [67/100] k=222 (used 113.3) c=0.965 alpha=-0.179 beta=+0.057 | loss 3.5470 (delta +0.8913) size 1941.6 MB sparsity 9.3%
+gen 3 offspring [68/100] k=308 (used 291.8) c=0.905 alpha=-0.164 beta=+0.020 | loss 3.3409 (delta +0.6853) size 2495.9 MB sparsity 7.3%
+gen 3 offspring [69/100] k= 94 (used  47.4) c=0.932 alpha=-0.190 beta=+0.111 | loss 6.1488 (delta +3.4931) size 1664.4 MB sparsity 11.9%
+gen 3 offspring [70/100] k=277 (used 269.0) c=0.901 alpha=-0.025 beta=+0.025 | loss 2.6974 (delta +0.0418) size 2495.9 MB sparsity 2.0%
+gen 3 offspring [71/100] k= 95 (used  93.0) c=0.930 alpha=-0.070 beta=+0.080 | loss 2.8049 (delta +0.1493) size 1941.6 MB sparsity 6.0%
+gen 3 offspring [72/100] k=112 (used  39.0) c=0.937 alpha=-0.106 beta=+0.109 | loss 5.8091 (delta +3.1535) size 1664.4 MB sparsity 8.5%
+gen 3 offspring [73/100] k=389 (used 375.4) c=0.948 alpha=-0.193 beta=+0.188 | loss 3.5464 (delta +0.8908) size 2397.5 MB sparsity 15.1%
+gen 3 offspring [74/100] k=260 (used 258.0) c=0.947 alpha=-0.029 beta=+0.028 | loss 2.6781 (delta +0.0225) size 2495.9 MB sparsity 2.3%
+gen 3 offspring [75/100] k=378 (used 370.1) c=0.989 alpha=-0.158 beta=+0.158 | loss 2.9332 (delta +0.2776) size 2460.1 MB sparsity 12.5%
+gen 3 offspring [76/100] k=297 (used  77.0) c=0.912 alpha=-0.057 beta=+0.056 | loss 2.8188 (delta +0.1631) size 1941.6 MB sparsity 4.5%
+gen 3 offspring [77/100] k=236 (used 117.6) c=0.943 alpha=-0.103 beta=+0.112 | loss 2.8358 (delta +0.1802) size 1941.6 MB sparsity 8.5%
+gen 3 offspring [78/100] k=232 (used 135.0) c=0.998 alpha=-0.018 beta=+0.007 | loss 2.7072 (delta +0.0516) size 2218.7 MB sparsity 1.4%
+gen 3 offspring [79/100] k=252 (used 143.5) c=0.975 alpha=-0.095 beta=+0.180 | loss 3.4779 (delta +0.8223) size 2218.5 MB sparsity 10.9%
+gen 3 offspring [80/100] k=198 (used  65.3) c=0.941 alpha=-0.169 beta=+0.072 | loss 3.6260 (delta +0.9704) size 1862.1 MB sparsity 9.5%
+gen 3 offspring [81/100] k=281 (used 275.0) c=0.938 alpha=-0.029 beta=+0.022 | loss 2.6806 (delta +0.0249) size 2495.9 MB sparsity 2.1%
+gen 3 offspring [82/100] k=101 (used  99.0) c=0.983 alpha=-0.147 beta=+0.071 | loss 3.1412 (delta +0.4856) size 1941.6 MB sparsity 8.7%
+gen 3 offspring [83/100] k=269 (used 132.4) c=0.945 alpha=-0.109 beta=+0.112 | loss 2.8133 (delta +0.1577) size 2218.7 MB sparsity 8.8%
+gen 3 offspring [84/100] k=203 (used 112.0) c=0.947 alpha=-0.052 beta=+0.017 | loss 2.7606 (delta +0.1049) size 1941.6 MB sparsity 2.8%
+gen 3 offspring [85/100] k=249 (used 247.0) c=0.907 alpha=-0.017 beta=+0.017 | loss 2.6927 (delta +0.0370) size 2218.7 MB sparsity 1.4%
+gen 3 offspring [86/100] k= 62 (used  61.0) c=0.913 alpha=-0.025 beta=+0.123 | loss 3.4376 (delta +0.7820) size 1664.4 MB sparsity 7.2%
+gen 3 offspring [87/100] k=391 (used 370.2) c=0.998 alpha=-0.148 beta=+0.148 | loss 2.8780 (delta +0.2223) size 2478.1 MB sparsity 11.7%
+gen 3 offspring [88/100] k=312 (used 111.5) c=0.947 alpha=-0.092 beta=+0.015 | loss 2.7949 (delta +0.1393) size 1941.6 MB sparsity 4.2%
+gen 3 offspring [89/100] k=224 (used 221.0) c=0.944 alpha=-0.101 beta=+0.028 | loss 2.7702 (delta +0.1146) size 2218.7 MB sparsity 5.1%
+gen 3 offspring [90/100] k=218 (used 107.0) c=0.947 alpha=-0.148 beta=+0.001 | loss 3.1319 (delta +0.4763) size 1941.6 MB sparsity 6.5%
+gen 3 offspring [91/100] k=222 (used 111.5) c=0.964 alpha=-0.180 beta=+0.180 | loss 3.4743 (delta +0.8186) size 1939.6 MB sparsity 14.2%
+gen 3 offspring [92/100] k=177 (used  99.0) c=0.956 alpha=-0.155 beta=+0.145 | loss 3.0905 (delta +0.4349) size 1941.5 MB sparsity 11.9%
+gen 3 offspring [93/100] k=225 (used 112.0) c=0.928 alpha=-0.024 beta=+0.132 | loss 3.0779 (delta +0.4223) size 1941.6 MB sparsity 6.2%
+gen 3 offspring [94/100] k=222 (used 113.3) c=0.982 alpha=-0.179 beta=+0.040 | loss 3.6281 (delta +0.9725) size 1941.6 MB sparsity 8.7%
+gen 3 offspring [95/100] k= 73 (used  71.0) c=0.989 alpha=-0.157 beta=+0.065 | loss 3.6974 (delta +1.0418) size 1941.6 MB sparsity 8.8%
+gen 3 offspring [96/100] k=242 (used 114.5) c=0.945 alpha=-0.112 beta=+0.104 | loss 2.8015 (delta +0.1458) size 1941.6 MB sparsity 8.5%
+gen 3 offspring [97/100] k=272 (used 267.0) c=0.913 alpha=-0.181 beta=+0.031 | loss 3.6880 (delta +1.0324) size 2495.9 MB sparsity 8.4%
+gen 3 offspring [98/100] k=392 (used 204.5) c=0.912 alpha=-0.145 beta=+0.173 | loss 3.2296 (delta +0.5740) size 2213.4 MB sparsity 12.6%
+gen 3 offspring [99/100] k=378 (used 365.8) c=0.992 alpha=-0.150 beta=+0.142 | loss 2.8765 (delta +0.2209) size 2481.9 MB sparsity 11.6%
+gen 3 offspring [100/100] k=252 (used 243.0) c=0.995 alpha=-0.094 beta=+0.094 | loss 2.7228 (delta +0.0672) size 2218.7 MB sparsity 7.5%
+=== generation 3/10 done in 3844s (0 reused), batch baseline 2.6556, HV 0.27326, front 19 points, 100/100 feasible, best delta loss +0.0172, smallest 1664.4 MB
+gen 4 offspring [1/100] k=251 (used  66.0) c=0.997 alpha=-0.017 beta=+0.098 | loss 3.1698 (delta +0.5142) size 1941.6 MB sparsity 4.6%
+gen 4 offspring [2/100] k=220 (used  57.0) c=0.943 alpha=-0.057 beta=+0.064 | loss 3.0372 (delta +0.3816) size 1664.4 MB sparsity 4.8%
+gen 4 offspring [3/100] k=206 (used  69.0) c=0.933 alpha=-0.073 beta=+0.070 | loss 2.9111 (delta +0.2554) size 1941.6 MB sparsity 5.7%
+gen 4 offspring [4/100] k=304 (used 148.0) c=0.948 alpha=-0.094 beta=+0.094 | loss 2.7695 (delta +0.1139) size 2218.7 MB sparsity 7.5%
+gen 4 offspring [5/100] k=280 (used 273.2) c=0.991 alpha=-0.102 beta=+0.103 | loss 2.7310 (delta +0.0754) size 2495.9 MB sparsity 8.1%
+gen 4 offspring [6/100] k=222 (used 111.5) c=0.963 alpha=-0.180 beta=+0.180 | loss 3.4339 (delta +0.7782) size 1939.6 MB sparsity 14.2%
+gen 4 offspring [7/100] k= 61 (used  61.0) c=0.947 alpha=-0.005 beta=+0.002 | loss 2.9498 (delta +0.2942) size 1664.4 MB sparsity 4.8%
+gen 4 offspring [8/100] k=354 (used 181.4) c=0.982 alpha=-0.130 beta=+0.073 | loss 2.8341 (delta +0.1784) size 2218.7 MB sparsity 8.1%
+gen 4 offspring [9/100] k=277 (used 270.5) c=0.984 alpha=-0.148 beta=+0.150 | loss 2.8951 (delta +0.2394) size 2475.8 MB sparsity 11.8%
+gen 4 offspring [10/100] k=211 (used  55.0) c=0.940 alpha=-0.065 beta=+0.068 | loss 3.1075 (delta +0.4519) size 1664.4 MB sparsity 5.3%
+gen 4 offspring [11/100] k=242 (used 115.5) c=0.945 alpha=-0.108 beta=+0.104 | loss 2.7931 (delta +0.1375) size 1941.6 MB sparsity 8.4%
+gen 4 offspring [12/100] k=422 (used  70.0) c=0.933 alpha=-0.052 beta=+0.110 | loss 3.1228 (delta +0.4671) size 1941.6 MB sparsity 6.4%
+gen 4 offspring [13/100] k=142 (used 135.0) c=0.937 alpha=-0.006 beta=+0.018 | loss 2.6996 (delta +0.0440) size 2218.7 MB sparsity 2.1%
+gen 4 offspring [14/100] k=112 (used  56.0) c=0.983 alpha=-0.102 beta=+0.012 | loss 3.3358 (delta +0.6802) size 1664.4 MB sparsity 5.4%
+gen 4 offspring [15/100] k=297 (used 295.0) c=0.934 alpha=-0.029 beta=+0.017 | loss 2.6802 (delta +0.0245) size 2495.9 MB sparsity 1.9%
+gen 4 offspring [16/100] k=297 (used  76.2) c=0.912 alpha=-0.097 beta=+0.050 | loss 2.9057 (delta +0.2501) size 1941.6 MB sparsity 5.8%
+gen 4 offspring [17/100] k=233 (used 222.7) c=0.944 alpha=-0.112 beta=+0.101 | loss 2.7641 (delta +0.1084) size 2218.7 MB sparsity 8.5%
+gen 4 offspring [18/100] k=127 (used 126.0) c=0.985 alpha=-0.055 beta=+0.005 | loss 2.7173 (delta +0.0616) size 1941.6 MB sparsity 3.4%
+gen 4 offspring [19/100] k=203 (used 116.0) c=0.948 alpha=-0.052 beta=+0.049 | loss 2.7486 (delta +0.0930) size 1941.6 MB sparsity 4.0%
+gen 4 offspring [20/100] k=261 (used 259.0) c=0.953 alpha=-0.029 beta=+0.028 | loss 2.6745 (delta +0.0189) size 2495.9 MB sparsity 2.3%
+gen 4 offspring [21/100] k=224 (used  75.8) c=0.965 alpha=-0.180 beta=+0.097 | loss 3.5678 (delta +0.9121) size 1941.5 MB sparsity 10.9%
+gen 4 offspring [22/100] k=277 (used 273.0) c=0.913 alpha=-0.025 beta=+0.025 | loss 2.6872 (delta +0.0316) size 2495.9 MB sparsity 2.0%
+gen 4 offspring [23/100] k= 72 (used  66.0) c=0.991 alpha=-0.020 beta=+0.121 | loss 3.2325 (delta +0.5768) size 1941.6 MB sparsity 7.0%
+gen 4 offspring [24/100] k= 76 (used  74.0) c=0.999 alpha=-0.152 beta=+0.137 | loss 3.3400 (delta +0.6843) size 1941.5 MB sparsity 11.5%
+gen 4 offspring [25/100] k=232 (used 130.0) c=0.999 alpha=-0.018 beta=+0.003 | loss 2.7086 (delta +0.0530) size 2218.7 MB sparsity 1.4%
+gen 4 offspring [26/100] k=238 (used  80.6) c=0.928 alpha=-0.100 beta=+0.138 | loss 3.0347 (delta +0.3790) size 1941.6 MB sparsity 9.4%
+gen 4 offspring [27/100] k=430 (used 408.5) c=0.935 alpha=-0.031 beta=+0.064 | loss 2.6919 (delta +0.0363) size 2495.9 MB sparsity 3.8%
+gen 4 offspring [28/100] k=338 (used  69.4) c=0.916 alpha=-0.122 beta=+0.057 | loss 3.0647 (delta +0.4091) size 1941.6 MB sparsity 7.1%
+gen 4 offspring [29/100] k=199 (used  53.0) c=0.937 alpha=-0.049 beta=+0.043 | loss 3.2693 (delta +0.6137) size 1664.4 MB sparsity 3.7%
+gen 4 offspring [30/100] k=244 (used 127.0) c=0.997 alpha=-0.104 beta=+0.094 | loss 2.7735 (delta +0.1179) size 1941.6 MB sparsity 7.9%
+gen 4 offspring [31/100] k=120 (used  61.0) c=0.942 alpha=-0.098 beta=+0.105 | loss 3.0741 (delta +0.4185) size 1664.4 MB sparsity 8.1%
+gen 4 offspring [32/100] k=223 (used 217.2) c=0.926 alpha=-0.140 beta=+0.170 | loss 3.1506 (delta +0.4949) size 2217.8 MB sparsity 12.3%
+gen 4 offspring [33/100] k=112 (used  55.0) c=0.983 alpha=-0.106 beta=+0.050 | loss 3.4049 (delta +0.7493) size 1664.4 MB sparsity 6.2%
+gen 4 offspring [34/100] k=222 (used 111.4) c=0.931 alpha=-0.109 beta=+0.127 | loss 2.8700 (delta +0.2144) size 1941.6 MB sparsity 9.4%
+gen 4 offspring [35/100] k=260 (used 258.0) c=0.947 alpha=-0.029 beta=+0.028 | loss 2.6781 (delta +0.0224) size 2495.9 MB sparsity 2.3%
+gen 4 offspring [36/100] k=274 (used 133.8) c=0.932 alpha=-0.109 beta=+0.112 | loss 2.8016 (delta +0.1459) size 2218.7 MB sparsity 8.8%
+gen 4 offspring [37/100] k= 73 (used  71.0) c=0.988 alpha=-0.152 beta=+0.147 | loss 3.3656 (delta +0.7100) size 1941.5 MB sparsity 11.8%
+gen 4 offspring [38/100] k=120 (used  31.0) c=0.932 alpha=-0.049 beta=+0.048 | loss 9.0287 (delta +6.3731) size 1387.3 MB sparsity 3.9%
+gen 4 offspring [39/100] k= 90 (used  88.0) c=0.986 alpha=-0.021 beta=+0.141 | loss 3.2268 (delta +0.5712) size 1941.6 MB sparsity 7.3%
+gen 4 offspring [40/100] k= 62 (used  61.0) c=0.913 alpha=-0.023 beta=+0.122 | loss 3.4284 (delta +0.7727) size 1664.4 MB sparsity 7.2%
+gen 4 offspring [41/100] k=201 (used 195.0) c=0.972 alpha=-0.027 beta=+0.017 | loss 2.6771 (delta +0.0215) size 2218.7 MB sparsity 1.8%
+gen 4 offspring [42/100] k=285 (used 270.0) c=0.998 alpha=-0.007 beta=+0.022 | loss 2.6649 (delta +0.0092) size 2495.9 MB sparsity 1.4%
+gen 4 offspring [43/100] k= 85 (used  29.0) c=0.979 alpha=-0.148 beta=+0.102 | loss 10.1036 (delta +7.4480) size 1387.3 MB sparsity 9.9%
+gen 4 offspring [44/100] k=238 (used 115.9) c=0.945 alpha=-0.112 beta=+0.104 | loss 2.8249 (delta +0.1693) size 1941.6 MB sparsity 8.5%
+gen 4 offspring [45/100] k= 73 (used  71.0) c=0.989 alpha=-0.152 beta=+0.143 | loss 3.3841 (delta +0.7284) size 1941.5 MB sparsity 11.7%
+gen 4 offspring [46/100] k=296 (used 280.4) c=0.949 alpha=-0.064 beta=+0.069 | loss 2.6903 (delta +0.0347) size 2495.9 MB sparsity 5.3%
+gen 4 offspring [47/100] k=107 (used 102.8) c=0.986 alpha=-0.148 beta=+0.141 | loss 3.0141 (delta +0.3585) size 1941.5 MB sparsity 11.5%
+gen 4 offspring [48/100] k=338 (used 171.8) c=0.916 alpha=-0.121 beta=+0.105 | loss 2.7940 (delta +0.1384) size 2218.7 MB sparsity 9.0%
+gen 4 offspring [49/100] k=282 (used 276.0) c=0.938 alpha=-0.026 beta=+0.022 | loss 2.6795 (delta +0.0238) size 2495.9 MB sparsity 1.9%
+gen 4 offspring [50/100] k= 92 (used  89.9) c=0.941 alpha=-0.165 beta=+0.072 | loss 3.2987 (delta +0.6431) size 1941.6 MB sparsity 9.4%
+gen 4 offspring [51/100] k=245 (used 226.0) c=0.997 alpha=-0.024 beta=+0.006 | loss 2.6706 (delta +0.0150) size 2218.7 MB sparsity 1.6%
+gen 4 offspring [52/100] k= 76 (used  37.0) c=0.983 alpha=-0.151 beta=+0.150 | loss 7.8858 (delta +5.2302) size 1664.4 MB sparsity 11.9%
+gen 4 offspring [53/100] k=243 (used 238.2) c=0.942 alpha=-0.112 beta=+0.113 | loss 2.7825 (delta +0.1268) size 2218.7 MB sparsity 8.9%
+gen 4 offspring [54/100] k=220 (used 108.6) c=0.914 alpha=-0.128 beta=+0.120 | loss 2.8956 (delta +0.2400) size 1941.6 MB sparsity 9.8%
+gen 4 offspring [55/100] k=430 (used  61.0) c=0.936 alpha=-0.050 beta=+0.131 | loss 3.4679 (delta +0.8123) size 1664.4 MB sparsity 7.2%
+gen 4 offspring [56/100] k=106 (used 104.0) c=0.912 alpha=-0.029 beta=+0.023 | loss 2.7497 (delta +0.0941) size 1941.6 MB sparsity 2.7%
+gen 4 offspring [57/100] k= 95 (used  93.0) c=0.932 alpha=-0.049 beta=+0.051 | loss 2.8065 (delta +0.1509) size 1941.6 MB sparsity 4.0%
+gen 4 offspring [58/100] k=124 (used  67.7) c=0.931 alpha=-0.109 beta=+0.127 | loss 3.2385 (delta +0.5828) size 1941.6 MB sparsity 9.4%
+gen 4 offspring [59/100] k=125 (used  65.0) c=0.924 alpha=-0.114 beta=+0.049 | loss 3.2004 (delta +0.5447) size 1833.9 MB sparsity 6.5%
+gen 4 offspring [60/100] k=199 (used  53.0) c=0.909 alpha=-0.060 beta=+0.048 | loss 3.1847 (delta +0.5291) size 1664.4 MB sparsity 4.3%
+gen 4 offspring [61/100] k=295 (used  63.0) c=0.963 alpha=-0.014 beta=+0.105 | loss 3.3348 (delta +0.6792) size 1664.4 MB sparsity 4.7%
+gen 4 offspring [62/100] k=155 (used 155.0) c=0.909 alpha=-0.017 beta=+0.022 | loss 2.7174 (delta +0.0617) size 2218.7 MB sparsity 1.9%
+gen 4 offspring [63/100] k= 73 (used  73.0) c=0.990 alpha=-0.150 beta=+0.164 | loss 3.5113 (delta +0.8556) size 1941.4 MB sparsity 12.4%
+gen 4 offspring [64/100] k=175 (used  87.0) c=0.917 alpha=-0.102 beta=+0.097 | loss 2.8675 (delta +0.2119) size 1941.6 MB sparsity 7.9%
+gen 4 offspring [65/100] k=338 (used  87.6) c=0.943 alpha=-0.110 beta=+0.055 | loss 2.9030 (delta +0.2473) size 1941.6 MB sparsity 6.6%
+gen 4 offspring [66/100] k=199 (used  52.0) c=0.937 alpha=-0.049 beta=+0.017 | loss 3.3634 (delta +0.7078) size 1664.4 MB sparsity 2.7%
+gen 4 offspring [67/100] k= 83 (used  41.0) c=0.979 alpha=-0.106 beta=+0.102 | loss 5.5613 (delta +2.9057) size 1664.4 MB sparsity 8.3%
+gen 4 offspring [68/100] k=250 (used 223.6) c=0.995 alpha=-0.094 beta=+0.177 | loss 3.3056 (delta +0.6500) size 2218.6 MB sparsity 10.7%
+gen 4 offspring [69/100] k=249 (used 247.0) c=0.907 alpha=-0.017 beta=+0.017 | loss 2.6928 (delta +0.0372) size 2218.7 MB sparsity 1.4%
+gen 4 offspring [70/100] k= 80 (used  78.0) c=0.912 alpha=-0.157 beta=+0.151 | loss 3.3718 (delta +0.7162) size 1941.4 MB sparsity 12.2%
+gen 4 offspring [71/100] k=150 (used  76.0) c=0.982 alpha=-0.102 beta=+0.102 | loss 2.8818 (delta +0.2262) size 1941.6 MB sparsity 8.1%
+gen 4 offspring [72/100] k=223 (used 109.5) c=0.983 alpha=-0.182 beta=+0.103 | loss 3.4107 (delta +0.7550) size 1941.5 MB sparsity 11.3%
+gen 4 offspring [73/100] k=249 (used  39.0) c=0.908 alpha=-0.010 beta=+0.017 | loss 5.2704 (delta +2.6148) size 1664.4 MB sparsity 1.3%
+gen 4 offspring [74/100] k=338 (used  87.0) c=0.945 alpha=-0.059 beta=+0.057 | loss 2.7799 (delta +0.1243) size 1941.6 MB sparsity 4.6%
+gen 4 offspring [75/100] k=185 (used 183.0) c=0.910 alpha=-0.007 beta=+0.017 | loss 2.6998 (delta +0.0441) size 2218.7 MB sparsity 1.5%
+gen 4 offspring [76/100] k=177 (used 172.4) c=0.951 alpha=-0.155 beta=+0.145 | loss 2.9845 (delta +0.3288) size 2218.2 MB sparsity 11.9%
+gen 4 offspring [77/100] k=212 (used 211.0) c=0.915 alpha=-0.023 beta=+0.015 | loss 2.7008 (delta +0.0452) size 2218.7 MB sparsity 1.6%
+gen 4 offspring [78/100] k=126 (used  65.0) c=0.932 alpha=-0.075 beta=+0.068 | loss 2.9100 (delta +0.2543) size 1847.3 MB sparsity 5.7%
+gen 4 offspring [79/100] k=194 (used  51.0) c=0.937 alpha=-0.055 beta=+0.101 | loss 3.6040 (delta +0.9483) size 1664.4 MB sparsity 6.2%
+gen 4 offspring [80/100] k=124 (used  64.0) c=0.963 alpha=-0.180 beta=+0.180 | loss 4.3743 (delta +1.7187) size 1664.3 MB sparsity 14.2%
+gen 4 offspring [81/100] k=295 (used 254.0) c=0.937 alpha=-0.011 beta=+0.002 | loss 2.6759 (delta +0.0202) size 2218.7 MB sparsity 1.0%
+gen 4 offspring [82/100] k=122 (used  62.0) c=0.944 alpha=-0.109 beta=+0.109 | loss 3.0670 (delta +0.4113) size 1664.4 MB sparsity 8.7%
+gen 4 offspring [83/100] k=279 (used 263.0) c=0.901 alpha=-0.025 beta=+0.030 | loss 2.6927 (delta +0.0371) size 2495.9 MB sparsity 2.2%
+gen 4 offspring [84/100] k=193 (used  99.0) c=0.937 alpha=-0.032 beta=+0.109 | loss 2.8729 (delta +0.2172) size 1941.6 MB sparsity 5.6%
+gen 4 offspring [85/100] k=156 (used 152.0) c=0.969 alpha=-0.149 beta=+0.033 | loss 3.0774 (delta +0.4218) size 2218.7 MB sparsity 7.2%
+gen 4 offspring [86/100] k=112 (used  41.0) c=0.981 alpha=-0.108 beta=+0.103 | loss 6.3184 (delta +3.6628) size 1664.4 MB sparsity 8.4%
+gen 4 offspring [87/100] k=176 (used  86.3) c=0.917 alpha=-0.102 beta=+0.116 | loss 2.9018 (delta +0.2462) size 1941.6 MB sparsity 8.6%
+gen 4 offspring [88/100] k= 91 (used  47.0) c=0.966 alpha=-0.035 beta=+0.052 | loss 3.9760 (delta +1.3204) size 1664.4 MB sparsity 3.7%
+gen 4 offspring [89/100] k=210 (used 108.0) c=0.938 alpha=-0.029 beta=+0.008 | loss 2.7446 (delta +0.0890) size 1941.6 MB sparsity 1.9%
+gen 4 offspring [90/100] k=107 (used  88.8) c=0.970 alpha=-0.106 beta=+0.148 | loss 3.0442 (delta +0.3885) size 1941.6 MB sparsity 10.1%
+gen 4 offspring [91/100] k=243 (used 231.0) c=0.913 alpha=-0.025 beta=+0.029 | loss 2.6936 (delta +0.0379) size 2218.7 MB sparsity 2.2%
+gen 4 offspring [92/100] k=155 (used 155.0) c=0.905 alpha=-0.017 beta=+0.017 | loss 2.7180 (delta +0.0624) size 2218.7 MB sparsity 1.8%
+gen 4 offspring [93/100] k=251 (used 125.0) c=0.997 alpha=-0.024 beta=+0.007 | loss 2.7045 (delta +0.0489) size 1941.6 MB sparsity 1.5%
+gen 4 offspring [94/100] k=211 (used  55.0) c=0.939 alpha=-0.049 beta=+0.049 | loss 3.1132 (delta +0.4576) size 1664.4 MB sparsity 3.9%
+gen 4 offspring [95/100] k=321 (used 311.3) c=0.985 alpha=-0.174 beta=+0.147 | loss 3.0152 (delta +0.3596) size 2455.4 MB sparsity 12.7%
+gen 4 offspring [96/100] k=140 (used 136.0) c=0.945 alpha=-0.070 beta=+0.068 | loss 2.7211 (delta +0.0655) size 2218.7 MB sparsity 5.5%
+gen 4 offspring [97/100] k=221 (used 220.0) c=0.947 alpha=-0.020 beta=+0.028 | loss 2.6795 (delta +0.0239) size 2218.7 MB sparsity 1.9%
+gen 4 offspring [98/100] k=195 (used  51.0) c=0.938 alpha=-0.049 beta=+0.070 | loss 3.3417 (delta +0.6861) size 1664.4 MB sparsity 4.7%
+gen 4 offspring [99/100] k=105 (used 103.0) c=0.913 alpha=-0.013 beta=+0.027 | loss 2.7588 (delta +0.1031) size 1941.6 MB sparsity 2.7%
+gen 4 offspring [100/100] k=305 (used  78.3) c=0.932 alpha=-0.111 beta=+0.057 | loss 2.9121 (delta +0.2564) size 1941.6 MB sparsity 6.7%
+=== generation 4/10 done in 3834s (0 reused), batch baseline 2.6556, HV 0.27839, front 23 points, 100/100 feasible, best delta loss +0.0092, smallest 1664.4 MB
+gen 5 offspring [1/100] k=112 (used  57.0) c=0.972 alpha=-0.106 beta=+0.048 | loss 3.2524 (delta +0.5968) size 1664.4 MB sparsity 6.1%
+gen 5 offspring [2/100] k=247 (used 203.0) c=0.920 alpha=-0.021 beta=+0.017 | loss 2.6890 (delta +0.0334) size 2218.7 MB sparsity 1.5%
+gen 5 offspring [3/100] k=112 (used  55.0) c=0.983 alpha=-0.123 beta=+0.102 | loss 3.3761 (delta +0.7205) size 1664.4 MB sparsity 8.9%
+gen 5 offspring [4/100] k=297 (used  56.2) c=0.912 alpha=-0.152 beta=+0.050 | loss 3.9315 (delta +1.2759) size 1664.4 MB sparsity 8.0%
+gen 5 offspring [5/100] k=251 (used  85.6) c=0.991 alpha=-0.088 beta=+0.090 | loss 2.8246 (delta +0.1690) size 1941.6 MB sparsity 7.1%
+gen 5 offspring [6/100] k=489 (used 472.6) c=0.917 alpha=-0.050 beta=+0.050 | loss 2.6870 (delta +0.0313) size 2495.9 MB sparsity 4.0%
+gen 5 offspring [7/100] k=338 (used  87.0) c=0.912 alpha=-0.061 beta=+0.057 | loss 2.7901 (delta +0.1344) size 1941.6 MB sparsity 4.7%
+gen 5 offspring [8/100] k=295 (used  61.0) c=0.947 alpha=-0.025 beta=+0.006 | loss 2.9388 (delta +0.2832) size 1664.4 MB sparsity 1.5%
+gen 5 offspring [9/100] k=215 (used 133.0) c=0.937 alpha=-0.012 beta=+0.002 | loss 2.7197 (delta +0.0640) size 2218.7 MB sparsity 1.3%
+gen 5 offspring [10/100] k=199 (used  53.0) c=0.937 alpha=-0.058 beta=+0.049 | loss 3.2109 (delta +0.5552) size 1664.4 MB sparsity 4.3%
+gen 5 offspring [11/100] k=289 (used 277.0) c=0.937 alpha=-0.011 beta=+0.002 | loss 2.6743 (delta +0.0187) size 2495.9 MB sparsity 1.0%
+gen 5 offspring [12/100] k=214 (used  91.0) c=0.984 alpha=-0.075 beta=+0.051 | loss 2.7891 (delta +0.1335) size 1941.6 MB sparsity 5.0%
+gen 5 offspring [13/100] k=176 (used  90.0) c=0.938 alpha=-0.029 beta=+0.008 | loss 2.7809 (delta +0.1253) size 1941.6 MB sparsity 2.0%
+gen 5 offspring [14/100] k=158 (used 158.0) c=0.947 alpha=-0.029 beta=+0.028 | loss 2.6953 (delta +0.0397) size 2218.7 MB sparsity 2.3%
+gen 5 offspring [15/100] k=243 (used 237.0) c=0.915 alpha=-0.025 beta=+0.029 | loss 2.6897 (delta +0.0341) size 2218.7 MB sparsity 2.2%
+gen 5 offspring [16/100] k=285 (used 270.0) c=0.998 alpha=-0.009 beta=+0.022 | loss 2.6649 (delta +0.0092) size 2495.9 MB sparsity 1.4%
+gen 5 offspring [17/100] k=112 (used  59.0) c=0.985 alpha=-0.106 beta=+0.101 | loss 3.2350 (delta +0.5794) size 1664.4 MB sparsity 8.2%
+gen 5 offspring [18/100] k=120 (used  62.0) c=0.942 alpha=-0.060 beta=+0.095 | loss 2.9945 (delta +0.3388) size 1664.4 MB sparsity 6.1%
+gen 5 offspring [19/100] k=394 (used  45.0) c=0.942 alpha=-0.050 beta=+0.054 | loss 3.9352 (delta +1.2796) size 1664.4 MB sparsity 4.1%
+gen 5 offspring [20/100] k= 52 (used  51.0) c=0.932 alpha=-0.070 beta=+0.072 | loss 4.1720 (delta +1.5163) size 1664.4 MB sparsity 6.0%
+gen 5 offspring [21/100] k= 80 (used  42.0) c=0.933 alpha=-0.086 beta=+0.112 | loss 4.6607 (delta +2.0051) size 1664.4 MB sparsity 7.9%
+gen 5 offspring [22/100] k=199 (used 197.0) c=0.937 alpha=-0.045 beta=+0.049 | loss 2.6884 (delta +0.0328) size 2218.7 MB sparsity 3.7%
+gen 5 offspring [23/100] k=153 (used 153.0) c=0.937 alpha=-0.006 beta=+0.018 | loss 2.7156 (delta +0.0600) size 2218.7 MB sparsity 1.9%
+gen 5 offspring [24/100] k= 96 (used  93.0) c=0.983 alpha=-0.141 beta=+0.145 | loss 3.0171 (delta +0.3615) size 1941.5 MB sparsity 11.3%
+gen 5 offspring [25/100] k=112 (used 109.8) c=0.982 alpha=-0.011 beta=+0.145 | loss 3.1100 (delta +0.4543) size 1941.6 MB sparsity 7.1%
+gen 5 offspring [26/100] k=194 (used 189.0) c=0.937 alpha=-0.049 beta=+0.101 | loss 2.7699 (delta +0.1142) size 2218.7 MB sparsity 5.9%
+gen 5 offspring [27/100] k=210 (used  70.0) c=0.939 alpha=-0.103 beta=+0.022 | loss 3.1372 (delta +0.4815) size 1941.6 MB sparsity 5.0%
+gen 5 offspring [28/100] k=220 (used 146.0) c=0.949 alpha=-0.045 beta=+0.066 | loss 2.7267 (delta +0.0710) size 2218.7 MB sparsity 4.4%
+gen 5 offspring [29/100] k=232 (used 135.0) c=0.999 alpha=-0.018 beta=+0.053 | loss 2.7201 (delta +0.0644) size 2218.7 MB sparsity 2.8%
+gen 5 offspring [30/100] k=127 (used 122.0) c=0.920 alpha=-0.055 beta=+0.004 | loss 2.7559 (delta +0.1002) size 1941.6 MB sparsity 3.3%
+gen 5 offspring [31/100] k=211 (used  71.0) c=0.940 alpha=-0.065 beta=+0.002 | loss 2.9354 (delta +0.2798) size 1941.6 MB sparsity 3.3%
+gen 5 offspring [32/100] k=125 (used  64.0) c=0.924 alpha=-0.114 beta=+0.062 | loss 3.1829 (delta +0.5272) size 1664.4 MB sparsity 7.0%
+gen 5 offspring [33/100] k=193 (used  51.0) c=0.924 alpha=-0.049 beta=+0.049 | loss 3.3498 (delta +0.6941) size 1664.4 MB sparsity 3.9%
+gen 5 offspring [34/100] k=141 (used  72.4) c=0.928 alpha=-0.109 beta=+0.109 | loss 2.9495 (delta +0.2939) size 1941.6 MB sparsity 8.7%
+gen 5 offspring [35/100] k=312 (used 111.0) c=0.946 alpha=-0.052 beta=+0.015 | loss 2.7435 (delta +0.0879) size 1941.6 MB sparsity 2.7%
+gen 5 offspring [36/100] k=157 (used  80.6) c=0.982 alpha=-0.102 beta=+0.102 | loss 2.8507 (delta +0.1951) size 1941.6 MB sparsity 8.1%
+gen 5 offspring [37/100] k=195 (used  97.0) c=0.930 alpha=-0.105 beta=+0.050 | loss 2.8673 (delta +0.2117) size 1941.6 MB sparsity 6.1%
+gen 5 offspring [38/100] k= 69 (used  67.0) c=0.996 alpha=-0.052 beta=+0.052 | loss 2.8892 (delta +0.2335) size 1941.6 MB sparsity 4.6%
+gen 5 offspring [39/100] k=253 (used  43.0) c=0.923 alpha=-0.063 beta=+0.070 | loss 3.9319 (delta +1.2763) size 1664.4 MB sparsity 5.3%
+gen 5 offspring [40/100] k=260 (used  67.0) c=0.947 alpha=-0.011 beta=+0.043 | loss 2.9091 (delta +0.2534) size 1941.6 MB sparsity 2.3%
+gen 5 offspring [41/100] k=283 (used 281.0) c=0.939 alpha=-0.029 beta=+0.024 | loss 2.6750 (delta +0.0194) size 2495.9 MB sparsity 2.1%
+gen 5 offspring [42/100] k=126 (used  65.0) c=0.983 alpha=-0.070 beta=+0.068 | loss 2.8835 (delta +0.2278) size 1850.4 MB sparsity 5.5%
+gen 5 offspring [43/100] k=205 (used  54.0) c=0.932 alpha=-0.001 beta=+0.071 | loss 3.2956 (delta +0.6400) size 1664.4 MB sparsity 3.5%
+gen 5 offspring [44/100] k=112 (used  56.0) c=0.979 alpha=-0.106 beta=+0.102 | loss 3.2004 (delta +0.5448) size 1664.4 MB sparsity 8.3%
+gen 5 offspring [45/100] k=130 (used 128.0) c=0.937 alpha=-0.012 beta=+0.002 | loss 2.7120 (delta +0.0564) size 1941.6 MB sparsity 2.2%
+gen 5 offspring [46/100] k=147 (used 145.0) c=0.945 alpha=-0.070 beta=+0.068 | loss 2.7156 (delta +0.0600) size 2218.7 MB sparsity 5.5%
+gen 5 offspring [47/100] k=202 (used 139.0) c=0.948 alpha=-0.045 beta=+0.049 | loss 2.7164 (delta +0.0608) size 2218.7 MB sparsity 3.8%
+gen 5 offspring [48/100] k=125 (used  62.0) c=0.924 alpha=-0.114 beta=+0.101 | loss 3.0725 (delta +0.4169) size 1664.4 MB sparsity 8.5%
+gen 5 offspring [49/100] k=157 (used 154.0) c=0.968 alpha=-0.018 beta=+0.026 | loss 2.6945 (delta +0.0388) size 2218.7 MB sparsity 2.0%
+gen 5 offspring [50/100] k=393 (used  99.6) c=0.999 alpha=-0.098 beta=+0.148 | loss 2.9844 (delta +0.3288) size 1941.6 MB sparsity 9.8%
+gen 5 offspring [51/100] k=251 (used 125.0) c=0.997 alpha=-0.021 beta=+0.012 | loss 2.7022 (delta +0.0466) size 1941.6 MB sparsity 1.5%
+gen 5 offspring [52/100] k= 51 (used   7.0) c=0.947 alpha=-0.005 beta=+0.002 | loss 15.5207 (delta +12.8650) size 833.0 MB sparsity 5.8%
+gen 5 offspring [53/100] k=112 (used  55.0) c=0.983 alpha=-0.102 beta=+0.050 | loss 3.3641 (delta +0.7084) size 1664.4 MB sparsity 6.0%
+gen 5 offspring [54/100] k=296 (used 269.0) c=0.947 alpha=-0.002 beta=+0.015 | loss 2.6701 (delta +0.0145) size 2495.9 MB sparsity 1.1%
+gen 5 offspring [55/100] k=290 (used  75.0) c=0.940 alpha=-0.032 beta=+0.068 | loss 2.8463 (delta +0.1907) size 1941.6 MB sparsity 4.0%
+gen 5 offspring [56/100] k=221 (used 220.0) c=0.947 alpha=-0.020 beta=+0.028 | loss 2.6804 (delta +0.0248) size 2218.7 MB sparsity 1.9%
+gen 5 offspring [57/100] k=236 (used 123.0) c=0.999 alpha=-0.024 beta=+0.003 | loss 2.7131 (delta +0.0574) size 1941.6 MB sparsity 1.6%
+gen 5 offspring [58/100] k=125 (used 124.0) c=0.933 alpha=-0.049 beta=+0.003 | loss 2.7269 (delta +0.0713) size 1941.6 MB sparsity 3.1%
+gen 5 offspring [59/100] k=211 (used  55.0) c=0.939 alpha=-0.033 beta=+0.049 | loss 3.1822 (delta +0.5266) size 1664.4 MB sparsity 3.3%
+gen 5 offspring [60/100] k=254 (used 250.0) c=0.905 alpha=-0.027 beta=+0.017 | loss 2.6928 (delta +0.0372) size 2218.7 MB sparsity 1.8%
+gen 5 offspring [61/100] k=245 (used 217.0) c=0.997 alpha=-0.014 beta=+0.006 | loss 2.6685 (delta +0.0129) size 2218.7 MB sparsity 1.3%
+gen 5 offspring [62/100] k=126 (used 124.0) c=0.927 alpha=-0.072 beta=+0.068 | loss 2.7346 (delta +0.0790) size 1941.6 MB sparsity 5.5%
+gen 5 offspring [63/100] k=177 (used  85.5) c=0.956 alpha=-0.155 beta=+0.146 | loss 3.1585 (delta +0.5029) size 1941.5 MB sparsity 11.9%
+gen 5 offspring [64/100] k=338 (used  87.3) c=0.945 alpha=-0.098 beta=+0.058 | loss 2.8423 (delta +0.1867) size 1941.6 MB sparsity 6.2%
+gen 5 offspring [65/100] k=212 (used  55.0) c=0.936 alpha=-0.053 beta=+0.048 | loss 3.0986 (delta +0.4430) size 1664.4 MB sparsity 4.0%
+gen 5 offspring [66/100] k=261 (used 259.0) c=0.953 alpha=-0.029 beta=+0.027 | loss 2.6742 (delta +0.0186) size 2495.9 MB sparsity 2.2%
+gen 5 offspring [67/100] k=260 (used 258.0) c=0.947 alpha=-0.029 beta=+0.025 | loss 2.6778 (delta +0.0222) size 2495.9 MB sparsity 2.2%
+gen 5 offspring [68/100] k=107 (used  27.0) c=0.983 alpha=-0.148 beta=+0.148 | loss 10.6665 (delta +8.0109) size 1387.3 MB sparsity 11.7%
+gen 5 offspring [69/100] k=143 (used  73.0) c=0.982 alpha=-0.102 beta=+0.102 | loss 2.9212 (delta +0.2655) size 1941.6 MB sparsity 8.1%
+gen 5 offspring [70/100] k=175 (used 111.0) c=0.953 alpha=-0.154 beta=+0.148 | loss 3.0493 (delta +0.3937) size 1941.5 MB sparsity 12.0%
+gen 5 offspring [71/100] k=289 (used 284.5) c=0.938 alpha=-0.149 beta=+0.007 | loss 3.0862 (delta +0.4306) size 2495.9 MB sparsity 6.4%
+gen 5 offspring [72/100] k=107 (used  27.0) c=0.986 alpha=-0.148 beta=+0.141 | loss 10.8713 (delta +8.2156) size 1387.3 MB sparsity 11.5%
+gen 5 offspring [73/100] k=236 (used  84.3) c=0.983 alpha=-0.049 beta=+0.103 | loss 2.8780 (delta +0.2223) size 1941.6 MB sparsity 6.0%
+gen 5 offspring [74/100] k=296 (used  98.0) c=0.944 alpha=-0.024 beta=+0.005 | loss 2.7818 (delta +0.1262) size 1941.6 MB sparsity 1.4%
+gen 5 offspring [75/100] k=430 (used  63.0) c=0.936 alpha=-0.050 beta=+0.004 | loss 2.9848 (delta +0.3291) size 1664.4 MB sparsity 2.3%
+gen 5 offspring [76/100] k=338 (used 114.0) c=0.980 alpha=-0.059 beta=+0.058 | loss 2.7247 (delta +0.0691) size 1941.6 MB sparsity 4.7%
+gen 5 offspring [77/100] k=228 (used 117.0) c=0.998 alpha=-0.007 beta=+0.033 | loss 2.7215 (delta +0.0658) size 1941.6 MB sparsity 2.0%
+gen 5 offspring [78/100] k=107 (used 104.8) c=0.988 alpha=-0.148 beta=+0.141 | loss 3.0494 (delta +0.3938) size 1941.5 MB sparsity 11.4%
+gen 5 offspring [79/100] k=211 (used  55.0) c=0.944 alpha=-0.089 beta=+0.049 | loss 3.2687 (delta +0.6131) size 1664.4 MB sparsity 5.5%
+gen 5 offspring [80/100] k=265 (used  69.0) c=0.947 alpha=-0.008 beta=+0.044 | loss 2.8781 (delta +0.2224) size 1941.6 MB sparsity 2.3%
+gen 5 offspring [81/100] k=112 (used  29.0) c=0.983 alpha=-0.050 beta=+0.068 | loss 9.2015 (delta +6.5459) size 1387.3 MB sparsity 4.7%
+gen 5 offspring [82/100] k=251 (used  68.0) c=0.929 alpha=-0.017 beta=+0.098 | loss 3.1152 (delta +0.4595) size 1941.6 MB sparsity 4.6%
+gen 5 offspring [83/100] k=432 (used 209.7) c=0.997 alpha=-0.050 beta=+0.050 | loss 2.6783 (delta +0.0227) size 2218.7 MB sparsity 4.0%
+gen 5 offspring [84/100] k=199 (used 117.0) c=0.937 alpha=-0.050 beta=+0.028 | loss 2.7333 (delta +0.0777) size 1941.6 MB sparsity 3.1%
+gen 5 offspring [85/100] k=197 (used  51.0) c=0.937 alpha=-0.058 beta=+0.047 | loss 3.4097 (delta +0.7541) size 1664.4 MB sparsity 4.2%
+gen 5 offspring [86/100] k=112 (used  55.0) c=0.932 alpha=-0.107 beta=+0.102 | loss 3.2935 (delta +0.6379) size 1664.4 MB sparsity 8.3%
+gen 5 offspring [87/100] k=245 (used 226.0) c=1.000 alpha=-0.049 beta=+0.005 | loss 2.6786 (delta +0.0230) size 2218.7 MB sparsity 2.6%
+gen 5 offspring [88/100] k= 96 (used  94.0) c=0.933 alpha=-0.070 beta=+0.071 | loss 2.7985 (delta +0.1429) size 1941.6 MB sparsity 5.6%
+gen 5 offspring [89/100] k=349 (used 293.4) c=0.932 alpha=-0.070 beta=+0.082 | loss 2.7087 (delta +0.0531) size 2495.9 MB sparsity 6.0%
+gen 5 offspring [90/100] k=150 (used  76.0) c=0.983 alpha=-0.102 beta=+0.102 | loss 2.8723 (delta +0.2166) size 1941.6 MB sparsity 8.1%
+gen 5 offspring [91/100] k=254 (used 136.0) c=0.981 alpha=-0.052 beta=+0.045 | loss 2.7026 (delta +0.0470) size 2218.7 MB sparsity 3.9%
+gen 5 offspring [92/100] k=111 (used  55.0) c=0.934 alpha=-0.058 beta=+0.050 | loss 3.1482 (delta +0.4925) size 1664.4 MB sparsity 4.3%
+gen 5 offspring [93/100] k=203 (used 107.0) c=0.947 alpha=-0.005 beta=+0.017 | loss 2.7560 (delta +0.1003) size 1941.6 MB sparsity 1.5%
+gen 5 offspring [94/100] k= 77 (used  77.0) c=0.929 alpha=-0.016 beta=+0.021 | loss 2.8016 (delta +0.1460) size 1941.6 MB sparsity 3.7%
+gen 5 offspring [95/100] k=177 (used 100.0) c=0.956 alpha=-0.155 beta=+0.147 | loss 3.1065 (delta +0.4509) size 1941.5 MB sparsity 12.0%
+gen 5 offspring [96/100] k=390 (used  96.9) c=0.999 alpha=-0.023 beta=+0.148 | loss 3.2510 (delta +0.5953) size 1941.6 MB sparsity 6.8%
+gen 5 offspring [97/100] k=200 (used  51.0) c=0.982 alpha=-0.106 beta=+0.102 | loss 3.4058 (delta +0.7501) size 1664.4 MB sparsity 8.3%
+gen 5 offspring [98/100] k=295 (used 151.7) c=0.949 alpha=-0.017 beta=+0.052 | loss 2.6968 (delta +0.0411) size 2218.7 MB sparsity 2.7%
+gen 5 offspring [99/100] k=285 (used 272.0) c=0.998 alpha=-0.007 beta=+0.053 | loss 2.6726 (delta +0.0170) size 2495.9 MB sparsity 2.6%
+gen 5 offspring [100/100] k=126 (used 124.0) c=0.932 alpha=-0.070 beta=+0.065 | loss 2.7284 (delta +0.0728) size 1941.6 MB sparsity 5.4%
+=== generation 5/10 done in 3837s (0 reused), batch baseline 2.6556, HV 0.28071, front 25 points, 100/100 feasible, best delta loss +0.0092, smallest 1664.4 MB
+gen 6 offspring [1/100] k=211 (used  55.0) c=0.979 alpha=-0.049 beta=+0.045 | loss 3.0216 (delta +0.3660) size 1664.4 MB sparsity 3.8%
+gen 6 offspring [2/100] k=284 (used  59.0) c=0.947 alpha=-0.025 beta=+0.006 | loss 3.0046 (delta +0.3490) size 1664.4 MB sparsity 1.5%
+gen 6 offspring [3/100] k=184 (used  97.0) c=1.000 alpha=-0.004 beta=+0.003 | loss 2.7494 (delta +0.0937) size 1941.6 MB sparsity 1.7%
+gen 6 offspring [4/100] k=248 (used 187.0) c=0.996 alpha=-0.024 beta=+0.006 | loss 2.6814 (delta +0.0257) size 2218.7 MB sparsity 1.6%
+gen 6 offspring [5/100] k=295 (used 190.8) c=0.929 alpha=-0.012 beta=+0.050 | loss 2.7092 (delta +0.0536) size 2218.7 MB sparsity 2.5%
+gen 6 offspring [6/100] k=142 (used 142.0) c=0.923 alpha=-0.004 beta=+0.018 | loss 2.7124 (delta +0.0568) size 2218.7 MB sparsity 2.0%
+gen 6 offspring [7/100] k=202 (used  53.0) c=0.937 alpha=-0.049 beta=+0.017 | loss 3.2271 (delta +0.5714) size 1664.4 MB sparsity 2.7%
+gen 6 offspring [8/100] k=349 (used  91.0) c=0.995 alpha=-0.021 beta=+0.046 | loss 2.7644 (delta +0.1087) size 1941.6 MB sparsity 2.7%
+gen 6 offspring [9/100] k=195 (used  67.7) c=0.938 alpha=-0.102 beta=+0.101 | loss 2.9652 (delta +0.3096) size 1941.6 MB sparsity 8.1%
+gen 6 offspring [10/100] k=209 (used 106.2) c=0.999 alpha=-0.152 beta=+0.010 | loss 3.1805 (delta +0.5249) size 1941.6 MB sparsity 6.8%
+gen 6 offspring [11/100] k=126 (used  65.0) c=0.933 alpha=-0.003 beta=+0.068 | loss 2.9514 (delta +0.2957) size 1877.8 MB sparsity 3.8%
+gen 6 offspring [12/100] k=134 (used  69.0) c=0.983 alpha=-0.070 beta=+0.052 | loss 2.8746 (delta +0.2190) size 1941.6 MB sparsity 4.9%
+gen 6 offspring [13/100] k=200 (used  45.0) c=0.909 alpha=-0.009 beta=+0.043 | loss 4.4464 (delta +1.7907) size 1664.4 MB sparsity 2.4%
+gen 6 offspring [14/100] k=272 (used 136.0) c=0.956 alpha=-0.008 beta=+0.084 | loss 2.7516 (delta +0.0960) size 2218.7 MB sparsity 3.9%
+gen 6 offspring [15/100] k=207 (used  55.0) c=0.940 alpha=-0.076 beta=+0.070 | loss 3.1152 (delta +0.4596) size 1664.4 MB sparsity 5.8%
+gen 6 offspring [16/100] k=185 (used 183.0) c=0.910 alpha=-0.011 beta=+0.018 | loss 2.6998 (delta +0.0441) size 2218.7 MB sparsity 1.5%
+gen 6 offspring [17/100] k=283 (used 273.4) c=0.999 alpha=-0.007 beta=+0.068 | loss 2.6872 (delta +0.0315) size 2495.9 MB sparsity 3.2%
+gen 6 offspring [18/100] k=296 (used 277.7) c=0.949 alpha=-0.024 beta=+0.052 | loss 2.6794 (delta +0.0237) size 2495.9 MB sparsity 3.0%
+gen 6 offspring [19/100] k= 61 (used  61.0) c=0.947 alpha=-0.003 beta=+0.058 | loss 2.9599 (delta +0.3043) size 1664.4 MB sparsity 4.9%
+gen 6 offspring [20/100] k=259 (used 147.0) c=0.945 alpha=-0.017 beta=+0.015 | loss 2.7023 (delta +0.0467) size 2218.7 MB sparsity 1.3%
+gen 6 offspring [21/100] k=205 (used  55.0) c=0.937 alpha=-0.013 beta=+0.044 | loss 3.0611 (delta +0.4055) size 1664.4 MB sparsity 2.5%
+gen 6 offspring [22/100] k=212 (used  55.0) c=0.935 alpha=-0.059 beta=+0.048 | loss 3.0704 (delta +0.4148) size 1664.4 MB sparsity 4.3%
+gen 6 offspring [23/100] k=213 (used 123.0) c=0.996 alpha=-0.055 beta=+0.046 | loss 2.7360 (delta +0.0804) size 1941.6 MB sparsity 4.0%
+gen 6 offspring [24/100] k=285 (used  73.0) c=0.998 alpha=-0.029 beta=+0.038 | loss 2.8231 (delta +0.1675) size 1941.6 MB sparsity 2.7%
+gen 6 offspring [25/100] k=423 (used  11.0) c=0.998 alpha=-0.012 beta=+0.022 | loss 18.9940 (delta +16.3384) size 1110.1 MB sparsity 1.3%
+gen 6 offspring [26/100] k=247 (used 222.6) c=0.983 alpha=-0.148 beta=+0.148 | loss 2.8996 (delta +0.2439) size 2218.3 MB sparsity 11.7%
+gen 6 offspring [27/100] k=244 (used  64.0) c=0.938 alpha=-0.008 beta=+0.070 | loss 2.9937 (delta +0.3381) size 1664.4 MB sparsity 3.4%
+gen 6 offspring [28/100] k=345 (used  89.0) c=0.914 alpha=-0.057 beta=+0.057 | loss 2.7688 (delta +0.1132) size 1941.6 MB sparsity 4.6%
+gen 6 offspring [29/100] k=296 (used 266.0) c=0.937 alpha=-0.042 beta=+0.071 | loss 2.7009 (delta +0.0453) size 2495.9 MB sparsity 4.5%
+gen 6 offspring [30/100] k=193 (used  51.0) c=0.937 alpha=-0.049 beta=+0.049 | loss 3.3094 (delta +0.6538) size 1664.4 MB sparsity 3.9%
+gen 6 offspring [31/100] k=225 (used  75.0) c=0.943 alpha=-0.073 beta=+0.069 | loss 2.8313 (delta +0.1756) size 1941.6 MB sparsity 5.7%
+gen 6 offspring [32/100] k=200 (used 194.0) c=0.979 alpha=-0.067 beta=+0.108 | loss 2.7656 (delta +0.1099) size 2218.7 MB sparsity 7.0%
+gen 6 offspring [33/100] k=145 (used  39.0) c=0.958 alpha=-0.065 beta=+0.068 | loss 6.3095 (delta +3.6539) size 1664.4 MB sparsity 5.3%
+gen 6 offspring [34/100] k=195 (used 191.0) c=0.936 alpha=-0.048 beta=+0.049 | loss 2.6926 (delta +0.0369) size 2218.7 MB sparsity 3.9%
+gen 6 offspring [35/100] k=294 (used 148.0) c=0.947 alpha=-0.007 beta=+0.002 | loss 2.6961 (delta +0.0405) size 2218.7 MB sparsity 1.0%
+gen 6 offspring [36/100] k=148 (used  76.8) c=0.983 alpha=-0.102 beta=+0.108 | loss 2.9395 (delta +0.2839) size 1941.6 MB sparsity 8.4%
+gen 6 offspring [37/100] k=295 (used 292.0) c=0.981 alpha=-0.011 beta=+0.037 | loss 2.6673 (delta +0.0117) size 2495.9 MB sparsity 2.0%
+gen 6 offspring [38/100] k= 57 (used  51.0) c=0.947 alpha=-0.005 beta=+0.003 | loss 3.2857 (delta +0.6301) size 1664.4 MB sparsity 5.1%
+gen 6 offspring [39/100] k=157 (used  80.8) c=0.968 alpha=-0.099 beta=+0.015 | loss 2.8797 (delta +0.2241) size 1941.6 MB sparsity 4.9%
+gen 6 offspring [40/100] k=205 (used  54.0) c=0.932 alpha=-0.001 beta=+0.071 | loss 3.2723 (delta +0.6166) size 1664.4 MB sparsity 3.5%
+gen 6 offspring [41/100] k=195 (used 189.0) c=0.938 alpha=-0.052 beta=+0.048 | loss 2.6914 (delta +0.0358) size 2218.7 MB sparsity 4.0%
+gen 6 offspring [42/100] k=132 (used  68.0) c=0.982 alpha=-0.024 beta=+0.068 | loss 2.8950 (delta +0.2394) size 1941.6 MB sparsity 3.9%
+gen 6 offspring [43/100] k=126 (used 124.0) c=0.931 alpha=-0.065 beta=+0.068 | loss 2.7293 (delta +0.0736) size 1941.6 MB sparsity 5.3%
+gen 6 offspring [44/100] k=251 (used 127.0) c=0.998 alpha=-0.010 beta=+0.012 | loss 2.7003 (delta +0.0447) size 1941.6 MB sparsity 1.2%
+gen 6 offspring [45/100] k=285 (used 153.3) c=0.935 alpha=-0.109 beta=+0.115 | loss 2.7979 (delta +0.1422) size 2218.7 MB sparsity 8.9%
+gen 6 offspring [46/100] k=254 (used 128.0) c=0.941 alpha=-0.052 beta=+0.049 | loss 2.7092 (delta +0.0535) size 1941.6 MB sparsity 4.0%
+gen 6 offspring [47/100] k=157 (used  80.6) c=0.982 alpha=-0.102 beta=+0.102 | loss 2.8508 (delta +0.1951) size 1941.6 MB sparsity 8.1%
+gen 6 offspring [48/100] k=306 (used 302.0) c=0.937 alpha=-0.012 beta=+0.002 | loss 2.6790 (delta +0.0234) size 2495.9 MB sparsity 1.0%
+gen 6 offspring [49/100] k=294 (used 100.0) c=0.913 alpha=-0.057 beta=+0.056 | loss 2.7573 (delta +0.1016) size 1941.6 MB sparsity 4.5%
+gen 6 offspring [50/100] k= 69 (used  69.0) c=0.937 alpha=-0.016 beta=+0.003 | loss 2.8757 (delta +0.2201) size 1941.6 MB sparsity 4.2%
+gen 6 offspring [51/100] k=136 (used  37.0) c=0.938 alpha=-0.049 beta=+0.049 | loss 6.6101 (delta +3.9545) size 1664.4 MB sparsity 3.9%
+gen 6 offspring [52/100] k=118 (used  60.0) c=0.942 alpha=-0.098 beta=+0.104 | loss 3.0576 (delta +0.4020) size 1664.4 MB sparsity 8.0%
+gen 6 offspring [53/100] k=195 (used  98.0) c=0.939 alpha=-0.049 beta=+0.014 | loss 2.7640 (delta +0.1084) size 1941.6 MB sparsity 2.7%
+gen 6 offspring [54/100] k=200 (used  52.0) c=0.982 alpha=-0.053 beta=+0.070 | loss 3.2873 (delta +0.6317) size 1664.4 MB sparsity 4.9%
+gen 6 offspring [55/100] k=107 (used 100.0) c=0.983 alpha=-0.019 beta=+0.142 | loss 3.1010 (delta +0.4453) size 1941.6 MB sparsity 7.1%
+gen 6 offspring [56/100] k=267 (used 242.0) c=0.992 alpha=-0.080 beta=+0.054 | loss 2.6977 (delta +0.0421) size 2218.7 MB sparsity 5.3%
+gen 6 offspring [57/100] k= 65 (used  62.0) c=0.996 alpha=-0.052 beta=+0.068 | loss 3.0911 (delta +0.4355) size 1664.4 MB sparsity 5.2%
+gen 6 offspring [58/100] k=259 (used  67.0) c=0.955 alpha=-0.056 beta=+0.048 | loss 2.9424 (delta +0.2868) size 1941.6 MB sparsity 4.2%
+gen 6 offspring [59/100] k=160 (used 159.0) c=0.937 alpha=-0.069 beta=+0.002 | loss 2.7316 (delta +0.0760) size 2218.7 MB sparsity 3.6%
+gen 6 offspring [60/100] k=285 (used 147.0) c=0.998 alpha=-0.011 beta=+0.022 | loss 2.6874 (delta +0.0317) size 2218.7 MB sparsity 1.4%
+gen 6 offspring [61/100] k=150 (used  75.0) c=0.983 alpha=-0.102 beta=+0.102 | loss 2.8726 (delta +0.2169) size 1941.6 MB sparsity 8.1%
+gen 6 offspring [62/100] k=289 (used  97.0) c=0.942 alpha=-0.030 beta=+0.068 | loss 2.7904 (delta +0.1348) size 1941.6 MB sparsity 3.9%
+gen 6 offspring [63/100] k=178 (used  91.0) c=0.978 alpha=-0.098 beta=+0.102 | loss 2.8170 (delta +0.1614) size 1941.6 MB sparsity 7.9%
+gen 6 offspring [64/100] k=220 (used  58.0) c=0.929 alpha=-0.001 beta=+0.026 | loss 2.9824 (delta +0.3268) size 1664.4 MB sparsity 1.7%
+gen 6 offspring [65/100] k=430 (used  41.0) c=0.924 alpha=-0.050 beta=+0.004 | loss 5.0194 (delta +2.3637) size 1664.4 MB sparsity 2.3%
+gen 6 offspring [66/100] k=338 (used  87.0) c=0.912 alpha=-0.061 beta=+0.002 | loss 2.8932 (delta +0.2375) size 1941.6 MB sparsity 2.9%
+gen 6 offspring [67/100] k=203 (used 103.0) c=0.972 alpha=-0.028 beta=+0.030 | loss 2.7236 (delta +0.0679) size 1941.6 MB sparsity 2.3%
+gen 6 offspring [68/100] k=265 (used  69.0) c=0.947 alpha=-0.052 beta=+0.050 | loss 2.8721 (delta +0.2164) size 1941.6 MB sparsity 4.1%
+gen 6 offspring [69/100] k=120 (used  62.0) c=0.942 alpha=-0.054 beta=+0.095 | loss 3.2718 (delta +0.6162) size 1664.4 MB sparsity 5.9%
+gen 6 offspring [70/100] k=228 (used  59.0) c=0.937 alpha=-0.006 beta=+0.009 | loss 3.0584 (delta +0.4027) size 1664.4 MB sparsity 1.3%
+gen 6 offspring [71/100] k=199 (used 197.0) c=0.937 alpha=-0.058 beta=+0.049 | loss 2.6926 (delta +0.0370) size 2218.7 MB sparsity 4.3%
+gen 6 offspring [72/100] k=289 (used 281.9) c=0.936 alpha=-0.050 beta=+0.004 | loss 2.6844 (delta +0.0287) size 2495.9 MB sparsity 2.5%
+gen 6 offspring [73/100] k=106 (used 103.0) c=0.997 alpha=-0.014 beta=+0.007 | loss 2.7213 (delta +0.0656) size 1941.6 MB sparsity 2.9%
+gen 6 offspring [74/100] k=265 (used  69.0) c=0.947 alpha=-0.049 beta=+0.044 | loss 2.8630 (delta +0.2074) size 1941.6 MB sparsity 3.7%
+gen 6 offspring [75/100] k=227 (used 117.0) c=0.999 alpha=-0.018 beta=+0.003 | loss 2.7164 (delta +0.0608) size 1941.6 MB sparsity 1.4%
+gen 6 offspring [76/100] k=290 (used  75.0) c=0.940 alpha=-0.011 beta=+0.001 | loss 2.8005 (delta +0.1449) size 1941.6 MB sparsity 1.0%
+gen 6 offspring [77/100] k=200 (used  53.0) c=0.924 alpha=-0.049 beta=+0.049 | loss 3.1369 (delta +0.4812) size 1664.4 MB sparsity 3.9%
+gen 6 offspring [78/100] k=245 (used  62.0) c=1.000 alpha=-0.116 beta=+0.001 | loss 3.3880 (delta +0.7324) size 1664.4 MB sparsity 5.2%
+gen 6 offspring [79/100] k=215 (used 107.0) c=0.938 alpha=-0.084 beta=+0.084 | loss 2.7770 (delta +0.1213) size 1941.6 MB sparsity 6.7%
+gen 6 offspring [80/100] k=150 (used  76.0) c=0.983 alpha=-0.096 beta=+0.102 | loss 2.8713 (delta +0.2157) size 1941.6 MB sparsity 7.9%
+gen 6 offspring [81/100] k=219 (used  45.0) c=0.947 alpha=-0.026 beta=+0.006 | loss 4.6060 (delta +1.9504) size 1664.4 MB sparsity 1.7%
+gen 6 offspring [82/100] k=390 (used  58.0) c=0.924 alpha=-0.050 beta=+0.050 | loss 3.0184 (delta +0.3628) size 1664.4 MB sparsity 4.0%
+gen 6 offspring [83/100] k=254 (used 187.0) c=0.937 alpha=-0.052 beta=+0.003 | loss 2.7256 (delta +0.0700) size 2218.7 MB sparsity 2.6%
+gen 6 offspring [84/100] k= 60 (used  60.0) c=0.913 alpha=-0.013 beta=+0.026 | loss 2.9690 (delta +0.3133) size 1664.4 MB sparsity 4.8%
+gen 6 offspring [85/100] k=151 (used 151.0) c=0.937 alpha=-0.006 beta=+0.018 | loss 2.7049 (delta +0.0492) size 2218.7 MB sparsity 1.9%
+gen 6 offspring [86/100] k=203 (used 105.0) c=0.982 alpha=-0.031 beta=+0.102 | loss 2.8302 (delta +0.1746) size 1941.6 MB sparsity 5.3%
+gen 6 offspring [87/100] k=199 (used  53.0) c=0.937 alpha=-0.049 beta=+0.043 | loss 3.1469 (delta +0.4912) size 1664.4 MB sparsity 3.7%
+gen 6 offspring [88/100] k= 69 (used  17.0) c=0.929 alpha=-0.014 beta=+0.052 | loss 13.9348 (delta +11.2791) size 1339.8 MB sparsity 4.3%
+gen 6 offspring [89/100] k=233 (used 116.0) c=0.997 alpha=-0.070 beta=+0.007 | loss 2.7718 (delta +0.1161) size 1941.6 MB sparsity 3.4%
+gen 6 offspring [90/100] k=309 (used 165.0) c=0.998 alpha=-0.007 beta=+0.022 | loss 2.6832 (delta +0.0275) size 2218.7 MB sparsity 1.4%
+gen 6 offspring [91/100] k=225 (used  51.0) c=0.948 alpha=-0.017 beta=+0.043 | loss 3.5179 (delta +0.8623) size 1664.4 MB sparsity 2.4%
+gen 6 offspring [92/100] k=130 (used 130.0) c=0.952 alpha=-0.024 beta=+0.006 | loss 2.7040 (delta +0.0483) size 2218.7 MB sparsity 2.3%
+gen 6 offspring [93/100] k=211 (used  55.0) c=0.940 alpha=-0.067 beta=+0.068 | loss 3.1064 (delta +0.4508) size 1664.4 MB sparsity 5.4%
+gen 6 offspring [94/100] k=220 (used 220.0) c=0.937 alpha=-0.014 beta=+0.016 | loss 2.6772 (delta +0.0216) size 2218.7 MB sparsity 1.4%
+gen 6 offspring [95/100] k=194 (used  67.0) c=0.946 alpha=-0.058 beta=+0.049 | loss 2.8740 (delta +0.2184) size 1941.6 MB sparsity 4.3%
+gen 6 offspring [96/100] k=372 (used  55.0) c=0.936 alpha=-0.050 beta=+0.004 | loss 3.1108 (delta +0.4552) size 1664.4 MB sparsity 2.4%
+gen 6 offspring [97/100] k=228 (used  60.0) c=0.947 alpha=-0.006 beta=+0.053 | loss 2.9972 (delta +0.3415) size 1664.4 MB sparsity 2.7%
+gen 6 offspring [98/100] k=211 (used  57.0) c=0.997 alpha=-0.050 beta=+0.049 | loss 3.0863 (delta +0.4307) size 1664.4 MB sparsity 3.9%
+gen 6 offspring [99/100] k=314 (used  81.0) c=0.937 alpha=-0.052 beta=+0.014 | loss 2.8249 (delta +0.1693) size 1941.6 MB sparsity 2.6%
+gen 6 offspring [100/100] k=154 (used 138.0) c=0.935 alpha=-0.012 beta=+0.002 | loss 2.7242 (delta +0.0685) size 2218.7 MB sparsity 1.9%
+=== generation 6/10 done in 3840s (0 reused), batch baseline 2.6556, HV 0.28102, front 31 points, 100/100 feasible, best delta loss +0.0092, smallest 1664.4 MB
+gen 7 offspring [1/100] k=184 (used  63.0) c=0.946 alpha=-0.030 beta=+0.049 | loss 2.9415 (delta +0.2859) size 1664.4 MB sparsity 3.2%
+gen 7 offspring [2/100] k=204 (used 104.0) c=0.972 alpha=-0.028 beta=+0.030 | loss 2.7220 (delta +0.0664) size 1941.6 MB sparsity 2.3%
+gen 7 offspring [3/100] k= 57 (used  51.0) c=0.947 alpha=-0.011 beta=+0.003 | loss 3.2857 (delta +0.6301) size 1664.4 MB sparsity 5.1%
+gen 7 offspring [4/100] k= 48 (used  17.0) c=0.945 alpha=-0.079 beta=+0.072 | loss 14.7913 (delta +12.1357) size 1314.8 MB sparsity 6.5%
+gen 7 offspring [5/100] k=200 (used  53.0) c=0.909 alpha=-0.060 beta=+0.016 | loss 3.2989 (delta +0.6433) size 1664.4 MB sparsity 3.1%
+gen 7 offspring [6/100] k=232 (used 130.0) c=0.999 alpha=-0.018 beta=+0.007 | loss 2.7086 (delta +0.0530) size 2218.7 MB sparsity 1.4%
+gen 7 offspring [7/100] k=143 (used  39.0) c=0.931 alpha=-0.049 beta=+0.049 | loss 5.4629 (delta +2.8072) size 1664.4 MB sparsity 3.9%
+gen 7 offspring [8/100] k=220 (used  47.0) c=0.939 alpha=-0.001 beta=+0.026 | loss 3.9475 (delta +1.2919) size 1664.4 MB sparsity 1.7%
+gen 7 offspring [9/100] k=218 (used 120.0) c=0.931 alpha=-0.008 beta=+0.003 | loss 2.7243 (delta +0.0687) size 1941.6 MB sparsity 1.3%
+gen 7 offspring [10/100] k=118 (used  60.0) c=0.934 alpha=-0.098 beta=+0.104 | loss 3.1036 (delta +0.4480) size 1664.4 MB sparsity 8.0%
+gen 7 offspring [11/100] k=212 (used  55.0) c=0.990 alpha=-0.049 beta=+0.045 | loss 3.0986 (delta +0.4429) size 1664.4 MB sparsity 3.8%
+gen 7 offspring [12/100] k=276 (used 274.0) c=0.997 alpha=-0.005 beta=+0.039 | loss 2.6697 (delta +0.0141) size 2495.9 MB sparsity 2.1%
+gen 7 offspring [13/100] k=310 (used 295.8) c=0.998 alpha=-0.052 beta=+0.068 | loss 2.6833 (delta +0.0276) size 2495.9 MB sparsity 4.8%
+gen 7 offspring [14/100] k=200 (used  52.0) c=0.937 alpha=-0.011 beta=+0.043 | loss 3.3781 (delta +0.7225) size 1664.4 MB sparsity 2.4%
+gen 7 offspring [15/100] k= 77 (used  41.0) c=0.929 alpha=-0.016 beta=+0.017 | loss 5.1459 (delta +2.4903) size 1664.4 MB sparsity 3.7%
+gen 7 offspring [16/100] k=284 (used  74.0) c=0.945 alpha=-0.033 beta=+0.057 | loss 2.8243 (delta +0.1687) size 1941.6 MB sparsity 3.6%
+gen 7 offspring [17/100] k=192 (used  51.0) c=0.937 alpha=-0.050 beta=+0.011 | loss 3.3526 (delta +0.6970) size 1664.4 MB sparsity 2.7%
+gen 7 offspring [18/100] k=290 (used  76.0) c=0.983 alpha=-0.011 beta=+0.001 | loss 2.8198 (delta +0.1641) size 1941.6 MB sparsity 1.1%
+gen 7 offspring [19/100] k=289 (used  33.0) c=0.922 alpha=-0.047 beta=+0.037 | loss 8.8773 (delta +6.2217) size 1617.9 MB sparsity 3.4%
+gen 7 offspring [20/100] k=129 (used  65.0) c=0.942 alpha=-0.047 beta=+0.022 | loss 2.9765 (delta +0.3208) size 1891.2 MB sparsity 3.0%
+gen 7 offspring [21/100] k=252 (used 121.0) c=0.999 alpha=-0.024 beta=+0.002 | loss 2.7069 (delta +0.0513) size 1941.6 MB sparsity 1.5%
+gen 7 offspring [22/100] k=303 (used  63.0) c=0.947 alpha=-0.023 beta=+0.000 | loss 2.9717 (delta +0.3160) size 1664.4 MB sparsity 1.4%
+gen 7 offspring [23/100] k=338 (used  87.0) c=0.910 alpha=-0.061 beta=+0.056 | loss 2.7965 (delta +0.1408) size 1941.6 MB sparsity 4.7%
+gen 7 offspring [24/100] k=218 (used 108.0) c=0.947 alpha=-0.005 beta=+0.002 | loss 2.7193 (delta +0.0636) size 1941.6 MB sparsity 1.3%
+gen 7 offspring [25/100] k=229 (used 224.0) c=0.992 alpha=-0.025 beta=+0.002 | loss 2.6746 (delta +0.0190) size 2218.7 MB sparsity 1.7%
+gen 7 offspring [26/100] k=251 (used 128.5) c=0.933 alpha=-0.043 beta=+0.068 | loss 2.7268 (delta +0.0711) size 2047.2 MB sparsity 4.4%
+gen 7 offspring [27/100] k=251 (used 112.0) c=0.997 alpha=-0.024 beta=+0.007 | loss 2.7094 (delta +0.0538) size 1941.6 MB sparsity 1.5%
+gen 7 offspring [28/100] k=126 (used  65.0) c=0.983 alpha=-0.070 beta=+0.068 | loss 2.8836 (delta +0.2280) size 1850.2 MB sparsity 5.5%
+gen 7 offspring [29/100] k=200 (used  51.0) c=0.982 alpha=-0.059 beta=+0.070 | loss 3.3588 (delta +0.7031) size 1664.4 MB sparsity 5.2%
+gen 7 offspring [30/100] k=184 (used  92.0) c=0.947 alpha=-0.052 beta=+0.067 | loss 2.7661 (delta +0.1105) size 1941.6 MB sparsity 4.7%
+gen 7 offspring [31/100] k=296 (used 272.0) c=0.948 alpha=-0.002 beta=+0.001 | loss 2.6688 (delta +0.0132) size 2495.9 MB sparsity 1.0%
+gen 7 offspring [32/100] k=295 (used 159.0) c=0.981 alpha=-0.011 beta=+0.037 | loss 2.6898 (delta +0.0341) size 2218.7 MB sparsity 2.0%
+gen 7 offspring [33/100] k=200 (used  42.0) c=0.908 alpha=-0.059 beta=+0.048 | loss 3.9736 (delta +1.3180) size 1664.4 MB sparsity 4.3%
+gen 7 offspring [34/100] k=432 (used 110.0) c=0.924 alpha=-0.052 beta=+0.050 | loss 2.7365 (delta +0.0808) size 1941.6 MB sparsity 4.1%
+gen 7 offspring [35/100] k=176 (used  90.0) c=0.949 alpha=-0.007 beta=+0.033 | loss 2.7702 (delta +0.1146) size 1941.6 MB sparsity 2.1%
+gen 7 offspring [36/100] k= 55 (used  51.0) c=1.000 alpha=-0.013 beta=+0.004 | loss 3.5520 (delta +0.8964) size 1664.4 MB sparsity 5.6%
+gen 7 offspring [37/100] k=285 (used 270.0) c=0.998 alpha=-0.029 beta=+0.022 | loss 2.6667 (delta +0.0111) size 2495.9 MB sparsity 2.0%
+gen 7 offspring [38/100] k=130 (used 130.0) c=0.952 alpha=-0.012 beta=+0.002 | loss 2.7039 (delta +0.0482) size 2218.7 MB sparsity 2.3%
+gen 7 offspring [39/100] k=338 (used  87.0) c=0.920 alpha=-0.066 beta=+0.010 | loss 2.8521 (delta +0.1965) size 1941.6 MB sparsity 3.1%
+gen 7 offspring [40/100] k=286 (used  74.0) c=0.942 alpha=-0.049 beta=+0.037 | loss 2.8061 (delta +0.1505) size 1941.6 MB sparsity 3.4%
+gen 7 offspring [41/100] k=207 (used  55.0) c=0.943 alpha=-0.050 beta=+0.064 | loss 3.1668 (delta +0.5111) size 1664.4 MB sparsity 4.5%
+gen 7 offspring [42/100] k=403 (used 199.9) c=0.944 alpha=-0.085 beta=+0.004 | loss 2.7371 (delta +0.0815) size 2218.7 MB sparsity 3.7%
+gen 7 offspring [43/100] k=233 (used 125.0) c=0.998 alpha=-0.004 beta=+0.003 | loss 2.7057 (delta +0.0501) size 1941.6 MB sparsity 1.3%
+gen 7 offspring [44/100] k=226 (used  76.0) c=0.947 alpha=-0.006 beta=+0.054 | loss 2.8553 (delta +0.1997) size 1941.6 MB sparsity 2.8%
+gen 7 offspring [45/100] k=106 (used 103.0) c=0.991 alpha=-0.005 beta=+0.008 | loss 2.7195 (delta +0.0638) size 1941.6 MB sparsity 2.9%
+gen 7 offspring [46/100] k=245 (used 221.0) c=0.997 alpha=-0.014 beta=+0.006 | loss 2.6679 (delta +0.0122) size 2218.7 MB sparsity 1.3%
+gen 7 offspring [47/100] k=176 (used  90.0) c=0.938 alpha=-0.057 beta=+0.008 | loss 2.7933 (delta +0.1377) size 1941.6 MB sparsity 3.1%
+gen 7 offspring [48/100] k=295 (used 278.0) c=0.949 alpha=-0.024 beta=+0.006 | loss 2.6736 (delta +0.0180) size 2495.9 MB sparsity 1.4%
+gen 7 offspring [49/100] k=291 (used 247.0) c=0.999 alpha=-0.007 beta=+0.030 | loss 2.6681 (delta +0.0125) size 2218.7 MB sparsity 1.7%
+gen 7 offspring [50/100] k=295 (used 255.0) c=0.937 alpha=-0.005 beta=+0.002 | loss 2.6754 (delta +0.0198) size 2218.7 MB sparsity 1.0%
+gen 7 offspring [51/100] k=282 (used 280.6) c=0.947 alpha=-0.002 beta=+0.058 | loss 2.6862 (delta +0.0305) size 2495.9 MB sparsity 2.8%
+gen 7 offspring [52/100] k=201 (used 197.0) c=0.997 alpha=-0.027 beta=+0.049 | loss 2.6830 (delta +0.0274) size 2218.7 MB sparsity 3.0%
+gen 7 offspring [53/100] k=321 (used 189.0) c=0.997 alpha=-0.024 beta=+0.003 | loss 2.6993 (delta +0.0437) size 2218.7 MB sparsity 1.4%
+gen 7 offspring [54/100] k=235 (used 234.0) c=0.937 alpha=-0.006 beta=+0.022 | loss 2.6819 (delta +0.0263) size 2218.7 MB sparsity 1.5%
+gen 7 offspring [55/100] k=255 (used 143.0) c=0.928 alpha=-0.052 beta=+0.049 | loss 2.7127 (delta +0.0570) size 2218.7 MB sparsity 4.0%
+gen 7 offspring [56/100] k=285 (used 270.0) c=0.998 alpha=-0.009 beta=+0.022 | loss 2.6648 (delta +0.0092) size 2495.9 MB sparsity 1.4%
+gen 7 offspring [57/100] k=126 (used  65.0) c=0.942 alpha=-0.003 beta=+0.023 | loss 2.9023 (delta +0.2467) size 1902.8 MB sparsity 2.3%
+gen 7 offspring [58/100] k=296 (used 269.0) c=0.947 alpha=-0.002 beta=+0.015 | loss 2.6701 (delta +0.0145) size 2495.9 MB sparsity 1.1%
+gen 7 offspring [59/100] k=293 (used  99.0) c=0.912 alpha=-0.057 beta=+0.060 | loss 2.7520 (delta +0.0964) size 1941.6 MB sparsity 4.7%
+gen 7 offspring [60/100] k= 60 (used  17.0) c=0.948 alpha=-0.029 beta=+0.006 | loss 14.9892 (delta +12.3335) size 1332.2 MB sparsity 5.0%
+gen 7 offspring [61/100] k= 64 (used  36.0) c=0.950 alpha=-0.000 beta=+0.013 | loss 7.8976 (delta +5.2420) size 1664.4 MB sparsity 4.7%
+gen 7 offspring [62/100] k=260 (used  67.0) c=0.947 alpha=-0.049 beta=+0.043 | loss 2.9394 (delta +0.2838) size 1941.6 MB sparsity 3.7%
+gen 7 offspring [63/100] k=227 (used 196.0) c=0.999 alpha=-0.018 beta=+0.003 | loss 2.6731 (delta +0.0175) size 2218.7 MB sparsity 1.4%
+gen 7 offspring [64/100] k=142 (used  29.0) c=0.947 alpha=-0.066 beta=+0.013 | loss 9.6377 (delta +6.9821) size 1387.3 MB sparsity 3.6%
+gen 7 offspring [65/100] k=264 (used 261.7) c=0.953 alpha=-0.060 beta=+0.027 | loss 2.6802 (delta +0.0246) size 2495.9 MB sparsity 3.4%
+gen 7 offspring [66/100] k=300 (used  78.0) c=0.947 alpha=-0.001 beta=+0.048 | loss 2.8105 (delta +0.1548) size 1941.6 MB sparsity 2.4%
+gen 7 offspring [67/100] k=134 (used  77.0) c=0.940 alpha=-0.070 beta=+0.052 | loss 2.8455 (delta +0.1898) size 1941.6 MB sparsity 4.9%
+gen 7 offspring [68/100] k=439 (used 430.0) c=0.984 alpha=-0.029 beta=+0.010 | loss 2.6609 (delta +0.0052) size 2495.9 MB sparsity 1.5%
+gen 7 offspring [69/100] k=195 (used 192.0) c=0.952 alpha=-0.026 beta=+0.006 | loss 2.6821 (delta +0.0264) size 2218.7 MB sparsity 1.8%
+gen 7 offspring [70/100] k=236 (used 125.0) c=0.998 alpha=-0.010 beta=+0.012 | loss 2.7080 (delta +0.0523) size 1941.6 MB sparsity 1.3%
+gen 7 offspring [71/100] k=190 (used  51.0) c=0.941 alpha=-0.051 beta=+0.054 | loss 3.3344 (delta +0.6788) size 1664.4 MB sparsity 4.2%
+gen 7 offspring [72/100] k=324 (used 181.0) c=0.999 alpha=-0.018 beta=+0.005 | loss 2.6851 (delta +0.0295) size 2218.7 MB sparsity 1.2%
+gen 7 offspring [73/100] k= 61 (used  61.0) c=0.947 alpha=-0.003 beta=+0.002 | loss 2.9498 (delta +0.2942) size 1664.4 MB sparsity 4.8%
+gen 7 offspring [74/100] k= 61 (used  61.0) c=0.948 alpha=-0.004 beta=+0.032 | loss 2.9521 (delta +0.2965) size 1664.4 MB sparsity 4.8%
+gen 7 offspring [75/100] k=131 (used 128.0) c=0.953 alpha=-0.003 beta=+0.027 | loss 2.7095 (delta +0.0539) size 1941.6 MB sparsity 2.3%
+gen 7 offspring [76/100] k=229 (used 117.0) c=0.941 alpha=-0.052 beta=+0.029 | loss 2.7272 (delta +0.0716) size 1941.6 MB sparsity 3.2%
+gen 7 offspring [77/100] k= 65 (used  65.0) c=0.939 alpha=-0.001 beta=+0.014 | loss 2.9162 (delta +0.2606) size 1867.4 MB sparsity 4.5%
+gen 7 offspring [78/100] k=290 (used  75.0) c=0.940 alpha=-0.011 beta=+0.015 | loss 2.8002 (delta +0.1446) size 1941.6 MB sparsity 1.1%
+gen 7 offspring [79/100] k=192 (used  50.0) c=0.939 alpha=-0.049 beta=+0.049 | loss 3.3920 (delta +0.7364) size 1664.4 MB sparsity 3.9%
+gen 7 offspring [80/100] k=264 (used  41.0) c=0.947 alpha=-0.057 beta=+0.050 | loss 4.7023 (delta +2.0466) size 1664.4 MB sparsity 4.2%
+gen 7 offspring [81/100] k=228 (used 115.0) c=0.995 alpha=-0.029 beta=+0.008 | loss 2.7156 (delta +0.0599) size 1941.6 MB sparsity 1.8%
+gen 7 offspring [82/100] k=293 (used 164.0) c=0.909 alpha=-0.024 beta=+0.026 | loss 2.7611 (delta +0.1055) size 2218.7 MB sparsity 2.0%
+gen 7 offspring [83/100] k=248 (used  72.0) c=0.999 alpha=-0.029 beta=+0.038 | loss 2.8519 (delta +0.1962) size 1941.6 MB sparsity 2.7%
+gen 7 offspring [84/100] k=295 (used 258.0) c=0.937 alpha=-0.038 beta=+0.006 | loss 2.6801 (delta +0.0245) size 2495.9 MB sparsity 2.0%
+gen 7 offspring [85/100] k=296 (used 282.6) c=0.949 alpha=-0.024 beta=+0.054 | loss 2.6812 (delta +0.0256) size 2495.9 MB sparsity 3.1%
+gen 7 offspring [86/100] k=430 (used  63.0) c=0.936 alpha=-0.049 beta=+0.054 | loss 2.9506 (delta +0.2950) size 1664.4 MB sparsity 4.1%
+gen 7 offspring [87/100] k=250 (used  84.0) c=0.997 alpha=-0.007 beta=+0.069 | loss 2.8732 (delta +0.2175) size 1941.6 MB sparsity 3.4%
+gen 7 offspring [88/100] k=198 (used  53.0) c=0.937 alpha=-0.049 beta=+0.043 | loss 3.2703 (delta +0.6147) size 1664.4 MB sparsity 3.7%
+gen 7 offspring [89/100] k=133 (used  69.0) c=0.982 alpha=-0.024 beta=+0.067 | loss 2.9035 (delta +0.2478) size 1941.6 MB sparsity 3.8%
+gen 7 offspring [90/100] k=142 (used 111.0) c=0.931 alpha=-0.002 beta=+0.018 | loss 2.7317 (delta +0.0761) size 1941.6 MB sparsity 2.0%
+gen 7 offspring [91/100] k=209 (used  55.0) c=0.924 alpha=-0.049 beta=+0.063 | loss 3.1164 (delta +0.4607) size 1664.4 MB sparsity 4.4%
+gen 7 offspring [92/100] k=265 (used  69.0) c=0.947 alpha=-0.048 beta=+0.047 | loss 2.8639 (delta +0.2082) size 1941.6 MB sparsity 3.8%
+gen 7 offspring [93/100] k=295 (used  39.0) c=0.947 alpha=-0.020 beta=+0.006 | loss 5.6540 (delta +2.9983) size 1664.4 MB sparsity 1.3%
+gen 7 offspring [94/100] k=207 (used  53.0) c=0.982 alpha=-0.053 beta=+0.071 | loss 3.2777 (delta +0.6220) size 1664.4 MB sparsity 4.9%
+gen 7 offspring [95/100] k=202 (used  54.0) c=0.947 alpha=-0.007 beta=+0.069 | loss 3.4000 (delta +0.7443) size 1664.4 MB sparsity 3.5%
+gen 7 offspring [96/100] k=236 (used 123.0) c=0.999 alpha=-0.024 beta=+0.002 | loss 2.7134 (delta +0.0577) size 1941.6 MB sparsity 1.6%
+gen 7 offspring [97/100] k=328 (used  84.0) c=0.912 alpha=-0.062 beta=+0.057 | loss 2.8108 (delta +0.1552) size 1941.6 MB sparsity 4.7%
+gen 7 offspring [98/100] k=228 (used  77.0) c=0.947 alpha=-0.073 beta=+0.053 | loss 2.8304 (delta +0.1747) size 1941.6 MB sparsity 5.0%
+gen 7 offspring [99/100] k=207 (used  59.0) c=0.983 alpha=-0.024 beta=+0.044 | loss 3.0665 (delta +0.4109) size 1664.4 MB sparsity 2.7%
+gen 7 offspring [100/100] k=130 (used  67.0) c=0.941 alpha=-0.013 beta=+0.068 | loss 2.9198 (delta +0.2642) size 1941.6 MB sparsity 3.8%
+=== generation 7/10 done in 3837s (0 reused), batch baseline 2.6556, HV 0.28113, front 38 points, 100/100 feasible, best delta loss +0.0052, smallest 1664.4 MB
+gen 8 offspring [1/100] k=220 (used  56.0) c=0.946 alpha=-0.001 beta=+0.024 | loss 3.0080 (delta +0.3523) size 1664.4 MB sparsity 1.6%
+gen 8 offspring [2/100] k=260 (used  67.0) c=0.951 alpha=-0.011 beta=+0.021 | loss 2.8574 (delta +0.2018) size 1941.6 MB sparsity 1.4%
+gen 8 offspring [3/100] k=201 (used  53.0) c=0.982 alpha=-0.053 beta=+0.005 | loss 3.3271 (delta +0.6715) size 1664.4 MB sparsity 2.9%
+gen 8 offspring [4/100] k=249 (used 124.0) c=0.940 alpha=-0.049 beta=+0.051 | loss 2.7169 (delta +0.0612) size 1941.6 MB sparsity 4.0%
+gen 8 offspring [5/100] k=199 (used  69.0) c=0.946 alpha=-0.058 beta=+0.048 | loss 2.9138 (delta +0.2581) size 1941.6 MB sparsity 4.2%
+gen 8 offspring [6/100] k=297 (used 100.3) c=0.913 alpha=-0.008 beta=+0.108 | loss 2.9294 (delta +0.2737) size 1941.6 MB sparsity 4.8%
+gen 8 offspring [7/100] k=188 (used  49.0) c=0.934 alpha=-0.052 beta=+0.043 | loss 3.5824 (delta +0.9267) size 1664.4 MB sparsity 3.8%
+gen 8 offspring [8/100] k=211 (used  53.0) c=0.997 alpha=-0.028 beta=+0.045 | loss 3.3505 (delta +0.6949) size 1664.4 MB sparsity 2.9%
+gen 8 offspring [9/100] k=171 (used  45.0) c=0.937 alpha=-0.049 beta=+0.043 | loss 4.4459 (delta +1.7902) size 1664.4 MB sparsity 3.7%
+gen 8 offspring [10/100] k=284 (used  59.0) c=0.951 alpha=-0.024 beta=+0.006 | loss 2.9712 (delta +0.3156) size 1664.4 MB sparsity 1.5%
+gen 8 offspring [11/100] k=293 (used  97.0) c=0.943 alpha=-0.073 beta=+0.068 | loss 2.7781 (delta +0.1225) size 1941.6 MB sparsity 5.6%
+gen 8 offspring [12/100] k=250 (used  65.0) c=0.939 alpha=-0.059 beta=+0.048 | loss 2.9161 (delta +0.2605) size 1870.8 MB sparsity 4.3%
+gen 8 offspring [13/100] k=430 (used  63.0) c=0.935 alpha=-0.050 beta=+0.053 | loss 2.9347 (delta +0.2790) size 1664.4 MB sparsity 4.1%
+gen 8 offspring [14/100] k=265 (used  69.0) c=0.947 alpha=-0.008 beta=+0.006 | loss 2.8571 (delta +0.2015) size 1941.6 MB sparsity 1.1%
+gen 8 offspring [15/100] k=285 (used  73.0) c=0.999 alpha=-0.004 beta=+0.038 | loss 2.8374 (delta +0.1818) size 1941.6 MB sparsity 2.1%
+gen 8 offspring [16/100] k= 69 (used  11.0) c=0.939 alpha=-0.000 beta=+0.014 | loss 16.8332 (delta +14.1776) size 1110.1 MB sparsity 4.2%
+gen 8 offspring [17/100] k=289 (used 260.0) c=0.998 alpha=-0.019 beta=+0.006 | loss 2.6676 (delta +0.0119) size 2495.9 MB sparsity 1.3%
+gen 8 offspring [18/100] k=386 (used 374.0) c=0.999 alpha=-0.007 beta=+0.022 | loss 2.6619 (delta +0.0063) size 2495.9 MB sparsity 1.3%
+gen 8 offspring [19/100] k=218 (used 107.0) c=0.947 alpha=-0.057 beta=+0.001 | loss 2.7638 (delta +0.1082) size 1941.6 MB sparsity 2.9%
+gen 8 offspring [20/100] k=128 (used  66.0) c=0.983 alpha=-0.070 beta=+0.066 | loss 2.8899 (delta +0.2342) size 1941.6 MB sparsity 5.4%
+gen 8 offspring [21/100] k=295 (used  61.0) c=0.947 alpha=-0.025 beta=+0.002 | loss 2.9468 (delta +0.2912) size 1664.4 MB sparsity 1.5%
+gen 8 offspring [22/100] k=117 (used  60.0) c=0.942 alpha=-0.098 beta=+0.001 | loss 3.2048 (delta +0.5491) size 1664.4 MB sparsity 5.1%
+gen 8 offspring [23/100] k=121 (used 119.0) c=0.999 alpha=-0.006 beta=+0.001 | loss 2.7147 (delta +0.0591) size 1941.6 MB sparsity 2.5%
+gen 8 offspring [24/100] k= 85 (used  85.0) c=0.984 alpha=-0.026 beta=+0.021 | loss 2.7688 (delta +0.1132) size 1941.6 MB sparsity 3.6%
+gen 8 offspring [25/100] k=195 (used  65.0) c=0.938 alpha=-0.049 beta=+0.048 | loss 2.8936 (delta +0.2380) size 1877.4 MB sparsity 3.9%
+gen 8 offspring [26/100] k=288 (used  73.0) c=0.997 alpha=-0.049 beta=+0.002 | loss 2.8619 (delta +0.2063) size 1941.6 MB sparsity 2.5%
+gen 8 offspring [27/100] k=226 (used 111.0) c=0.997 alpha=-0.025 beta=+0.013 | loss 2.7242 (delta +0.0686) size 1941.6 MB sparsity 1.7%
+gen 8 offspring [28/100] k=439 (used 424.0) c=0.983 alpha=-0.002 beta=+0.027 | loss 2.6614 (delta +0.0058) size 2495.9 MB sparsity 1.4%
+gen 8 offspring [29/100] k=284 (used  59.0) c=0.945 alpha=-0.033 beta=+0.057 | loss 3.0020 (delta +0.3464) size 1664.4 MB sparsity 3.6%
+gen 8 offspring [30/100] k= 57 (used  57.0) c=0.935 alpha=-0.005 beta=+0.013 | loss 3.0288 (delta +0.3731) size 1664.4 MB sparsity 5.1%
+gen 8 offspring [31/100] k=253 (used 251.0) c=0.997 alpha=-0.052 beta=+0.052 | loss 2.6804 (delta +0.0248) size 2218.7 MB sparsity 4.2%
+gen 8 offspring [32/100] k=176 (used  93.0) c=0.936 alpha=-0.007 beta=+0.033 | loss 2.7699 (delta +0.1143) size 1941.6 MB sparsity 2.1%
+gen 8 offspring [33/100] k=133 (used 132.0) c=0.945 alpha=-0.011 beta=+0.043 | loss 2.7194 (delta +0.0638) size 2218.7 MB sparsity 2.8%
+gen 8 offspring [34/100] k=295 (used 258.0) c=0.937 alpha=-0.011 beta=+0.033 | loss 2.6786 (delta +0.0230) size 2495.9 MB sparsity 1.8%
+gen 8 offspring [35/100] k=192 (used  49.0) c=1.000 alpha=-0.050 beta=+0.003 | loss 3.8009 (delta +1.1453) size 1664.4 MB sparsity 2.8%
+gen 8 offspring [36/100] k=233 (used 125.0) c=0.998 alpha=-0.025 beta=+0.006 | loss 2.7061 (delta +0.0505) size 1941.6 MB sparsity 1.6%
+gen 8 offspring [37/100] k=126 (used  65.0) c=0.932 alpha=-0.075 beta=+0.009 | loss 2.9343 (delta +0.2787) size 1872.9 MB sparsity 4.1%
+gen 8 offspring [38/100] k=276 (used  69.0) c=0.980 alpha=-0.052 beta=+0.054 | loss 2.8427 (delta +0.1871) size 1941.6 MB sparsity 4.2%
+gen 8 offspring [39/100] k=244 (used 123.7) c=0.996 alpha=-0.024 beta=+0.068 | loss 2.7225 (delta +0.0669) size 1941.6 MB sparsity 3.6%
+gen 8 offspring [40/100] k=430 (used  63.0) c=0.948 alpha=-0.050 beta=+0.050 | loss 2.9215 (delta +0.2659) size 1664.4 MB sparsity 4.0%
+gen 8 offspring [41/100] k=187 (used  49.0) c=0.944 alpha=-0.011 beta=+0.000 | loss 3.6860 (delta +1.0304) size 1664.4 MB sparsity 1.6%
+gen 8 offspring [42/100] k=252 (used 137.0) c=0.984 alpha=-0.045 beta=+0.060 | loss 2.7150 (delta +0.0593) size 2218.7 MB sparsity 4.2%
+gen 8 offspring [43/100] k= 64 (used  64.0) c=0.948 alpha=-0.018 beta=+0.032 | loss 2.9217 (delta +0.2660) size 1664.4 MB sparsity 4.7%
+gen 8 offspring [44/100] k= 57 (used  55.0) c=0.998 alpha=-0.011 beta=+0.007 | loss 3.0646 (delta +0.4089) size 1664.4 MB sparsity 5.4%
+gen 8 offspring [45/100] k=252 (used  65.0) c=0.997 alpha=-0.024 beta=+0.007 | loss 2.8816 (delta +0.2259) size 1915.8 MB sparsity 1.6%
+gen 8 offspring [46/100] k=211 (used  43.0) c=0.985 alpha=-0.053 beta=+0.065 | loss 4.3776 (delta +1.7220) size 1664.4 MB sparsity 4.7%
+gen 8 offspring [47/100] k= 77 (used  77.0) c=0.929 alpha=-0.016 beta=+0.021 | loss 2.8044 (delta +0.1488) size 1941.6 MB sparsity 3.7%
+gen 8 offspring [48/100] k=110 (used 108.0) c=0.942 alpha=-0.098 beta=+0.104 | loss 2.8077 (delta +0.1521) size 1941.6 MB sparsity 8.0%
+gen 8 offspring [49/100] k=184 (used  62.0) c=0.928 alpha=-0.030 beta=+0.061 | loss 2.9932 (delta +0.3376) size 1664.4 MB sparsity 3.6%
+gen 8 offspring [50/100] k=305 (used 297.0) c=0.996 alpha=-0.009 beta=+0.044 | loss 2.6737 (delta +0.0181) size 2495.9 MB sparsity 2.2%
+gen 8 offspring [51/100] k=195 (used 193.0) c=0.952 alpha=-0.026 beta=+0.072 | loss 2.7055 (delta +0.0499) size 2218.7 MB sparsity 3.9%
+gen 8 offspring [52/100] k=197 (used  51.0) c=0.998 alpha=-0.010 beta=+0.011 | loss 3.6221 (delta +0.9665) size 1664.4 MB sparsity 1.6%
+gen 8 offspring [53/100] k=205 (used  53.0) c=0.909 alpha=-0.060 beta=+0.049 | loss 3.1583 (delta +0.5027) size 1664.4 MB sparsity 4.3%
+gen 8 offspring [54/100] k=225 (used  59.0) c=0.949 alpha=-0.058 beta=+0.056 | loss 3.0460 (delta +0.3903) size 1664.4 MB sparsity 4.5%
+gen 8 offspring [55/100] k=369 (used 110.0) c=0.995 alpha=-0.021 beta=+0.046 | loss 2.7230 (delta +0.0674) size 1941.6 MB sparsity 2.7%
+gen 8 offspring [56/100] k=233 (used 121.0) c=0.975 alpha=-0.004 beta=+0.003 | loss 2.7102 (delta +0.0545) size 1941.6 MB sparsity 1.3%
+gen 8 offspring [57/100] k=193 (used  67.0) c=0.924 alpha=-0.049 beta=+0.049 | loss 2.8563 (delta +0.2007) size 1941.6 MB sparsity 3.9%
+gen 8 offspring [58/100] k=245 (used  78.0) c=0.999 alpha=-0.009 beta=+0.038 | loss 2.8008 (delta +0.1452) size 1941.6 MB sparsity 2.2%
+gen 8 offspring [59/100] k=420 (used 401.0) c=0.999 alpha=-0.007 beta=+0.031 | loss 2.6614 (delta +0.0057) size 2495.9 MB sparsity 1.6%
+gen 8 offspring [60/100] k=192 (used  50.0) c=0.936 alpha=-0.049 beta=+0.049 | loss 3.3137 (delta +0.6580) size 1664.4 MB sparsity 3.9%
+gen 8 offspring [61/100] k=294 (used 148.0) c=0.948 alpha=-0.007 beta=+0.011 | loss 2.6909 (delta +0.0353) size 2218.7 MB sparsity 1.0%
+gen 8 offspring [62/100] k=246 (used 222.0) c=0.998 alpha=-0.054 beta=+0.047 | loss 2.6832 (delta +0.0276) size 2218.7 MB sparsity 4.0%
+gen 8 offspring [63/100] k= 57 (used  57.0) c=0.945 alpha=-0.030 beta=+0.003 | loss 3.0121 (delta +0.3564) size 1664.4 MB sparsity 5.1%
+gen 8 offspring [64/100] k= 61 (used  61.0) c=0.945 alpha=-0.036 beta=+0.032 | loss 2.9380 (delta +0.2824) size 1664.4 MB sparsity 4.8%
+gen 8 offspring [65/100] k=430 (used 406.0) c=0.924 alpha=-0.054 beta=+0.050 | loss 2.6853 (delta +0.0297) size 2495.9 MB sparsity 4.1%
+gen 8 offspring [66/100] k=128 (used 128.0) c=0.952 alpha=-0.009 beta=+0.021 | loss 2.7010 (delta +0.0454) size 1941.6 MB sparsity 2.3%
+gen 8 offspring [67/100] k=126 (used  65.0) c=0.940 alpha=-0.003 beta=+0.023 | loss 2.9096 (delta +0.2539) size 1902.9 MB sparsity 2.3%
+gen 8 offspring [68/100] k=265 (used  69.0) c=0.947 alpha=-0.006 beta=+0.050 | loss 2.8782 (delta +0.2226) size 1941.6 MB sparsity 2.5%
+gen 8 offspring [69/100] k=257 (used 223.0) c=0.957 alpha=-0.029 beta=+0.028 | loss 2.6719 (delta +0.0163) size 2218.7 MB sparsity 2.3%
+gen 8 offspring [70/100] k= 57 (used  51.0) c=0.947 alpha=-0.011 beta=+0.007 | loss 3.2857 (delta +0.6301) size 1664.4 MB sparsity 5.1%
+gen 8 offspring [71/100] k=324 (used 185.4) c=0.999 alpha=-0.019 beta=+0.103 | loss 2.7878 (delta +0.1322) size 2218.7 MB sparsity 4.8%
+gen 8 offspring [72/100] k=229 (used 218.0) c=0.939 alpha=-0.014 beta=+0.025 | loss 2.6803 (delta +0.0247) size 2218.7 MB sparsity 1.6%
+gen 8 offspring [73/100] k=399 (used 356.0) c=0.926 alpha=-0.017 beta=+0.004 | loss 2.6750 (delta +0.0193) size 2495.9 MB sparsity 1.0%
+gen 8 offspring [74/100] k=126 (used  65.0) c=0.942 alpha=-0.003 beta=+0.016 | loss 2.9183 (delta +0.2626) size 1903.0 MB sparsity 2.3%
+gen 8 offspring [75/100] k=162 (used  83.0) c=0.938 alpha=-0.007 beta=+0.043 | loss 2.7738 (delta +0.1182) size 1941.6 MB sparsity 2.6%
+gen 8 offspring [76/100] k=220 (used  58.0) c=0.929 alpha=-0.028 beta=+0.008 | loss 2.9735 (delta +0.3179) size 1664.4 MB sparsity 1.8%
+gen 8 offspring [77/100] k=295 (used  77.0) c=0.941 alpha=-0.025 beta=+0.006 | loss 2.8111 (delta +0.1555) size 1941.6 MB sparsity 1.5%
+gen 8 offspring [78/100] k= 65 (used  65.0) c=0.948 alpha=-0.001 beta=+0.003 | loss 2.8870 (delta +0.2314) size 1866.7 MB sparsity 4.5%
+gen 8 offspring [79/100] k= 71 (used  71.0) c=0.952 alpha=-0.029 beta=+0.029 | loss 2.8773 (delta +0.2216) size 1941.6 MB sparsity 4.2%
+gen 8 offspring [80/100] k=192 (used  50.0) c=0.937 alpha=-0.049 beta=+0.049 | loss 3.3116 (delta +0.6560) size 1664.4 MB sparsity 3.9%
+gen 8 offspring [81/100] k=285 (used  72.0) c=0.998 alpha=-0.009 beta=+0.022 | loss 2.8324 (delta +0.1768) size 1941.6 MB sparsity 1.4%
+gen 8 offspring [82/100] k=430 (used  63.0) c=0.935 alpha=-0.049 beta=+0.054 | loss 2.9384 (delta +0.2827) size 1664.4 MB sparsity 4.1%
+gen 8 offspring [83/100] k=227 (used 215.0) c=0.926 alpha=-0.017 beta=+0.049 | loss 2.7033 (delta +0.0476) size 2218.7 MB sparsity 2.7%
+gen 8 offspring [84/100] k=130 (used 130.0) c=0.952 alpha=-0.004 beta=+0.003 | loss 2.7041 (delta +0.0484) size 2218.7 MB sparsity 2.3%
+gen 8 offspring [85/100] k=106 (used 102.0) c=0.991 alpha=-0.014 beta=+0.066 | loss 2.7708 (delta +0.1152) size 1941.6 MB sparsity 4.1%
+gen 8 offspring [86/100] k=285 (used  75.0) c=0.947 alpha=-0.029 beta=+0.038 | loss 2.8163 (delta +0.1607) size 1941.6 MB sparsity 2.7%
+gen 8 offspring [87/100] k=133 (used 129.0) c=0.983 alpha=-0.024 beta=+0.006 | loss 2.6963 (delta +0.0407) size 2174.3 MB sparsity 2.3%
+gen 8 offspring [88/100] k=265 (used  69.0) c=0.923 alpha=-0.048 beta=+0.046 | loss 2.8884 (delta +0.2328) size 1941.6 MB sparsity 3.8%
+gen 8 offspring [89/100] k=285 (used 141.0) c=0.947 alpha=-0.052 beta=+0.067 | loss 2.7161 (delta +0.0604) size 2218.7 MB sparsity 4.7%
+gen 8 offspring [90/100] k=294 (used 100.0) c=0.913 alpha=-0.033 beta=+0.045 | loss 2.7622 (delta +0.1065) size 1941.6 MB sparsity 3.1%
+gen 8 offspring [91/100] k=220 (used  23.0) c=0.979 alpha=-0.049 beta=+0.045 | loss 12.3080 (delta +9.6523) size 1387.3 MB sparsity 3.8%
+gen 8 offspring [92/100] k=132 (used 121.0) c=0.945 alpha=-0.014 beta=+0.003 | loss 2.7036 (delta +0.0480) size 1941.6 MB sparsity 2.2%
+gen 8 offspring [93/100] k=338 (used 168.8) c=0.945 alpha=-0.059 beta=+0.075 | loss 2.7232 (delta +0.0675) size 2218.7 MB sparsity 5.3%
+gen 8 offspring [94/100] k=126 (used  65.0) c=0.983 alpha=-0.066 beta=+0.069 | loss 2.8834 (delta +0.2278) size 1852.5 MB sparsity 5.4%
+gen 8 offspring [95/100] k=184 (used  63.0) c=0.946 alpha=-0.032 beta=+0.049 | loss 2.9327 (delta +0.2770) size 1664.4 MB sparsity 3.2%
+gen 8 offspring [96/100] k=285 (used 147.0) c=0.997 alpha=-0.009 beta=+0.022 | loss 2.6883 (delta +0.0327) size 2218.7 MB sparsity 1.4%
+gen 8 offspring [97/100] k=220 (used  57.0) c=0.947 alpha=-0.011 beta=+0.066 | loss 3.0675 (delta +0.4118) size 1664.4 MB sparsity 3.3%
+gen 8 offspring [98/100] k=283 (used  59.0) c=0.950 alpha=-0.026 beta=+0.006 | loss 2.9759 (delta +0.3203) size 1664.4 MB sparsity 1.5%
+gen 8 offspring [99/100] k=261 (used  54.0) c=0.929 alpha=-0.001 beta=+0.026 | loss 3.1494 (delta +0.4938) size 1664.4 MB sparsity 1.6%
+gen 8 offspring [100/100] k=213 (used 202.0) c=0.947 alpha=-0.025 beta=+0.006 | loss 2.6915 (delta +0.0359) size 2218.7 MB sparsity 1.7%
+=== generation 8/10 done in 3841s (0 reused), batch baseline 2.6556, HV 0.28311, front 47 points, 100/100 feasible, best delta loss +0.0052, smallest 1664.4 MB
+gen 9 offspring [1/100] k=285 (used  74.0) c=0.935 alpha=-0.057 beta=+0.022 | loss 2.8352 (delta +0.1796) size 1941.6 MB sparsity 3.1%
+gen 9 offspring [2/100] k=126 (used  65.0) c=0.983 alpha=-0.066 beta=+0.009 | loss 2.9057 (delta +0.2501) size 1878.1 MB sparsity 3.8%
+gen 9 offspring [3/100] k=200 (used  51.0) c=0.952 alpha=-0.006 beta=+0.024 | loss 3.2281 (delta +0.5724) size 1664.4 MB sparsity 1.7%
+gen 9 offspring [4/100] k=354 (used  91.0) c=0.951 alpha=-0.049 beta=+0.037 | loss 2.7553 (delta +0.0997) size 1941.6 MB sparsity 3.4%
+gen 9 offspring [5/100] k=199 (used  43.0) c=0.932 alpha=-0.060 beta=+0.049 | loss 4.4723 (delta +1.8166) size 1664.4 MB sparsity 4.3%
+gen 9 offspring [6/100] k= 64 (used  64.0) c=0.948 alpha=-0.018 beta=+0.011 | loss 2.9222 (delta +0.2666) size 1664.4 MB sparsity 4.6%
+gen 9 offspring [7/100] k=285 (used 268.0) c=0.998 alpha=-0.007 beta=+0.022 | loss 2.6663 (delta +0.0106) size 2495.9 MB sparsity 1.4%
+gen 9 offspring [8/100] k=251 (used 125.0) c=0.941 alpha=-0.012 beta=+0.012 | loss 2.7101 (delta +0.0544) size 1941.6 MB sparsity 1.2%
+gen 9 offspring [9/100] k=439 (used 424.0) c=0.983 alpha=-0.002 beta=+0.026 | loss 2.6612 (delta +0.0056) size 2495.9 MB sparsity 1.4%
+gen 9 offspring [10/100] k=233 (used 125.0) c=0.998 alpha=-0.004 beta=+0.002 | loss 2.7057 (delta +0.0501) size 1941.6 MB sparsity 1.3%
+gen 9 offspring [11/100] k=252 (used  65.0) c=0.995 alpha=-0.044 beta=+0.007 | loss 2.8859 (delta +0.2303) size 1902.3 MB sparsity 2.4%
+gen 9 offspring [12/100] k=145 (used 143.0) c=0.997 alpha=-0.011 beta=+0.007 | loss 2.6925 (delta +0.0369) size 2218.7 MB sparsity 2.1%
+gen 9 offspring [13/100] k=219 (used  57.0) c=0.937 alpha=-0.013 beta=+0.044 | loss 2.9892 (delta +0.3336) size 1664.4 MB sparsity 2.4%
+gen 9 offspring [14/100] k= 65 (used  19.0) c=0.948 alpha=-0.001 beta=+0.047 | loss 16.3731 (delta +13.7174) size 1387.3 MB sparsity 4.5%
+gen 9 offspring [15/100] k=288 (used  44.0) c=0.948 alpha=-0.026 beta=+0.019 | loss 4.5808 (delta +1.9252) size 1664.4 MB sparsity 1.8%
+gen 9 offspring [16/100] k=192 (used  50.0) c=0.939 alpha=-0.049 beta=+0.049 | loss 3.3913 (delta +0.7357) size 1664.4 MB sparsity 3.9%
+gen 9 offspring [17/100] k=285 (used 147.0) c=0.998 alpha=-0.011 beta=+0.022 | loss 2.6873 (delta +0.0316) size 2218.7 MB sparsity 1.4%
+gen 9 offspring [18/100] k=133 (used 133.0) c=0.946 alpha=-0.024 beta=+0.007 | loss 2.7057 (delta +0.0501) size 2218.7 MB sparsity 2.2%
+gen 9 offspring [19/100] k=293 (used  97.0) c=0.910 alpha=-0.058 beta=+0.060 | loss 2.7627 (delta +0.1071) size 1941.6 MB sparsity 4.7%
+gen 9 offspring [20/100] k=439 (used 426.9) c=0.984 alpha=-0.058 beta=+0.048 | loss 2.6699 (delta +0.0142) size 2495.9 MB sparsity 4.2%
+gen 9 offspring [21/100] k= 73 (used  71.0) c=0.983 alpha=-0.014 beta=+0.036 | loss 2.8648 (delta +0.2092) size 1941.6 MB sparsity 4.2%
+gen 9 offspring [22/100] k=186 (used  49.0) c=0.999 alpha=-0.011 beta=+0.003 | loss 4.1156 (delta +1.4600) size 1664.4 MB sparsity 1.7%
+gen 9 offspring [23/100] k=126 (used  65.0) c=0.983 alpha=-0.072 beta=+0.068 | loss 2.8838 (delta +0.2281) size 1849.3 MB sparsity 5.6%
+gen 9 offspring [24/100] k=130 (used 130.0) c=0.952 alpha=-0.012 beta=+0.031 | loss 2.7040 (delta +0.0484) size 2218.7 MB sparsity 2.4%
+gen 9 offspring [25/100] k=192 (used  50.0) c=0.943 alpha=-0.049 beta=+0.049 | loss 3.4236 (delta +0.7680) size 1664.4 MB sparsity 3.9%
+gen 9 offspring [26/100] k=220 (used  58.0) c=0.929 alpha=-0.001 beta=+0.026 | loss 2.9820 (delta +0.3264) size 1664.4 MB sparsity 1.7%
+gen 9 offspring [27/100] k=191 (used  99.0) c=0.997 alpha=-0.005 beta=+0.057 | loss 2.7660 (delta +0.1104) size 1941.6 MB sparsity 3.1%
+gen 9 offspring [28/100] k=229 (used 224.0) c=0.992 alpha=-0.025 beta=+0.010 | loss 2.6746 (delta +0.0189) size 2218.7 MB sparsity 1.7%
+gen 9 offspring [29/100] k=274 (used 158.0) c=0.997 alpha=-0.024 beta=+0.008 | loss 2.6927 (delta +0.0371) size 2218.7 MB sparsity 1.5%
+gen 9 offspring [30/100] k=212 (used 209.0) c=0.983 alpha=-0.026 beta=+0.015 | loss 2.6756 (delta +0.0199) size 2218.7 MB sparsity 1.8%
+gen 9 offspring [31/100] k=166 (used 126.0) c=1.000 alpha=-0.007 beta=+0.042 | loss 2.7183 (delta +0.0627) size 1941.6 MB sparsity 2.6%
+gen 9 offspring [32/100] k=290 (used 261.0) c=0.999 alpha=-0.007 beta=+0.030 | loss 2.6682 (delta +0.0126) size 2495.9 MB sparsity 1.7%
+gen 9 offspring [33/100] k=251 (used 127.0) c=0.998 alpha=-0.004 beta=+0.002 | loss 2.7004 (delta +0.0447) size 1941.6 MB sparsity 1.2%
+gen 9 offspring [34/100] k= 56 (used   9.0) c=0.935 alpha=-0.050 beta=+0.053 | loss 15.2670 (delta +12.6113) size 1065.7 MB sparsity 5.3%
+gen 9 offspring [35/100] k=253 (used  69.0) c=0.940 alpha=-0.011 beta=+0.015 | loss 2.8563 (delta +0.2007) size 1941.6 MB sparsity 1.2%
+gen 9 offspring [36/100] k=283 (used 281.0) c=0.948 alpha=-0.011 beta=+0.006 | loss 2.6738 (delta +0.0181) size 2495.9 MB sparsity 1.0%
+gen 9 offspring [37/100] k=208 (used 207.0) c=0.953 alpha=-0.009 beta=+0.027 | loss 2.6782 (delta +0.0226) size 2218.7 MB sparsity 1.8%
+gen 9 offspring [38/100] k=188 (used  35.0) c=0.937 alpha=-0.052 beta=+0.040 | loss 7.3750 (delta +4.7194) size 1664.4 MB sparsity 3.7%
+gen 9 offspring [39/100] k=167 (used  45.0) c=0.982 alpha=-0.047 beta=+0.027 | loss 4.0779 (delta +1.4223) size 1664.4 MB sparsity 3.0%
+gen 9 offspring [40/100] k= 44 (used  41.0) c=0.984 alpha=-0.036 beta=+0.047 | loss 4.5776 (delta +1.9220) size 1664.4 MB sparsity 7.1%
+gen 9 offspring [41/100] k=220 (used  58.0) c=0.949 alpha=-0.028 beta=+0.005 | loss 3.0276 (delta +0.3719) size 1664.4 MB sparsity 1.8%
+gen 9 offspring [42/100] k=338 (used  87.0) c=0.917 alpha=-0.011 beta=+0.020 | loss 2.8053 (delta +0.1497) size 1941.6 MB sparsity 1.2%
+gen 9 offspring [43/100] k=133 (used 131.0) c=0.998 alpha=-0.007 beta=+0.022 | loss 2.6947 (delta +0.0390) size 2218.7 MB sparsity 2.3%
+gen 9 offspring [44/100] k=211 (used  55.0) c=0.937 alpha=-0.045 beta=+0.043 | loss 2.9961 (delta +0.3405) size 1664.4 MB sparsity 3.5%
+gen 9 offspring [45/100] k=283 (used 259.0) c=0.985 alpha=-0.019 beta=+0.032 | loss 2.6667 (delta +0.0111) size 2495.9 MB sparsity 2.1%
+gen 9 offspring [46/100] k=202 (used  53.0) c=0.909 alpha=-0.060 beta=+0.020 | loss 3.3128 (delta +0.6572) size 1664.4 MB sparsity 3.2%
+gen 9 offspring [47/100] k=431 (used  63.0) c=0.948 alpha=-0.023 beta=+0.018 | loss 2.9249 (delta +0.2693) size 1664.4 MB sparsity 1.6%
+gen 9 offspring [48/100] k=188 (used 184.0) c=0.997 alpha=-0.004 beta=+0.043 | loss 2.6832 (delta +0.0276) size 2218.7 MB sparsity 2.5%
+gen 9 offspring [49/100] k=106 (used 102.0) c=0.997 alpha=-0.014 beta=+0.067 | loss 2.7761 (delta +0.1205) size 1941.6 MB sparsity 4.1%
+gen 9 offspring [50/100] k=127 (used 125.0) c=0.937 alpha=-0.049 beta=+0.043 | loss 2.7302 (delta +0.0746) size 1941.6 MB sparsity 3.7%
+gen 9 offspring [51/100] k=284 (used  59.0) c=0.942 alpha=-0.009 beta=+0.006 | loss 3.0339 (delta +0.3782) size 1664.4 MB sparsity 1.0%
+gen 9 offspring [52/100] k=130 (used  75.0) c=0.910 alpha=-0.075 beta=+0.068 | loss 2.8957 (delta +0.2400) size 1941.6 MB sparsity 5.7%
+gen 9 offspring [53/100] k=193 (used  67.0) c=0.920 alpha=-0.040 beta=+0.049 | loss 2.8634 (delta +0.2077) size 1941.6 MB sparsity 3.6%
+gen 9 offspring [54/100] k=463 (used  69.0) c=0.940 alpha=-0.050 beta=+0.053 | loss 2.8783 (delta +0.2227) size 1941.6 MB sparsity 4.1%
+gen 9 offspring [55/100] k= 61 (used  59.0) c=0.998 alpha=-0.036 beta=+0.032 | loss 2.9831 (delta +0.3275) size 1664.4 MB sparsity 5.1%
+gen 9 offspring [56/100] k=261 (used 260.0) c=0.952 alpha=-0.041 beta=+0.003 | loss 2.6785 (delta +0.0229) size 2495.9 MB sparsity 2.2%
+gen 9 offspring [57/100] k=248 (used 187.0) c=0.996 alpha=-0.024 beta=+0.006 | loss 2.6814 (delta +0.0257) size 2218.7 MB sparsity 1.6%
+gen 9 offspring [58/100] k=226 (used 116.0) c=0.937 alpha=-0.005 beta=+0.018 | loss 2.7160 (delta +0.0603) size 1941.6 MB sparsity 1.4%
+gen 9 offspring [59/100] k=349 (used 342.0) c=1.000 alpha=-0.022 beta=+0.003 | loss 2.6631 (delta +0.0074) size 2495.9 MB sparsity 1.3%
+gen 9 offspring [60/100] k=422 (used  87.0) c=0.955 alpha=-0.031 beta=+0.006 | loss 2.7699 (delta +0.1142) size 1941.6 MB sparsity 1.6%
+gen 9 offspring [61/100] k=213 (used  55.0) c=0.937 alpha=-0.070 beta=+0.049 | loss 3.0862 (delta +0.4306) size 1664.4 MB sparsity 4.8%
+gen 9 offspring [62/100] k=295 (used  61.0) c=0.947 alpha=-0.025 beta=+0.006 | loss 2.9417 (delta +0.2860) size 1664.4 MB sparsity 1.5%
+gen 9 offspring [63/100] k=265 (used  43.0) c=0.947 alpha=-0.008 beta=+0.006 | loss 4.3629 (delta +1.7073) size 1664.4 MB sparsity 1.1%
+gen 9 offspring [64/100] k=276 (used  49.0) c=0.983 alpha=-0.001 beta=+0.011 | loss 3.8333 (delta +1.1776) size 1664.4 MB sparsity 1.1%
+gen 9 offspring [65/100] k=289 (used 255.0) c=0.997 alpha=-0.018 beta=+0.006 | loss 2.6691 (delta +0.0135) size 2218.7 MB sparsity 1.3%
+gen 9 offspring [66/100] k=195 (used  43.0) c=0.939 alpha=-0.049 beta=+0.010 | loss 4.7628 (delta +2.1072) size 1664.4 MB sparsity 2.7%
+gen 9 offspring [67/100] k=173 (used  45.0) c=0.937 alpha=-0.049 beta=+0.049 | loss 4.0824 (delta +1.4267) size 1664.4 MB sparsity 3.9%
+gen 9 offspring [68/100] k=288 (used 148.0) c=0.938 alpha=-0.005 beta=+0.012 | loss 2.7002 (delta +0.0446) size 2218.7 MB sparsity 1.0%
+gen 9 offspring [69/100] k=200 (used  51.0) c=0.984 alpha=-0.078 beta=+0.070 | loss 3.3410 (delta +0.6854) size 1664.4 MB sparsity 5.9%
+gen 9 offspring [70/100] k=291 (used 239.0) c=0.999 alpha=-0.022 beta=+0.002 | loss 2.6677 (delta +0.0121) size 2218.7 MB sparsity 1.4%
+gen 9 offspring [71/100] k=126 (used  65.0) c=0.932 alpha=-0.075 beta=+0.071 | loss 2.9132 (delta +0.2575) size 1845.1 MB sparsity 5.8%
+gen 9 offspring [72/100] k=192 (used  50.0) c=0.929 alpha=-0.049 beta=+0.049 | loss 3.3824 (delta +0.7268) size 1664.4 MB sparsity 3.9%
+gen 9 offspring [73/100] k=227 (used 198.0) c=0.998 alpha=-0.018 beta=+0.003 | loss 2.6727 (delta +0.0171) size 2218.7 MB sparsity 1.4%
+gen 9 offspring [74/100] k=346 (used  90.0) c=0.915 alpha=-0.057 beta=+0.004 | loss 2.8168 (delta +0.1612) size 1941.6 MB sparsity 2.7%
+gen 9 offspring [75/100] k=195 (used  51.0) c=0.946 alpha=-0.001 beta=+0.024 | loss 3.4187 (delta +0.7631) size 1664.4 MB sparsity 1.7%
+gen 9 offspring [76/100] k=285 (used 147.0) c=0.998 alpha=-0.011 beta=+0.022 | loss 2.6873 (delta +0.0317) size 2218.7 MB sparsity 1.4%
+gen 9 offspring [77/100] k=126 (used  69.0) c=0.952 alpha=-0.070 beta=+0.081 | loss 2.9286 (delta +0.2730) size 1941.6 MB sparsity 6.0%
+gen 9 offspring [78/100] k=315 (used 161.0) c=0.936 alpha=-0.018 beta=+0.007 | loss 2.6912 (delta +0.0356) size 2218.7 MB sparsity 1.2%
+gen 9 offspring [79/100] k=246 (used 220.0) c=0.994 alpha=-0.014 beta=+0.006 | loss 2.6683 (delta +0.0126) size 2218.7 MB sparsity 1.3%
+gen 9 offspring [80/100] k=216 (used 119.0) c=0.998 alpha=-0.011 beta=+0.007 | loss 2.7393 (delta +0.0837) size 1941.6 MB sparsity 1.4%
+gen 9 offspring [81/100] k=483 (used 403.0) c=0.948 alpha=-0.001 beta=+0.003 | loss 2.6721 (delta +0.0165) size 2495.9 MB sparsity 0.6%
+gen 9 offspring [82/100] k=200 (used  53.0) c=0.931 alpha=-0.049 beta=+0.049 | loss 3.1786 (delta +0.5230) size 1664.4 MB sparsity 3.9%
+gen 9 offspring [83/100] k=280 (used  71.0) c=0.996 alpha=-0.024 beta=+0.004 | loss 2.8314 (delta +0.1758) size 1941.6 MB sparsity 1.5%
+gen 9 offspring [84/100] k= 57 (used   9.0) c=0.951 alpha=-0.026 beta=+0.007 | loss 15.7177 (delta +13.0620) size 1067.3 MB sparsity 5.2%
+gen 9 offspring [85/100] k=285 (used 270.0) c=0.998 alpha=-0.029 beta=+0.022 | loss 2.6666 (delta +0.0110) size 2495.9 MB sparsity 2.0%
+gen 9 offspring [86/100] k=205 (used  55.0) c=0.935 alpha=-0.013 beta=+0.044 | loss 3.1220 (delta +0.4663) size 1664.4 MB sparsity 2.5%
+gen 9 offspring [87/100] k=439 (used 399.0) c=0.939 alpha=-0.004 beta=+0.049 | loss 2.6765 (delta +0.0208) size 2495.9 MB sparsity 2.3%
+gen 9 offspring [88/100] k=418 (used 406.0) c=0.918 alpha=-0.013 beta=+0.026 | loss 2.6794 (delta +0.0237) size 2495.9 MB sparsity 1.6%
+gen 9 offspring [89/100] k= 57 (used  57.0) c=0.927 alpha=-0.005 beta=+0.003 | loss 3.0311 (delta +0.3754) size 1664.4 MB sparsity 5.0%
+gen 9 offspring [90/100] k=142 (used 139.8) c=0.936 alpha=-0.056 beta=+0.107 | loss 2.8038 (delta +0.1482) size 2218.7 MB sparsity 6.5%
+gen 9 offspring [91/100] k=284 (used 267.0) c=0.983 alpha=-0.024 beta=+0.006 | loss 2.6661 (delta +0.0104) size 2495.9 MB sparsity 1.5%
+gen 9 offspring [92/100] k=195 (used  51.0) c=0.938 alpha=-0.049 beta=+0.048 | loss 3.2007 (delta +0.5451) size 1664.4 MB sparsity 3.9%
+gen 9 offspring [93/100] k= 66 (used  66.0) c=0.948 alpha=-0.020 beta=+0.004 | loss 2.8753 (delta +0.2197) size 1941.6 MB sparsity 4.5%
+gen 9 offspring [94/100] k= 86 (used  85.0) c=0.984 alpha=-0.004 beta=+0.050 | loss 2.7702 (delta +0.1146) size 1941.6 MB sparsity 3.8%
+gen 9 offspring [95/100] k=252 (used 120.0) c=0.999 alpha=-0.050 beta=+0.002 | loss 2.7365 (delta +0.0809) size 1941.6 MB sparsity 2.6%
+gen 9 offspring [96/100] k=306 (used 302.0) c=0.942 alpha=-0.009 beta=+0.022 | loss 2.6757 (delta +0.0201) size 2495.9 MB sparsity 1.4%
+gen 9 offspring [97/100] k=285 (used  59.0) c=0.999 alpha=-0.004 beta=+0.038 | loss 2.9968 (delta +0.3411) size 1664.4 MB sparsity 2.1%
+gen 9 offspring [98/100] k=251 (used 125.0) c=0.997 alpha=-0.024 beta=+0.003 | loss 2.7047 (delta +0.0490) size 1941.6 MB sparsity 1.5%
+gen 9 offspring [99/100] k=192 (used  49.0) c=0.997 alpha=-0.048 beta=+0.049 | loss 3.5778 (delta +0.9222) size 1664.4 MB sparsity 3.9%
+gen 9 offspring [100/100] k=422 (used 396.0) c=0.997 alpha=-0.024 beta=+0.006 | loss 2.6605 (delta +0.0049) size 2495.9 MB sparsity 1.3%
+=== generation 9/10 done in 3845s (0 reused), batch baseline 2.6556, HV 0.28316, front 57 points, 100/100 feasible, best delta loss +0.0049, smallest 1664.4 MB
+gen 10 offspring [1/100] k=123 (used  31.0) c=1.000 alpha=-0.046 beta=+0.001 | loss 9.2838 (delta +6.6281) size 1387.3 MB sparsity 3.1%
+gen 10 offspring [2/100] k= 66 (used  35.0) c=0.948 alpha=-0.023 beta=+0.004 | loss 7.3345 (delta +4.6788) size 1664.4 MB sparsity 4.5%
+gen 10 offspring [3/100] k=439 (used 425.0) c=0.983 alpha=-0.028 beta=+0.030 | loss 2.6617 (delta +0.0060) size 2495.9 MB sparsity 2.3%
+gen 10 offspring [4/100] k=217 (used 109.0) c=0.997 alpha=-0.007 beta=+0.005 | loss 2.7274 (delta +0.0718) size 1941.6 MB sparsity 1.4%
+gen 10 offspring [5/100] k=192 (used  49.0) c=0.997 alpha=-0.037 beta=+0.049 | loss 3.6380 (delta +0.9824) size 1664.4 MB sparsity 3.4%
+gen 10 offspring [6/100] k=283 (used 279.0) c=0.948 alpha=-0.031 beta=+0.032 | loss 2.6794 (delta +0.0238) size 2495.9 MB sparsity 2.5%
+gen 10 offspring [7/100] k=211 (used  55.0) c=0.937 alpha=-0.049 beta=+0.043 | loss 3.0241 (delta +0.3685) size 1664.4 MB sparsity 3.7%
+gen 10 offspring [8/100] k=199 (used 174.0) c=0.947 alpha=-0.018 beta=+0.049 | loss 2.6940 (delta +0.0384) size 2218.7 MB sparsity 2.7%
+gen 10 offspring [9/100] k= 61 (used  61.0) c=0.918 alpha=-0.013 beta=+0.026 | loss 2.9935 (delta +0.3378) size 1664.4 MB sparsity 4.7%
+gen 10 offspring [10/100] k=418 (used 400.0) c=0.990 alpha=-0.002 beta=+0.003 | loss 2.6599 (delta +0.0043) size 2495.9 MB sparsity 0.7%
+gen 10 offspring [11/100] k=142 (used 135.0) c=0.937 alpha=-0.006 beta=+0.019 | loss 2.6994 (delta +0.0438) size 2218.7 MB sparsity 2.1%
+gen 10 offspring [12/100] k=220 (used 218.0) c=0.956 alpha=-0.028 beta=+0.028 | loss 2.6748 (delta +0.0191) size 2218.7 MB sparsity 2.3%
+gen 10 offspring [13/100] k=290 (used 271.0) c=0.930 alpha=-0.011 beta=+0.015 | loss 2.6789 (delta +0.0233) size 2495.9 MB sparsity 1.1%
+gen 10 offspring [14/100] k=251 (used 125.0) c=0.953 alpha=-0.010 beta=+0.012 | loss 2.6976 (delta +0.0420) size 1941.6 MB sparsity 1.2%
+gen 10 offspring [15/100] k=219 (used  57.0) c=0.937 alpha=-0.013 beta=+0.044 | loss 2.9878 (delta +0.3322) size 1664.4 MB sparsity 2.4%
+gen 10 offspring [16/100] k= 95 (used  95.0) c=0.991 alpha=-0.005 beta=+0.006 | loss 2.7408 (delta +0.0851) size 1941.6 MB sparsity 3.2%
+gen 10 offspring [17/100] k=128 (used  66.0) c=0.983 alpha=-0.064 beta=+0.069 | loss 2.8865 (delta +0.2309) size 1941.6 MB sparsity 5.3%
+gen 10 offspring [18/100] k=280 (used  71.0) c=0.999 alpha=-0.024 beta=+0.004 | loss 2.8255 (delta +0.1699) size 1941.6 MB sparsity 1.5%
+gen 10 offspring [19/100] k=162 (used  83.0) c=0.937 alpha=-0.002 beta=+0.049 | loss 2.7784 (delta +0.1228) size 1941.6 MB sparsity 2.8%
+gen 10 offspring [20/100] k=192 (used  98.0) c=0.998 alpha=-0.063 beta=+0.049 | loss 2.7553 (delta +0.0997) size 1941.6 MB sparsity 4.5%
+gen 10 offspring [21/100] k=286 (used 144.9) c=0.908 alpha=-0.060 beta=+0.060 | loss 2.7136 (delta +0.0580) size 2218.7 MB sparsity 4.8%
+gen 10 offspring [22/100] k= 86 (used  50.0) c=0.997 alpha=-0.007 beta=+0.022 | loss 3.7067 (delta +1.0510) size 1664.4 MB sparsity 3.6%
+gen 10 offspring [23/100] k=211 (used  55.0) c=0.937 alpha=-0.045 beta=+0.002 | loss 3.0284 (delta +0.3728) size 1664.4 MB sparsity 2.5%
+gen 10 offspring [24/100] k=218 (used 132.0) c=0.946 alpha=-0.019 beta=+0.007 | loss 2.7179 (delta +0.0622) size 2218.7 MB sparsity 1.4%
+gen 10 offspring [25/100] k=195 (used  99.5) c=0.932 alpha=-0.049 beta=+0.086 | loss 2.7819 (delta +0.1262) size 1941.6 MB sparsity 5.4%
+gen 10 offspring [26/100] k=289 (used 267.0) c=0.999 alpha=-0.019 beta=+0.005 | loss 2.6652 (delta +0.0095) size 2495.9 MB sparsity 1.3%
+gen 10 offspring [27/100] k= 57 (used  57.0) c=0.982 alpha=-0.013 beta=+0.026 | loss 3.0615 (delta +0.4058) size 1664.4 MB sparsity 5.3%
+gen 10 offspring [28/100] k=220 (used  58.0) c=0.940 alpha=-0.007 beta=+0.026 | loss 2.9800 (delta +0.3243) size 1664.4 MB sparsity 1.7%
+gen 10 offspring [29/100] k=133 (used 133.0) c=0.916 alpha=-0.024 beta=+0.006 | loss 2.7221 (delta +0.0664) size 2218.7 MB sparsity 2.1%
+gen 10 offspring [30/100] k=106 (used  27.0) c=0.991 alpha=-0.003 beta=+0.006 | loss 10.2890 (delta +7.6334) size 1387.3 MB sparsity 2.9%
+gen 10 offspring [31/100] k=142 (used 141.0) c=0.996 alpha=-0.006 beta=+0.018 | loss 2.6905 (delta +0.0349) size 2218.7 MB sparsity 2.2%
+gen 10 offspring [32/100] k=251 (used 116.0) c=0.998 alpha=-0.009 beta=+0.012 | loss 2.7043 (delta +0.0487) size 1941.6 MB sparsity 1.2%
+gen 10 offspring [33/100] k=193 (used 192.0) c=0.983 alpha=-0.019 beta=+0.032 | loss 2.6785 (delta +0.0228) size 2218.7 MB sparsity 2.1%
+gen 10 offspring [34/100] k=439 (used 428.0) c=0.984 alpha=-0.029 beta=+0.010 | loss 2.6611 (delta +0.0055) size 2495.9 MB sparsity 1.5%
+gen 10 offspring [35/100] k=195 (used  51.0) c=0.938 alpha=-0.049 beta=+0.048 | loss 3.2064 (delta +0.5508) size 1664.4 MB sparsity 3.9%
+gen 10 offspring [36/100] k=352 (used  73.0) c=0.947 alpha=-0.073 beta=+0.006 | loss 2.9138 (delta +0.2581) size 1941.6 MB sparsity 3.3%
+gen 10 offspring [37/100] k=126 (used 120.0) c=0.983 alpha=-0.065 beta=+0.069 | loss 2.7292 (delta +0.0736) size 1941.6 MB sparsity 5.3%
+gen 10 offspring [38/100] k=213 (used 107.0) c=0.999 alpha=-0.024 beta=+0.002 | loss 2.7222 (delta +0.0666) size 1941.6 MB sparsity 1.7%
+gen 10 offspring [39/100] k=132 (used 131.0) c=0.988 alpha=-0.011 beta=+0.022 | loss 2.6944 (delta +0.0388) size 2218.7 MB sparsity 2.3%
+gen 10 offspring [40/100] k=188 (used  49.0) c=0.934 alpha=-0.049 beta=+0.043 | loss 3.5578 (delta +0.9022) size 1664.4 MB sparsity 3.7%
+gen 10 offspring [41/100] k=196 (used  52.0) c=0.950 alpha=-0.049 beta=+0.049 | loss 3.2916 (delta +0.6359) size 1664.4 MB sparsity 3.9%
+gen 10 offspring [42/100] k=250 (used  65.0) c=0.976 alpha=-0.004 beta=+0.002 | loss 2.9021 (delta +0.2464) size 1921.6 MB sparsity 1.2%
+gen 10 offspring [43/100] k=192 (used  51.0) c=0.941 alpha=-0.026 beta=+0.048 | loss 3.4298 (delta +0.7741) size 1664.4 MB sparsity 2.9%
+gen 10 offspring [44/100] k=272 (used  71.0) c=0.998 alpha=-0.029 beta=+0.038 | loss 2.8194 (delta +0.1637) size 1941.6 MB sparsity 2.7%
+gen 10 offspring [45/100] k=260 (used  88.0) c=0.951 alpha=-0.011 beta=+0.045 | loss 2.7933 (delta +0.1377) size 1941.6 MB sparsity 2.4%
+gen 10 offspring [46/100] k=290 (used  75.0) c=0.951 alpha=-0.011 beta=+0.024 | loss 2.8205 (delta +0.1648) size 1941.6 MB sparsity 1.5%
+gen 10 offspring [47/100] k=285 (used 282.0) c=0.946 alpha=-0.009 beta=+0.022 | loss 2.6730 (delta +0.0174) size 2495.9 MB sparsity 1.4%
+gen 10 offspring [48/100] k=243 (used 230.0) c=0.995 alpha=-0.005 beta=+0.023 | loss 2.6705 (delta +0.0149) size 2218.7 MB sparsity 1.6%
+gen 10 offspring [49/100] k=251 (used 248.0) c=0.997 alpha=-0.020 beta=+0.007 | loss 2.6696 (delta +0.0139) size 2218.7 MB sparsity 1.4%
+gen 10 offspring [50/100] k=291 (used 227.0) c=0.999 alpha=-0.008 beta=+0.010 | loss 2.6700 (delta +0.0144) size 2218.7 MB sparsity 1.1%
+gen 10 offspring [51/100] k=252 (used 125.0) c=0.940 alpha=-0.024 beta=+0.002 | loss 2.7110 (delta +0.0554) size 1941.6 MB sparsity 1.5%
+gen 10 offspring [52/100] k= 61 (used  61.0) c=0.948 alpha=-0.047 beta=+0.032 | loss 2.9565 (delta +0.3008) size 1664.4 MB sparsity 4.8%
+gen 10 offspring [53/100] k= 64 (used  61.0) c=0.985 alpha=-0.019 beta=+0.028 | loss 2.9314 (delta +0.2758) size 1664.4 MB sparsity 4.8%
+gen 10 offspring [54/100] k=242 (used  63.0) c=0.979 alpha=-0.049 beta=+0.045 | loss 2.9542 (delta +0.2986) size 1664.4 MB sparsity 3.8%
+gen 10 offspring [55/100] k=137 (used  36.0) c=0.922 alpha=-0.046 beta=+0.000 | loss 7.4290 (delta +4.7734) size 1664.4 MB sparsity 2.9%
+gen 10 offspring [56/100] k=308 (used  80.0) c=0.940 alpha=-0.011 beta=+0.028 | loss 2.7937 (delta +0.1380) size 1941.6 MB sparsity 1.6%
+gen 10 offspring [57/100] k=288 (used 268.0) c=0.997 alpha=-0.024 beta=+0.006 | loss 2.6660 (delta +0.0103) size 2495.9 MB sparsity 1.5%
+gen 10 offspring [58/100] k=145 (used 143.0) c=0.997 alpha=-0.004 beta=+0.007 | loss 2.6924 (delta +0.0367) size 2218.7 MB sparsity 2.1%
+gen 10 offspring [59/100] k=257 (used  65.0) c=0.930 alpha=-0.017 beta=+0.008 | loss 2.9109 (delta +0.2553) size 1920.8 MB sparsity 1.2%
+gen 10 offspring [60/100] k=133 (used  35.0) c=0.983 alpha=-0.024 beta=+0.006 | loss 7.9004 (delta +5.2448) size 1664.4 MB sparsity 2.3%
+gen 10 offspring [61/100] k=295 (used  61.0) c=0.992 alpha=-0.025 beta=+0.006 | loss 2.9508 (delta +0.2951) size 1664.4 MB sparsity 1.5%
+gen 10 offspring [62/100] k=195 (used  51.0) c=0.938 alpha=-0.049 beta=+0.048 | loss 3.2009 (delta +0.5453) size 1664.4 MB sparsity 3.9%
+gen 10 offspring [63/100] k=334 (used  69.0) c=0.950 alpha=-0.026 beta=+0.008 | loss 2.8687 (delta +0.2131) size 1941.6 MB sparsity 1.5%
+gen 10 offspring [64/100] k=274 (used  67.0) c=0.980 alpha=-0.052 beta=+0.049 | loss 2.8873 (delta +0.2316) size 1941.6 MB sparsity 4.0%
+gen 10 offspring [65/100] k=291 (used 207.0) c=0.996 alpha=-0.022 beta=+0.002 | loss 2.6753 (delta +0.0196) size 2218.7 MB sparsity 1.4%
+gen 10 offspring [66/100] k=188 (used  49.0) c=0.935 alpha=-0.052 beta=+0.059 | loss 3.4162 (delta +0.7605) size 1664.4 MB sparsity 4.4%
+gen 10 offspring [67/100] k=284 (used  73.0) c=0.936 alpha=-0.011 beta=+0.023 | loss 2.8399 (delta +0.1842) size 1941.6 MB sparsity 1.4%
+gen 10 offspring [68/100] k=291 (used  99.0) c=0.998 alpha=-0.027 beta=+0.008 | loss 2.7615 (delta +0.1059) size 1941.6 MB sparsity 1.6%
+gen 10 offspring [69/100] k=133 (used 130.0) c=0.984 alpha=-0.004 beta=+0.050 | loss 2.7173 (delta +0.0617) size 2218.7 MB sparsity 3.1%
+gen 10 offspring [70/100] k=251 (used 126.0) c=0.998 alpha=-0.004 beta=+0.043 | loss 2.7135 (delta +0.0579) size 1941.6 MB sparsity 2.3%
+gen 10 offspring [71/100] k=292 (used  81.0) c=0.998 alpha=-0.001 beta=+0.024 | loss 2.8268 (delta +0.1712) size 1941.6 MB sparsity 1.5%
+gen 10 offspring [72/100] k=126 (used  31.0) c=0.938 alpha=-0.080 beta=+0.047 | loss 8.5501 (delta +5.8945) size 1387.3 MB sparsity 5.1%
+gen 10 offspring [73/100] k=451 (used 245.0) c=0.998 alpha=-0.007 beta=+0.052 | loss 2.6777 (delta +0.0221) size 2218.7 MB sparsity 2.4%
+gen 10 offspring [74/100] k=213 (used 109.0) c=0.904 alpha=-0.025 beta=+0.017 | loss 2.7355 (delta +0.0799) size 1941.6 MB sparsity 1.7%
+gen 10 offspring [75/100] k=126 (used  65.0) c=0.932 alpha=-0.075 beta=+0.064 | loss 2.9083 (delta +0.2527) size 1849.7 MB sparsity 5.5%
+gen 10 offspring [76/100] k=290 (used  95.0) c=0.929 alpha=-0.012 beta=+0.001 | loss 2.7591 (delta +0.1035) size 1941.6 MB sparsity 1.0%
+gen 10 offspring [77/100] k=329 (used  85.0) c=0.981 alpha=-0.057 beta=+0.058 | loss 2.7824 (delta +0.1268) size 1941.6 MB sparsity 4.6%
+gen 10 offspring [78/100] k=252 (used 245.7) c=0.995 alpha=-0.066 beta=+0.007 | loss 2.6876 (delta +0.0320) size 2218.7 MB sparsity 3.2%
+gen 10 offspring [79/100] k=185 (used 105.0) c=0.940 alpha=-0.004 beta=+0.003 | loss 2.7625 (delta +0.1068) size 1941.6 MB sparsity 1.6%
+gen 10 offspring [80/100] k= 69 (used  69.0) c=0.945 alpha=-0.037 beta=+0.032 | loss 2.8783 (delta +0.2227) size 1941.6 MB sparsity 4.3%
+gen 10 offspring [81/100] k=246 (used  51.0) c=0.997 alpha=-0.048 beta=+0.049 | loss 3.3577 (delta +0.7020) size 1664.4 MB sparsity 3.9%
+gen 10 offspring [82/100] k=283 (used  51.0) c=0.950 alpha=-0.026 beta=+0.006 | loss 3.4469 (delta +0.7912) size 1664.4 MB sparsity 1.5%
+gen 10 offspring [83/100] k=252 (used  65.0) c=0.997 alpha=-0.024 beta=+0.007 | loss 2.8814 (delta +0.2257) size 1915.7 MB sparsity 1.6%
+gen 10 offspring [84/100] k=126 (used  64.0) c=0.983 alpha=-0.023 beta=+0.100 | loss 3.2511 (delta +0.5954) size 1664.4 MB sparsity 5.2%
+gen 10 offspring [85/100] k=286 (used 148.0) c=0.998 alpha=-0.039 beta=+0.002 | loss 2.6921 (delta +0.0364) size 2218.7 MB sparsity 2.1%
+gen 10 offspring [86/100] k=292 (used 247.0) c=0.999 alpha=-0.007 beta=+0.030 | loss 2.6681 (delta +0.0125) size 2218.7 MB sparsity 1.7%
+gen 10 offspring [87/100] k=121 (used 119.0) c=0.999 alpha=-0.006 beta=+0.001 | loss 2.7167 (delta +0.0611) size 1941.6 MB sparsity 2.5%
+gen 10 offspring [88/100] k=326 (used 318.0) c=0.998 alpha=-0.004 beta=+0.020 | loss 2.6621 (delta +0.0065) size 2495.9 MB sparsity 1.3%
+gen 10 offspring [89/100] k=195 (used  51.0) c=0.938 alpha=-0.052 beta=+0.048 | loss 3.3199 (delta +0.6642) size 1664.4 MB sparsity 4.0%
+gen 10 offspring [90/100] k= 65 (used  65.0) c=0.922 alpha=-0.006 beta=+0.032 | loss 2.8851 (delta +0.2295) size 1868.5 MB sparsity 4.4%
+gen 10 offspring [91/100] k=212 (used 103.0) c=1.000 alpha=-0.049 beta=+0.045 | loss 2.7325 (delta +0.0769) size 1941.6 MB sparsity 3.8%
+gen 10 offspring [92/100] k=422 (used 400.0) c=0.996 alpha=-0.052 beta=+0.008 | loss 2.6690 (delta +0.0134) size 2495.9 MB sparsity 2.5%
+gen 10 offspring [93/100] k=430 (used  64.0) c=0.948 alpha=-0.033 beta=+0.050 | loss 2.9087 (delta +0.2531) size 1664.4 MB sparsity 3.3%
+gen 10 offspring [94/100] k=162 (used 162.0) c=0.938 alpha=-0.007 beta=+0.019 | loss 2.6922 (delta +0.0366) size 2218.7 MB sparsity 1.8%
+gen 10 offspring [95/100] k=253 (used  85.0) c=0.994 alpha=-0.011 beta=+0.015 | loss 2.7656 (delta +0.1100) size 1941.6 MB sparsity 1.2%
+gen 10 offspring [96/100] k=220 (used  58.0) c=0.929 alpha=-0.045 beta=+0.043 | loss 2.9548 (delta +0.2991) size 1664.4 MB sparsity 3.5%
+gen 10 offspring [97/100] k=155 (used 155.0) c=0.969 alpha=-0.021 beta=+0.026 | loss 2.6860 (delta +0.0304) size 2218.7 MB sparsity 2.0%
+gen 10 offspring [98/100] k=211 (used  55.0) c=0.937 alpha=-0.015 beta=+0.026 | loss 3.0145 (delta +0.3588) size 1664.4 MB sparsity 1.7%
+gen 10 offspring [99/100] k= 60 (used  60.0) c=0.913 alpha=-0.013 beta=+0.026 | loss 2.9691 (delta +0.3135) size 1664.4 MB sparsity 4.8%
+gen 10 offspring [100/100] k=252 (used  63.0) c=0.990 alpha=-0.044 beta=+0.007 | loss 2.9183 (delta +0.2626) size 1664.4 MB sparsity 2.4%
+=== generation 10/10 done in 3840s (0 reused), batch baseline 2.6556, HV 0.28489, front 56 points, 100/100 feasible, best delta loss +0.0043, smallest 1664.4 MB
+Search done; test scoring skipped (python -m scripts.compress_score --run-dir compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq)
+Generation 10: scoring 56 of 56 front solutions (delta_loss <= 1.0) with 2048-token windows
+2026-10-08 06:07:15,226 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/kernels-community/flash-attn3/resolve/main/build/torch29-cxx11-cu128-x86_64-linux/__init__.py "HTTP/1.1 307 Temporary Redirect"
+2026-10-08 06:07:15,243 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/kernels-community/flash-attn3/e29f138fc363b396e5d2706c8a5f6fa7d36f41e0/build%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py?%2Fkernels-community%2Fflash-attn[1m3%[0m2Fresolve%2Fmain%2Fbuild%2Ftorch29-cxx11-cu128-x86_64-linux%2F__init__.py=&etag=%223d12edd447e84d6e65c4fa9ab91ae3c3192884c[1m1%[0m22 "HTTP/1.1 200 OK"
+2026-10-08 06:07:15,288 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/models/kernels-community/flash-attn3/revision/main "HTTP/1.1 200 OK"
+
+Fetching 7 files:   0%|                                                                                                                                                 | 0/7 [00:00<?, ?it/s]
+Fetching 7 files: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 7/7 [00:00<00:00, 1346.92it/s]
+Loaded nanochat:base:d34 step 169150 with the pre-2026 nanochat architecture (nanochat/gpt_legacy.py)
+2026-10-08 06:07:18,032 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/Salesforce/wikitext/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-08 06:07:18,033 - huggingface_hub.utils._http - [33m[1mWARNING[0m - Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-10-08 06:07:18,048 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/datasets/Salesforce/wikitext/b08601e04326c79dfdd32d625aee71d232d685c3/README.md?%2Fdatasets%2FSalesforce%2Fwikitext%2Fresolve%2Fmain%2FREADME.md=&etag=%222a4fec2bc8df76c9d4da1c8e8865b625eb221c[1m76%[0m22 "HTTP/1.1 200 OK"
+2026-10-08 06:07:18,066 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/resolve-cache/datasets/Salesforce/wikitext/b08601e04326c79dfdd32d625aee71d232d685c3/README.md?%2Fdatasets%2FSalesforce%2Fwikitext%2Fresolve%2Fmain%2FREADME.md=&etag=%222a4fec2bc8df76c9d4da1c8e8865b625eb221c[1m76%[0m22 "HTTP/1.1 200 OK"
+2026-10-08 06:07:18,115 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext.py "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:18,240 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/Salesforce/wikitext/Salesforce/wikitext.py "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:18,303 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/Salesforce/wikitext/revision/b08601e04326c79dfdd32d625aee71d232d685c3 "HTTP/1.1 200 OK"
+2026-10-08 06:07:18,356 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/.huggingface.yaml "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:18,494 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://datasets-server.huggingface.co/info?dataset=Salesforce/wikitext "HTTP/1.1 200 OK"
+2026-10-08 06:07:18,546 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/Salesforce/wikitext/tree/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-103-raw-v1?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-10-08 06:07:18,592 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/Salesforce/wikitext/tree/b08601e04326c79dfdd32d625aee71d232d685c3?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-08 06:07:18,642 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/dataset_infos.json "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:18,692 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/Salesforce/wikitext/tree/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-2-raw-v1?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-10-08 06:07:18,849 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-2-raw-v1/test-00000-of-00001.parquet "HTTP/1.1 302 Found"
+2026-10-08 06:07:18,903 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/Salesforce/wikitext/xet-read-token/b08601e04326c79dfdd32d625aee71d232d685c3 "HTTP/1.1 200 OK"
+2026-10-08 06:07:19,391 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-2-raw-v1/train-00000-of-00001.parquet "HTTP/1.1 302 Found"
+2026-10-08 06:07:19,814 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-2-raw-v1/validation-00000-of-00001.parquet "HTTP/1.1 302 Found"
+
+Generating test split:   0%|                                                                                                                                  | 0/4358 [00:00<?, ? examples/s]
+Generating test split: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 4358/4358 [00:00<00:00, 361404.92 examples/s]
+
+Generating train split:   0%|                                                                                                                                | 0/36718 [00:00<?, ? examples/s]
+Generating train split: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 36718/36718 [00:00<00:00, 816239.59 examples/s]
+
+Generating validation split:   0%|                                                                                                                            | 0/3760 [00:00<?, ? examples/s]
+Generating validation split: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3760/3760 [00:00<00:00, 662768.78 examples/s]
+2026-10-08 06:07:20,608 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
+2026-10-08 06:07:20,623 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/api/resolve-cache/datasets/allenai/c4/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/README.md?%2Fdatasets%2Fallenai%2Fc[1m4%[0m2Fresolve%2Fmain%2FREADME.md=&etag=%222a750bf152e98e6eb2a14a6c2bd58c940c3cf[1m504%[0m22 "HTTP/1.1 200 OK"
+2026-10-08 06:07:20,671 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/c4.py "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:20,721 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://s3.amazonaws.com/datasets.huggingface.co/datasets/datasets/allenai/c4/allenai/c4.py "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:20,901 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-08 06:07:21,255 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/.huggingface.yaml "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:21,333 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://datasets-server.huggingface.co/info?dataset=allenai/c4 "HTTP/1.1 200 OK"
+2026-10-08 06:07:21,416 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=true&expand=false "HTTP/1.1 200 OK"
+2026-10-08 06:07:21,481 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=true&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-08 06:07:21,529 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-08 06:07:21,728 - httpx - [32m[1mINFO[0m - HTTP Request: HEAD https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/dataset_infos.json "HTTP/1.1 404 Not Found"
+2026-10-08 06:07:21,961 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/revision/1588ec454efa1a09f29cd18ddd04fe05fc8653a2 "HTTP/1.1 200 OK"
+2026-10-08 06:07:22,316 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?recursive=false&expand=false "HTTP/1.1 200 OK"
+2026-10-08 06:07:22,388 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/api/datasets/allenai/c4/tree/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en?expand=false&recursive=false&limit=1000&cursor=ZXlKbWFXeGxYMjVoYldVaU9pSmxiaTlqTkMxMGNtRnBiaTR3TURrNU9TMXZaaTB3TVRBeU5DNXFjMjl1TG1kNklpd2lkSEpsWlY5dmFXUWlPaUprWXprME0yTTBZelF3WmpVelpEQXlZak14WTJWa01XUmxabUUzWlRWbU5ETTRaRFU0TmpKbEluMD06MTAwMA%3D%3D "HTTP/1.1 200 OK"
+2026-10-08 06:07:22,436 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://huggingface.co/datasets/allenai/c4/resolve/1588ec454efa1a09f29cd18ddd04fe05fc8653a2/en/c4-validation.00000-of-00008.json.gz "HTTP/1.1 302 Found"
+2026-10-08 06:07:22,483 - httpx - [32m[1mINFO[0m - HTTP Request: GET https://us.gcp.cdn.hf.co/xet-bridge-us/621ffdd236468d709f182a80/dffa9a5aa789525d19e0d6d9473f981585bd51d31019f9ba258b54d311dd5bf2?xip=VU7X-35DSSs&X-Xet-Cas-Uid=public&response-content-disposition=inline%3B+filename*%3DUTF-[1m8%[0m[1m27%[0m27c4-validation.00000-of-00008.json.gz%3B+filename%3D%22c4-validation.00000-of-00008.json.gz%[1m22%[0m3B&response-content-type=application%2Fgzip&user_id=public&Expires=1791443242&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5nY3AuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjIxZmZkZDIzNjQ2OGQ3MDlmMTgyYTgwL2RmZmE5YTVhYTc4OTUyNWQxOWUwZDZkOTQ3M2Y5ODE1ODViZDUxZDMxMDE5ZjliYTI1OGI1NGQzMTFkZDViZjJcXD94aXA9VlU3WC0zNURTU3MmWC1YZXQtQ2FzLVVpZD1wdWJsaWMmcmVzcG9uc2UtY29udGVudC1kaXNwb3NpdGlvbj0qJnJlc3BvbnNlLWNvbnRlbnQtdHlwZT0qJnVzZXJfaWQ9cHVibGljIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTE0NDMyNDJ9fX1dfQ__&Signature=MEQCIBXRS3Cikw2j-EsM74wsfZd4MCyo6Ekq8Ia5PdsBKD4aAiArbmUa2YNKI%7EuR8HnqzPU1KCqr6wFf7FF%7EArGNX2kGWw__&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256 "HTTP/1.1 206 Partial Content"
+Test set wikitext2: 144 windows, 294912 tokens
+Test set c4: 255 windows, 522240 tokens
+uncompressed: wikitext2 ppl 12.913, c4 ppl 17.267
+k=188 c=0.935 1664.4 MB | wikitext2 ppl 27.618, c4 ppl 35.918 | 108s
+k=192 c=0.937 1664.4 MB | wikitext2 ppl 24.789, c4 ppl 32.828 | 108s
+k=195 c=0.938 1664.4 MB | wikitext2 ppl 22.985, c4 ppl 30.271 | 108s
+k=200 c=0.924 1664.4 MB | wikitext2 ppl 20.969, c4 ppl 27.729 | 108s
+k=211 c=0.937 1664.4 MB | wikitext2 ppl 18.182, c4 ppl 24.252 | 108s
+k=219 c=0.937 1664.4 MB | wikitext2 ppl 17.549, c4 ppl 24.014 | 108s
+k=220 c=0.929 1664.4 MB | wikitext2 ppl 17.512, c4 ppl 23.379 | 108s
+k=64 c=0.985 1664.4 MB | wikitext2 ppl 17.561, c4 ppl 22.880 | 107s
+k=252 c=0.990 1664.4 MB | wikitext2 ppl 17.421, c4 ppl 22.547 | 108s
+k=430 c=0.948 1664.4 MB | wikitext2 ppl 16.907, c4 ppl 22.602 | 109s
+k=126 c=0.983 1849.3 MB | wikitext2 ppl 17.121, c4 ppl 21.790 | 108s
+k=126 c=0.983 1850.2 MB | wikitext2 ppl 17.028, c4 ppl 21.785 | 108s
+k=126 c=0.983 1850.4 MB | wikitext2 ppl 17.027, c4 ppl 21.774 | 108s
+k=126 c=0.983 1852.5 MB | wikitext2 ppl 16.822, c4 ppl 21.778 | 108s
+k=252 c=0.997 1915.7 MB | wikitext2 ppl 16.067, c4 ppl 21.829 | 108s
+k=66 c=0.948 1941.6 MB | wikitext2 ppl 16.113, c4 ppl 21.643 | 107s
+k=193 c=0.924 1941.6 MB | wikitext2 ppl 16.079, c4 ppl 21.174 | 108s
+k=276 c=0.980 1941.6 MB | wikitext2 ppl 16.223, c4 ppl 20.940 | 108s
+k=272 c=0.998 1941.6 MB | wikitext2 ppl 15.582, c4 ppl 20.543 | 108s
+k=286 c=0.942 1941.6 MB | wikitext2 ppl 14.672, c4 ppl 20.139 | 108s
+k=290 c=0.940 1941.6 MB | wikitext2 ppl 14.851, c4 ppl 20.074 | 108s
+k=308 c=0.940 1941.6 MB | wikitext2 ppl 16.164, c4 ppl 19.897 | 108s
+k=162 c=0.938 1941.6 MB | wikitext2 ppl 15.375, c4 ppl 19.479 | 108s
+k=253 c=0.994 1941.6 MB | wikitext2 ppl 15.381, c4 ppl 19.443 | 108s
+k=354 c=0.951 1941.6 MB | wikitext2 ppl 14.296, c4 ppl 19.203 | 109s
+k=95 c=0.991 1941.6 MB | wikitext2 ppl 13.774, c4 ppl 18.853 | 107s
+k=106 c=0.991 1941.6 MB | wikitext2 ppl 13.661, c4 ppl 18.477 | 107s
+k=218 c=0.947 1941.6 MB | wikitext2 ppl 13.538, c4 ppl 18.401 | 108s
+k=251 c=0.997 1941.6 MB | wikitext2 ppl 14.066, c4 ppl 18.286 | 108s
+k=251 c=0.998 1941.6 MB | wikitext2 ppl 13.436, c4 ppl 18.160 | 108s
+k=132 c=0.945 1941.6 MB | wikitext2 ppl 13.244, c4 ppl 18.186 | 107s
+k=251 c=0.953 1941.6 MB | wikitext2 ppl 13.130, c4 ppl 18.072 | 108s
+k=133 c=0.983 2174.3 MB | wikitext2 ppl 13.417, c4 ppl 18.055 | 107s
+k=132 c=0.988 2218.7 MB | wikitext2 ppl 13.547, c4 ppl 17.973 | 107s
+k=142 c=0.996 2218.7 MB | wikitext2 ppl 13.461, c4 ppl 17.920 | 107s
+k=285 c=0.998 2218.7 MB | wikitext2 ppl 13.404, c4 ppl 17.896 | 108s
+k=155 c=0.969 2218.7 MB | wikitext2 ppl 13.194, c4 ppl 17.814 | 108s
+k=309 c=0.998 2218.7 MB | wikitext2 ppl 13.357, c4 ppl 17.809 | 108s
+k=344 c=0.976 2218.7 MB | wikitext2 ppl 13.228, c4 ppl 17.741 | 108s
+k=248 c=0.996 2218.7 MB | wikitext2 ppl 13.575, c4 ppl 17.753 | 108s
+k=248 c=0.996 2218.7 MB | wikitext2 ppl 13.575, c4 ppl 17.753 | 108s
+k=193 c=0.983 2218.7 MB | wikitext2 ppl 13.190, c4 ppl 17.691 | 108s
+k=201 c=0.972 2218.7 MB | wikitext2 ppl 13.278, c4 ppl 17.683 | 108s
+k=227 c=0.999 2218.7 MB | wikitext2 ppl 13.411, c4 ppl 17.586 | 108s
+k=227 c=0.998 2218.7 MB | wikitext2 ppl 13.325, c4 ppl 17.577 | 108s
+k=245 c=0.997 2218.7 MB | wikitext2 ppl 13.225, c4 ppl 17.501 | 108s
+k=246 c=0.994 2218.7 MB | wikitext2 ppl 13.268, c4 ppl 17.491 | 108s
+k=245 c=0.997 2218.7 MB | wikitext2 ppl 13.143, c4 ppl 17.514 | 108s
+k=291 c=0.999 2218.7 MB | wikitext2 ppl 12.972, c4 ppl 17.461 | 108s
+k=283 c=0.985 2495.9 MB | wikitext2 ppl 12.973, c4 ppl 17.469 | 108s
+k=289 c=0.999 2495.9 MB | wikitext2 ppl 13.023, c4 ppl 17.454 | 108s
+k=285 c=0.998 2495.9 MB | wikitext2 ppl 13.032, c4 ppl 17.427 | 108s
+k=326 c=0.998 2495.9 MB | wikitext2 ppl 12.896, c4 ppl 17.418 | 108s
+k=386 c=0.999 2495.9 MB | wikitext2 ppl 13.165, c4 ppl 17.359 | 109s
+k=422 c=0.997 2495.9 MB | wikitext2 ppl 12.876, c4 ppl 17.364 | 109s
+k=418 c=0.990 2495.9 MB | wikitext2 ppl 12.955, c4 ppl 17.342 | 109s
+Done. 56 solutions in compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/test_scores.json
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/hypervolume.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_with_init_pop.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_with_init_pop.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_with_pop_every_gen.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_with_pop_every_gen.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_ylinear.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_ylinear.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_ylinear_with_init_pop.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_ylinear_with_init_pop.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_ylinear_with_pop_every_gen.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_ylinear_with_pop_every_gen.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_bins.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_bins.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_bins_with_init_pop.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_bins_with_init_pop.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_bins_with_pop_every_gen.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_bins_with_pop_every_gen.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_bins_ylinear.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_bins_ylinear.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_bins_ylinear_with_init_pop.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_bins_ylinear_with_init_pop.png/.pdf
+10 generations -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/front_evolution_bins_ylinear_with_pop_every_gen.gif
+generation 10 -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/pareto_front_bins_ylinear_with_pop_every_gen.png/.pdf
+Pareto front: 56 scored, WikiText-2 test perplexity 12.876-27.618 (uncompressed 12.913)
+1 runs -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/test_front_wikitext2.png/.pdf
+Pareto front: 56 scored, WikiText-2 test perplexity 12.876-27.618 (uncompressed 12.913)
+1 runs -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/test_front_wikitext2_ylinear.png/.pdf
+Pareto front: 56 scored, C4 validation perplexity 17.342-35.918 (uncompressed 17.267)
+1 runs -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/test_front_c4.png/.pdf
+Pareto front: 56 scored, C4 validation perplexity 17.342-35.918 (uncompressed 17.267)
+1 runs -> compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq/test_front_c4_ylinear.png/.pdf

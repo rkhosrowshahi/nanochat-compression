@@ -1,0 +1,28 @@
+model: nanochat:base:d34
+download: karpathy/nanochat-d34
+nanochat_base_dir: ~/.cache/nanochat-d34
+out_dir: compress_runs/d34_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq
+include:
+- embeddings
+- lm_head
+eval_batch_size: 2
+search:
+  method: ubq-ecsq
+  pop_size: 100
+  n_gen: 10
+  seed: 42
+  k_space: log2
+  auto_k_bounds: true
+  c_min: 0.9
+  alpha_min: -0.3
+  beta_max: 0.3
+  rho_min: 0.0
+  max_delta_loss: 1.0
+calibration:
+  seqs: 128
+  seq_len: 2048
+  every: 0
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256
