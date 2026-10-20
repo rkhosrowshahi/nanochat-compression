@@ -1,0 +1,36 @@
+# Llama-2-7B with everything compressed: the 224 transformer matrices plus the token embedding and
+# lm_head (untied in Llama, two 32000 x 4096 matrices), 6.74B weights, 100%, with the UBQ-ECSQ method:
+# after pruning, clipping and the uniform K-level grid, the levels are merged by entropy-constrained
+# scalar quantization down to rho x the non-empty levels. 5 genes: K, c, rho, alpha, beta. Same search
+# settings as d34_emb_ecsq.yaml (the 7B counterpart). Gated model: accept the license on its HF page
+# and export HF_TOKEN first. ~13.5 GB of bf16 weights: one H100 80 GB (originals kept on the GPU);
+# on a 24 GB L4 use eval_batch_size=1 (originals offloaded to CPU, needs ~32 GB RAM, ~3x slower).
+#   python -m scripts.compress_run configs/compress/llama7b_emb_ecsq.yaml --smoke    # quick check first
+#   python -m scripts.compress_run configs/compress/llama7b_emb_ecsq.yaml
+model: meta-llama/Llama-2-7b-hf
+out_dir: compress_runs/llama7b_10_log2_autok_c0.9_prune0.3_calib_fixed_128x2048_maxdelta1.0_inc-embeddings-lm_head_ecsq
+include: [embeddings, lm_head]
+eval_batch_size: 4                       # 4 for an 80 GB H100, 1 for a 24 GB L4
+
+search:
+  method: ubq-ecsq
+  pop_size: 100
+  n_gen: 10
+  seed: 42
+  k_space: log2
+  auto_k_bounds: true      # K_min/K_max from the warm-up (plain uniform quantization, no merge)
+  c_min: 0.9
+  alpha_min: -0.3
+  beta_max: 0.3
+  rho_min: 0.0             # rho in [0, 1]; 1 = no merging
+  max_delta_loss: 1.0
+
+calibration:
+  seqs: 128                # the GPTQ calibration size: 128 x 2048 tokens of C4 train
+  seq_len: 2048
+  every: 0                 # the batch is shared through the cache, no download if a run made it
+
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256

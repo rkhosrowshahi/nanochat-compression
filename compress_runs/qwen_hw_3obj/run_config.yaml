@@ -1,0 +1,26 @@
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/qwen_hw_3obj
+eval_batch_size: 1
+search:
+  method: hw
+  objectives:
+  - latency
+  - memory
+  pop_size: 40
+  n_gen: 12
+  seed: 42
+  max_delta_loss: 1.0
+  memory_budget_mb: 7000
+  latency_batch: 1
+  latency_context: 1024
+  bands: 4
+calibration:
+  seqs: 8
+  seq_len: 2048
+test:
+  seq_len: 2048
+  wikitext_seqs: 32
+  c4_seqs: 32
+  max_points: 6
+validate:
+  points: 6

@@ -27,11 +27,19 @@ Works on a finished or running run.
     python -m scripts.compress_plot --run-dir compress_runs/local_100 --last-gen
     -> <run-dir>/pareto_front.png/.pdf (the latest generation as a still image instead of the GIF)
 
+    python -m scripts.compress_plot --run-dir compress_runs/qwen_hw_3obj --x latency
+    -> <run-dir>/front_evolution_latency.gif (compress_search_hw runs, which have no model size: the
+       predicted decode latency, or with --x memory the deployed memory, on the x-axis; the front is
+       joined by a line only when x is the run's only objective besides delta_loss, else it is not
+       monotone in x and is drawn as points)
+
     python -m scripts.compress_plot --run-dir compress_runs/local_100 --all
     -> every plot above: the GIF and the still image for each x-axis (bins only if the run logs
-       the used bins), each y-axis scale and each population view, plus the hypervolume, and,
-       once the front is scored, its WikiText-2 test and C4 validation perplexities
-       (test_front_wikitext2.png/.pdf, test_front_c4.png/.pdf, each also _ylinear)
+       the used bins; latency and memory for compress_search_hw runs), each y-axis scale and each
+       population view, plus the hypervolume, and, once the front is scored, its WikiText-2 test and
+       C4 validation perplexities (test_front_wikitext2.png/.pdf, test_front_c4.png/.pdf, each also
+       _ylinear, and per x-axis for compress_search_hw runs); for compress_search_hw runs also the
+       final front in 3-D over memory and latency (pareto_front_3d.png/.pdf, by compress_compare --3d)
 """
 
 import argparse
@@ -52,8 +60,9 @@ pop_mode = parser.add_mutually_exclusive_group()
 pop_mode.add_argument("--with-init-pop", action="store_true", help="also plot every candidate of the initial population")
 pop_mode.add_argument("--with-pop-every-gen", action="store_true",
                       help="also plot the current population of every generation (instead of the initial one)")
-parser.add_argument("--x", type=str, default="size", choices=["size", "bins"],
-                    help="x-axis: model size in MB, or the number of non-empty bins per matrix (log2 axis)")
+parser.add_argument("--x", type=str, default="size", choices=["size", "bins", "latency", "memory"],
+                    help="x-axis: model size in MB, or the number of non-empty bins per matrix (log2 axis), "
+                         "or (compress_search_hw runs) the predicted decode latency / the deployed memory")
 parser.add_argument("--y", type=str, default="log", choices=["log", "linear"],
                     help="y-axis scale of the calibration loss: log (symlog, linear near 0) or linear")
 parser.add_argument("--hv", action="store_true", help="plot the hypervolume per generation instead of the GIF")
@@ -70,25 +79,29 @@ for name in ("front.csv", "generations.csv"):
 if args.all:  # one process per plot, so no matplotlib state carries over between them
     front_csv = pd.read_csv(os.path.join(args.run_dir, "front.csv"))
     has_bins = "k_used_mean" in front_csv.columns
+    hw = "latency_ms" in front_csv.columns  # compress_search_hw: no model size, latency and memory instead
+    x_axes = [["--x", "latency"], ["--x", "memory"]] if hw else [[], ["--x", "bins"]] if has_bins else [[]]
     runs = [["--hv"]] + ([] if front_csv.empty else [[*x, *y, *pop, *still] for x, y, pop, still in itertools.product(
-        [[], ["--x", "bins"]] if has_bins else [[]], [[], ["--y", "linear"]],
-        [[], ["--with-init-pop"], ["--with-pop-every-gen"]], [[], ["--last-gen"]])])
+        x_axes, [[], ["--y", "linear"]], [[], ["--with-init-pop"], ["--with-pop-every-gen"]], [[], ["--last-gen"]])])
     for flags in runs:
         subprocess.run([sys.executable, "-m", "scripts.compress_plot", "--run-dir", args.run_dir, "--fps", str(args.fps), *flags],
                        check=True)
+    if hw and not front_csv.empty:  # the final front over memory and latency at once
+        subprocess.run([sys.executable, "-m", "scripts.compress_compare", "--run-dirs", args.run_dir, "--labels", "Pareto front",
+                        "--3d", "--out", os.path.join(args.run_dir, "pareto_front_3d")], check=True)
     # the final front's test perplexities (WikiText-2 test, C4 validation), when the run is scored
     scored = any(os.path.exists(os.path.join(args.run_dir, f)) and "wikitext2_ppl" in open(os.path.join(args.run_dir, f)).read()
                  for f in ("test_scores.json", "pareto.json"))
     if scored and not front_csv.empty:
-        for metric, y in itertools.product(["wikitext2", "c4"], ["log", "linear"]):
-            out = os.path.join(args.run_dir, f"test_front_{metric}" + ("_ylinear" if y == "linear" else ""))
-            subprocess.run([sys.executable, "-m", "scripts.compress_compare", "--run-dirs", args.run_dir,
-                            "--labels", "Pareto front", "--metric", metric, "--y", y, "--out", out], check=True)
+        for metric, y, x in itertools.product(["wikitext2", "c4"], ["log", "linear"], ["latency", "memory"] if hw else ["size"]):
+            out = os.path.join(args.run_dir, f"test_front_{metric}" + (f"_{x}" if hw else "") + ("_ylinear" if y == "linear" else ""))
+            subprocess.run([sys.executable, "-m", "scripts.compress_compare", "--run-dirs", args.run_dir, "--labels",
+                            "Pareto front", "--metric", metric, "--y", y, "--x", x, "--out", out], check=True)
     elif not front_csv.empty:
         print("no test-score plots: the final front is not scored yet (python -m scripts.compress_score)")
     if front_csv.empty:
         print("no front plots: no generation has a feasible solution yet (see --max-delta-loss)")
-    elif not has_bins:
+    elif not has_bins and not hw:
         print("no bins plots: this run does not log the used bins (k_used_mean)")
     raise SystemExit
 
@@ -110,7 +123,7 @@ if args.hv:
 # delta_loss = loss of the compressed model - loss of the uncompressed one on the same batch
 # (runs started before the renames call it loss_increase, and k_init k)
 read = lambda name: pd.read_csv(os.path.join(args.run_dir, name)).rename(columns={"loss_increase": "delta_loss", "k": "k_init"})
-X = "size_mb" if args.x == "size" else "k_used_mean"
+X = {"size": "size_mb", "bins": "k_used_mean", "latency": "latency_ms", "memory": "memory_mb"}[args.x]
 front = read("front.csv")
 if front.empty:
     sys.exit(f"{args.run_dir}: the front is empty, no generation has a feasible solution yet (see --max-delta-loss)")
@@ -119,7 +132,7 @@ gens = pd.read_csv(os.path.join(args.run_dir, "generations.csv")).set_index("gen
 # along the front: left to right, and top to bottom among solutions with the same x
 front = front[front["gen"].isin(gens.index)].sort_values(["gen", X, "delta_loss"], ascending=[True, True, False])
 config = json.load(open(os.path.join(args.run_dir, "config.json")))
-baseline_mb = config["baseline_size_mb"]
+baseline_mb = config["baseline"][X] if args.x in ("latency", "memory") else config.get("baseline_size_mb")
 n_gen = max(config["args"]["n_gen"], gens.index.max())  # generations the run was started for
 
 fig, ax = plt.subplots(figsize=(8, 5))
@@ -136,18 +149,23 @@ if args.with_pop_every_gen:
     pop = pop[pop["gen"].isin(gens.index)]
     pop_scatter = ax.scatter([], [], s=16, color="lightgray", label="Population")
     y_max = max(y_max, pop["delta_loss"].max())
-# the front is Pareto-optimal in size, not in bins: in the bins view a line joining its points
-# in bins order would zigzag, so there the fronts are drawn as points only
-bins = args.x == "bins"
+# the front is Pareto-optimal in its objectives: in an x it did not optimize (bins; or with compress_search_hw,
+# x besides another objective) a line joining its points in x order would zigzag, so there it is points only
+norm_path = os.path.join(args.run_dir, "normalization.json")
+objectives = json.load(open(norm_path)).get("objectives", ["delta_loss", "size_mb"]) if os.path.exists(norm_path) \
+    else ["delta_loss", "size_mb"]
+points_only = objectives != ["delta_loss", X]
 if not args.with_pop_every_gen:  # the population view shows the current generation only
-    ax.plot(first[X], first["delta_loss"], "o" if bins else "--", color="gray", mfc="none", label="Initial Pareto front")
-line, = ax.plot([], [], "o" if bins else "o-", color="#2a78d6", label="Pareto front")  # slot 1 of compress_compare
+    ax.plot(first[X], first["delta_loss"], "--" if args.x == "size" else "o", color="gray", mfc="none",
+            label=f"Initial Pareto front (N={len(first)})")
+line, = ax.plot([], [], "o" if points_only else "o-", color="#2a78d6", label="Pareto front")  # slot 1 of compress_compare
 if args.y == "log":
     ax.set_yscale("symlog", linthresh=0.01)  # linear near 0, log above: shows both +0.001 and +15
-if args.x == "size":
+if args.x != "bins":
     ax.plot(baseline_mb, 0, "D", color="black", label="Uncompressed")
-    ax.set_xlim(0, 1.05 * baseline_mb)  # from 0 MB, so sizes read as fractions of the original
-    ax.set_xlabel("Model size (MB)")
+    ax.set_xlim(0, 1.05 * baseline_mb)  # from 0, so values read as fractions of the original
+    ax.set_xlabel({"size": "Model size (MB)", "latency": "Predicted decode latency (ms per token)",
+                   "memory": "Deployed memory: weights + KV cache (MB)"}[args.x])
 else:  # the uncompressed model has no bins (16-bit floats), so it has no point here
     shown = pd.concat([front[X], pop[X] if args.with_init_pop or args.with_pop_every_gen else front[X]])
     lo, hi = shown.min(), shown.max()
@@ -160,7 +178,7 @@ if args.y == "log":
     ax.set_ylim(-0.005, y_max * 1.5)
 else:
     ax.set_ylim(-0.02 * y_max, y_max * 1.05)
-ax.set_ylabel(r"Calibration loss ($\Delta$)")
+ax.set_ylabel(r"$\Delta$ Calibration loss (nats)")
 ax.grid(True, alpha=0.3)
 legend = ax.legend(loc="upper right")
 front_label = next(t for t in legend.get_texts() if t.get_text() == "Pareto front")  # gets the front size per frame
@@ -196,7 +214,7 @@ def draw(gen):
     return line, title, bar, bar_label, bar_pct, *([pop_scatter] if pop_scatter is not None else [])
 
 
-suffix = ("_bins" if args.x == "bins" else "") + ("_ylinear" if args.y == "linear" else "") + \
+suffix = ("" if args.x == "size" else f"_{args.x}") + ("_ylinear" if args.y == "linear" else "") + \
          ("_with_init_pop" if args.with_init_pop else "_with_pop_every_gen" if args.with_pop_every_gen else "")
 if args.last_gen:
     draw(gens.index[-1])

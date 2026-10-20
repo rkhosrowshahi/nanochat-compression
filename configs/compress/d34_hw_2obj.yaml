@@ -1,0 +1,40 @@
+# nanochat d34 (2.2B, karpathy/nanochat-d34), hardware-aware search (scripts/compress_search_hw.py),
+# scenario 1 of 2: objectives delta_loss + predicted decode latency; memory only a constraint. The d34
+# counterpart of qwen_hw_2obj.yaml, with the same settings as d34_hw_3obj.yaml. Genes as there, plus the
+# format of the untied token embedding (memory only). The latency table is measured on the server's GPU
+# when the run starts (int4 needs sm80+: A100, L4, H100, RTX 30xx/40xx).
+#   python -m scripts.compress_run configs/compress/d34_hw_2obj.yaml --smoke    # quick check first
+#   python -m scripts.compress_run configs/compress/d34_hw_2obj.yaml
+# then, with d34_hw_3obj.yaml done too, the hypervolume of both in all three objectives per generation:
+#   python -m scripts.compress_compare --run-dirs compress_runs/d34_hw_2obj compress_runs/d34_hw_3obj \
+#       --labels "2 objectives" "3 objectives" --3d --hv --out compress_runs/comparisons/d34_hw_2obj_vs_3obj/d34_hw_hv_3d
+model: nanochat:base:d34
+download: karpathy/nanochat-d34          # ~8.6 GB, fetched once
+nanochat_base_dir: ~/.cache/nanochat-d34
+out_dir: compress_runs/d34_hw_2obj
+eval_batch_size: 2                       # 2 fits a 24 GB L4, 8 an 80 GB H100
+
+search:
+  method: hw
+  objectives: [latency]
+  pop_size: 100
+  n_gen: 10
+  seed: 42
+  max_delta_loss: 1.0
+  memory_budget_mb: 20000  # set to what the server GPU can give the deployed model (here: a 24 GB L4)
+  latency_batch: 1
+  latency_context: 1024
+  bands: 4
+
+calibration:
+  seqs: 128                # the GPTQ calibration size, as the other d34 runs
+  seq_len: 2048
+
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256
+  max_points: 10           # spread evenly along the front
+
+validate:
+  points: 8

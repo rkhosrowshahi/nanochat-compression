@@ -1,0 +1,662 @@
+=== 2026-10-19 10:23:01  python -m scripts.compress_search_hw --model Qwen/Qwen2.5-0.5B-Instruct --objectives latency memory --pop-size 40 --n-gen 12 --seed 42 --max-delta-loss 1.0 --memory-budget-mb 7000 --latency-batch 1 --latency-context 1024 --bands 4 --calib-seqs 8 --seq-len 2048 --test-seq-len 2048 --wikitext-seqs 32 --c4-test-seqs 32 --test-max-points 6 --test-max-delta-loss 1.0 --eval-batch-size 1 --out-dir compress_runs/qwen_hw_3obj
+Loading Qwen/Qwen2.5-0.5B-Instruct on cuda
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]Loading weights: 100%|##########| 290/290 [00:00<00:00, 9519.08it/s]
+24 layers, MLP width 4864, 14 heads (2 KV), lm_head tied to the embedding, embeddings none separate
+Calibration batch from C:\Users\NICI Lab\.cache\nanochat-compress\calib_041d1315075783d5.pt
+Baseline: calib loss 2.8854, one forward pass over the batch takes 4.2s
+Activation statistics of 169 linear inputs in 4s
+Removal ranking: each of the 48 sublayers removed alone, on 4 windows
+  layer  0: removing attention +2.3693, MLP +7.9368
+  layer  1: removing attention +5.1160, MLP +0.2697
+  layer  2: removing attention +0.2321, MLP +2.0771
+  layer  3: removing attention +0.0704, MLP +0.2092
+  layer  4: removing attention +0.0940, MLP +0.1682
+  layer  5: removing attention +0.0683, MLP +0.1713
+  layer  6: removing attention +0.0349, MLP +0.1474
+  layer  7: removing attention +0.0402, MLP +0.1512
+  layer  8: removing attention +0.1752, MLP +0.0955
+  layer  9: removing attention +0.0432, MLP +0.0792
+  layer 10: removing attention +0.0824, MLP +0.0570
+  layer 11: removing attention +0.0596, MLP +0.0686
+  layer 12: removing attention +0.0796, MLP +0.0561
+  layer 13: removing attention +0.0317, MLP +0.0820
+  layer 14: removing attention +0.1141, MLP +0.0836
+  layer 15: removing attention +0.0685, MLP +0.1233
+  layer 16: removing attention +0.0715, MLP +0.2021
+  layer 17: removing attention +0.1546, MLP +0.1417
+  layer 18: removing attention +0.0273, MLP +0.1187
+  layer 19: removing attention +0.0385, MLP +0.2244
+  layer 20: removing attention +0.1641, MLP +0.2461
+  layer 21: removing attention +0.1583, MLP +0.2080
+  layer 22: removing attention +0.0417, MLP +0.2408
+  layer 23: removing attention +0.3422, MLP +0.5370
+...done in 98s
+Removal order (attn): 18 (+0.027), 13 (+0.032), 6 (+0.035), 19 (+0.038), 7 (+0.040), 22 (+0.042), 9 (+0.043), 11 (+0.060), ...
+Removal order (mlp): 12 (+0.056), 10 (+0.057), 11 (+0.069), 9 (+0.079), 13 (+0.082), 14 (+0.084), 8 (+0.095), 18 (+0.119), ...
+Latency table from C:\Users\NICI Lab\.cache\nanochat-compress\latency_01d183a4f17440df.pt
+23 genes (qkv_b0:4, qkv_b1:4, qkv_b2:4, qkv_b3:4, o_b0:4, o_b1:4, o_b2:4, o_b3:4, up_b0:4, up_b1:4, up_b2:4, up_b3:4, down_b0:4, down_b1:4, down_b2:4, down_b3:4, lm_head:4, keep_b0:5, keep_b1:5, keep_b2:5, keep_b3:5, skip_attn:7, skip_mlp:7), originals offloaded to CPU
+Uncompressed: predicted decode latency 6.78 ms, memory 1001 MB (KV cache 13 MB)
+gen 1 initial [1/40] qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0000 latency 6.78 ms memory 1001 MB (4.0s)
+gen 1 initial [2/40] qkv:3333 o:3333 up:3333 down:3333 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0843 latency 3.57 ms memory 321 MB (6.0s)
+gen 1 initial [3/40] qkv:6666 o:6666 up:6666 down:6666 head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1223 latency 3.43 ms memory 291 MB (5.9s)
+gen 1 initial [4/40] qkv:8888 o:8888 up:8888 down:8888 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1756 latency 3.36 ms memory 275 MB (5.9s)
+gen 1 initial [5/40] qkv:8383 o:B66B up:8B8B down:8886 head:3 keep:0.625/0.875/0.625/0.75 -attn 0 -mlp 0 | delta +0.4983 latency 3.86 ms memory 380 MB (4.6s)
+gen 1 initial [6/40] qkv:6BBB o:B366 up:386B down:8666 head:6 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1331 latency 3.87 ms memory 385 MB (4.5s)
+gen 1 initial [7/40] qkv:338B o:3388 up:BB8B down:8383 head:3 keep:0.625/1/0.75/1 -attn 0 -mlp 0 | delta +0.3008 latency 4.28 ms memory 480 MB (4.4s)
+gen 1 initial [8/40] qkv:6333 o:83B3 up:BBB8 down:6636 head:B keep:1/1/1/1 -attn 3 -mlp 0 | delta +0.1849 latency 5.17 ms memory 714 MB (4.2s)
+gen 1 initial [9/40] qkv:33B3 o:B366 up:638B down:3B38 head:3 keep:0.5/0.75/0.625/1 -attn 1 -mlp 5 | delta +1.1422 latency 3.52 ms memory 330 MB (4.4s)
+gen 1 initial [10/40] qkv:8383 o:6836 up:3BB3 down:8B36 head:B keep:0.625/0.875/0.5/1 -attn 3 -mlp 0 | delta +0.5440 latency 4.58 ms memory 579 MB (4.3s)
+gen 1 initial [11/40] qkv:38B8 o:3663 up:36B6 down:B66B head:8 keep:1/0.625/1/1 -attn 3 -mlp 1 | delta +0.3469 latency 3.86 ms memory 407 MB (4.4s)
+gen 1 initial [12/40] qkv:36B6 o:BB68 up:B388 down:6336 head:6 keep:1/1/1/0.5 -attn 0 -mlp 0 | delta +0.3551 latency 3.81 ms memory 371 MB (4.4s)
+gen 1 initial [13/40] qkv:38BB o:3363 up:38B6 down:6383 head:8 keep:0.875/1/0.75/0.5 -attn 0 -mlp 1 | delta +0.5047 latency 3.51 ms memory 310 MB (4.5s)
+gen 1 initial [14/40] qkv:B38B o:86B3 up:63B6 down:6B3B head:6 keep:0.625/1/1/1 -attn 0 -mlp 0 | delta +0.2594 latency 4.25 ms memory 455 MB (4.4s)
+gen 1 initial [15/40] qkv:688B o:BBB6 up:6338 down:3883 head:B keep:0.5/0.625/0.875/0.625 -attn 0 -mlp 6 | delta +1.4557 latency 3.99 ms memory 425 MB (4.4s)
+gen 1 initial [16/40] qkv:388B o:B6B3 up:388B down:8B68 head:8 keep:0.875/0.5/1/1 -attn 3 -mlp 2 | delta +0.6461 latency 3.58 ms memory 353 MB (4.4s)
+gen 1 initial [17/40] qkv:B836 o:338B up:6633 down:B88B head:B keep:1/1/1/0.5 -attn 1 -mlp 5 | delta +0.7802 latency 4.31 ms memory 500 MB (4.3s)
+gen 1 initial [18/40] qkv:B366 o:8BB3 up:3883 down:8363 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0891 latency 4.44 ms memory 515 MB (4.3s)
+gen 1 initial [19/40] qkv:B68B o:3686 up:863B down:88B6 head:B keep:0.625/1/1/1 -attn 0 -mlp 0 | delta +0.2522 latency 4.84 ms memory 601 MB (4.3s)
+gen 1 initial [20/40] qkv:8B38 o:3B36 up:6386 down:3883 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0896 latency 4.39 ms memory 506 MB (4.3s)
+gen 1 initial [21/40] qkv:6B63 o:B8B6 up:B868 down:3368 head:8 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1520 latency 3.85 ms memory 378 MB (4.5s)
+gen 1 initial [22/40] qkv:83B3 o:6868 up:8863 down:3B38 head:3 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8142 latency 3.24 ms memory 252 MB (4.5s)
+gen 1 initial [23/40] qkv:6B3B o:8688 up:8B8B down:363B head:B keep:0.5/1/0.875/0.5 -attn 0 -mlp 0 | delta +0.7071 latency 4.76 ms memory 586 MB (4.3s)
+gen 1 initial [24/40] qkv:86BB o:36B3 up:B6B6 down:BBB8 head:B keep:1/1/0.75/1 -attn 0 -mlp 0 | delta +0.1085 latency 5.50 ms memory 732 MB (4.2s)
+gen 1 initial [25/40] qkv:8386 o:6888 up:6B3B down:8BBB head:6 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1293 latency 4.61 ms memory 535 MB (4.3s)
+gen 1 initial [26/40] qkv:3868 o:BB8B up:B386 down:B888 head:8 keep:1/1/1/1 -attn 4 -mlp 0 | delta +0.3097 latency 3.82 ms memory 409 MB (4.4s)
+gen 1 initial [27/40] qkv:6668 o:6B86 up:3688 down:8383 head:6 keep:1/0.875/0.875/1 -attn 0 -mlp 3 | delta +0.4027 latency 3.31 ms memory 268 MB (4.5s)
+gen 1 initial [28/40] qkv:3B36 o:B336 up:3633 down:3B6B head:3 keep:1/0.5/1/0.5 -attn 0 -mlp 3 | delta +0.6825 latency 3.48 ms memory 298 MB (4.4s)
+gen 1 initial [29/40] qkv:8336 o:8836 up:B866 down:86B3 head:B keep:1/1/1/1 -attn 4 -mlp 3 | delta +0.4635 latency 4.43 ms memory 565 MB (4.3s)
+gen 1 initial [30/40] qkv:88B8 o:66B6 up:66B6 down:86B8 head:8 keep:1/0.5/1/1 -attn 0 -mlp 0 | delta +0.2995 latency 3.92 ms memory 391 MB (4.4s)
+gen 1 initial [31/40] qkv:8888 o:B366 up:BB66 down:BBB6 head:B keep:1/1/0.75/0.625 -attn 0 -mlp 0 | delta +0.2959 latency 5.43 ms memory 718 MB (4.3s)
+gen 1 initial [32/40] qkv:8886 o:3B6B up:88B8 down:B6B3 head:6 keep:0.625/1/1/0.625 -attn 1 -mlp 0 | delta +0.4830 latency 3.96 ms memory 403 MB (4.4s)
+gen 1 initial [33/40] qkv:6368 o:8863 up:8363 down:3B8B head:B keep:1/0.75/1/0.625 -attn 0 -mlp 0 | delta +0.2919 latency 4.46 ms memory 514 MB (4.3s)
+gen 1 initial [34/40] qkv:6B68 o:8386 up:3B36 down:8B68 head:8 keep:1/1/0.875/1 -attn 6 -mlp 4 | delta +0.7904 latency 3.19 ms memory 309 MB (4.4s)
+gen 1 initial [35/40] qkv:BB36 o:B66B up:B368 down:3383 head:3 keep:0.75/1/1/1 -attn 6 -mlp 5 | delta +0.9475 latency 3.26 ms memory 325 MB (4.4s)
+gen 1 initial [36/40] qkv:86B3 o:8B86 up:388B down:B68B head:6 keep:1/1/1/1 -attn 0 -mlp 6 | delta +0.6959 latency 3.99 ms memory 414 MB (4.3s)
+gen 1 initial [37/40] qkv:8BBB o:3B88 up:8BB8 down:368B head:B keep:1/1/1/0.5 -attn 4 -mlp 6 | delta +1.0581 latency 4.27 ms memory 533 MB (4.2s)
+gen 1 initial [38/40] qkv:88B3 o:8BB6 up:888B down:8868 head:8 keep:0.75/1/1/0.875 -attn 0 -mlp 0 | delta +0.2910 latency 3.72 ms memory 350 MB (4.4s)
+gen 1 initial [39/40] qkv:6666 o:66B8 up:3B86 down:BBB3 head:B keep:1/1/0.5/1 -attn 4 -mlp 3 | delta +0.5818 latency 4.55 ms memory 578 MB (4.3s)
+gen 1 initial [40/40] qkv:BB6B o:BB83 up:63B3 down:B8B3 head:8 keep:1/1/1/1 -attn 0 -mlp 4 | delta +0.3968 latency 4.12 ms memory 435 MB (4.3s)
+=== generation 1/12 done in 179s (0 reused), HV 0.33016, front 7 points, 37/40 feasible, best delta loss +0.0000, fastest 3.19 ms, smallest 252 MB
+gen 2 offspring [1/40] qkv:B38B o:B6B3 up:388B down:8B66 head:8 keep:0.875/0.5/1/1 -attn 3 -mlp 2 | delta +0.5986 latency 3.63 ms memory 363 MB (4.3s)
+gen 2 offspring [2/40] qkv:B83B o:BBBB up:B63B down:BBBB head:B keep:1/1/1/0.5 -attn 0 -mlp 5 | delta +0.6909 latency 5.29 ms memory 688 MB (4.2s)
+gen 2 offspring [3/40] qkv:6BBB o:8363 up:386B down:8666 head:6 keep:1/1/1/1 -attn 0 -mlp 5 | delta +0.5628 latency 3.68 ms memory 358 MB (4.3s)
+gen 2 offspring [4/40] qkv:B386 o:8B88 up:8888 down:8883 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1497 latency 3.46 ms memory 295 MB (4.4s)
+gen 2 offspring [5/40] qkv:8386 o:6863 up:6B6B down:8BBB head:6 keep:1/1/1/0.875 -attn 0 -mlp 6 | delta +0.7225 latency 3.97 ms memory 413 MB (4.3s)
+gen 2 offspring [6/40] qkv:86BB o:3636 up:B633 down:BBB8 head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0954 latency 4.47 ms memory 500 MB (4.3s)
+gen 2 offspring [7/40] qkv:336B o:3888 up:BB86 down:8383 head:B keep:0.625/1/0.75/1 -attn 4 -mlp 0 | delta +0.4965 latency 4.52 ms memory 582 MB (4.3s)
+gen 2 offspring [8/40] qkv:3B63 o:38B3 up:B868 down:3368 head:8 keep:1/1/1/0.5 -attn 0 -mlp 0 | delta +0.3696 latency 3.74 ms memory 357 MB (4.4s)
+gen 2 offspring [9/40] qkv:8366 o:6BB3 up:3683 down:8683 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0940 latency 4.40 ms memory 506 MB (4.4s)
+gen 2 offspring [10/40] qkv:8888 o:B3B6 up:B366 down:BB36 head:B keep:1/1/0.75/0.625 -attn 0 -mlp 0 | delta +0.3009 latency 5.01 ms memory 627 MB (4.3s)
+gen 2 offspring [11/40] qkv:B36B o:6B83 up:33B3 down:B8B3 head:8 keep:1/1/1/1 -attn 0 -mlp 4 | delta +0.3991 latency 4.05 ms memory 423 MB (4.3s)
+gen 2 offspring [12/40] qkv:8336 o:8836 up:B866 down:86B3 head:3 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.1351 latency 3.95 ms memory 410 MB (4.4s)
+gen 2 offspring [13/40] qkv:368B o:B38B up:388B down:8B63 head:8 keep:0.875/1/1/1 -attn 5 -mlp 2 | delta +0.6498 latency 3.62 ms memory 383 MB (4.3s)
+gen 2 offspring [14/40] qkv:6386 o:6888 up:8B83 down:88B8 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1363 latency 3.93 ms memory 396 MB (4.4s)
+gen 2 offspring [15/40] qkv:3B38 o:3B88 up:6386 down:3883 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1131 latency 4.37 ms memory 500 MB (4.4s)
+gen 2 offspring [16/40] qkv:BB3B o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0071 latency 6.74 ms memory 992 MB (4.1s)
+gen 2 offspring [17/40] qkv:3B68 o:B386 up:3B33 down:8B68 head:8 keep:1/0.625/0.875/0.625 -attn 5 -mlp 4 | delta +0.9564 latency 3.09 ms memory 275 MB (4.4s)
+gen 2 offspring [18/40] qkv:86B3 o:36B8 up:B8B3 down:BBB8 head:B keep:1/1/0.75/0.5 -attn 0 -mlp 4 | delta +0.6804 latency 5.03 ms memory 642 MB (4.2s)
+gen 2 offspring [19/40] qkv:388B o:86B3 up:63B6 down:3B33 head:6 keep:0.625/1/1/1 -attn 0 -mlp 0 | delta +0.2791 latency 4.01 ms memory 411 MB (4.4s)
+gen 2 offspring [20/40] qkv:BBB6 o:338B up:6B33 down:B88B head:B keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.0741 latency 5.16 ms memory 673 MB (4.2s)
+gen 2 offspring [21/40] qkv:6B3B o:8686 up:8B8B down:363B head:B keep:0.5/1/0.875/0.5 -attn 0 -mlp 0 | delta +0.7038 latency 4.76 ms memory 586 MB (4.2s)
+gen 2 offspring [22/40] qkv:6B88 o:B686 up:3336 down:8B68 head:8 keep:1/1/0.875/0.875 -attn 6 -mlp 0 | delta +0.4877 latency 3.32 ms memory 323 MB (4.4s)
+gen 2 offspring [23/40] qkv:8868 o:88B3 up:3883 down:8368 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1151 latency 4.34 ms memory 496 MB (4.4s)
+gen 2 offspring [24/40] qkv:BB36 o:B686 up:B338 down:3383 head:3 keep:0.75/1/1/1 -attn 6 -mlp 0 | delta +0.4994 latency 3.48 ms memory 364 MB (4.4s)
+gen 2 offspring [25/40] qkv:3333 o:33B3 up:33B6 down:3333 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0860 latency 4.67 ms memory 568 MB (4.4s)
+gen 2 offspring [26/40] qkv:8336 o:8336 up:B86B down:86B3 head:3 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.2980 latency 4.18 ms memory 459 MB (4.3s)
+gen 2 offspring [27/40] qkv:68BB o:B366 up:38B6 down:6383 head:8 keep:0.875/1/0.75/0.875 -attn 0 -mlp 1 | delta +0.2947 latency 3.63 ms memory 332 MB (4.5s)
+gen 2 offspring [28/40] qkv:B8B8 o:86B6 up:68B6 down:83B8 head:8 keep:1/0.5/1/1 -attn 0 -mlp 3 | delta +0.5146 latency 3.78 ms memory 366 MB (4.4s)
+gen 2 offspring [29/40] qkv:B38B o:8663 up:6BB6 down:6BBB head:6 keep:0.625/1/1/1 -attn 0 -mlp 0 | delta +0.2484 latency 4.72 ms memory 556 MB (4.3s)
+gen 2 offspring [30/40] qkv:6368 o:BB86 up:6688 down:8383 head:6 keep:1/0.875/0.875/1 -attn 0 -mlp 3 | delta +0.3936 latency 3.34 ms memory 272 MB (4.5s)
+gen 2 offspring [31/40] qkv:3333 o:333B up:3333 down:3333 head:B keep:1/1/1/1 -attn 4 -mlp 3 | delta +0.4282 latency 4.04 ms memory 482 MB (4.3s)
+gen 2 offspring [32/40] qkv:B336 o:B6B3 up:B368 down:3388 head:3 keep:0.75/0.5/1/1 -attn 4 -mlp 5 | delta +0.9340 latency 3.29 ms memory 311 MB (4.3s)
+gen 2 offspring [33/40] qkv:8888 o:8888 up:6838 down:8B8B head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1322 latency 3.82 ms memory 363 MB (4.4s)
+gen 2 offspring [34/40] qkv:8B3B o:86B6 up:8B8B down:363B head:B keep:0.5/1/1/0.5 -attn 0 -mlp 0 | delta +0.6648 latency 4.83 ms memory 598 MB (4.2s)
+gen 2 offspring [35/40] qkv:63B3 o:83B3 up:BBB8 down:6636 head:B keep:1/1/1/1 -attn 4 -mlp 0 | delta +0.2537 latency 5.15 ms memory 720 MB (4.2s)
+gen 2 offspring [36/40] qkv:6B36 o:8336 up:3636 down:3B6B head:3 keep:1/0.875/1/0.875 -attn 1 -mlp 3 | delta +0.3971 latency 3.61 ms memory 338 MB (4.4s)
+gen 2 offspring [37/40] qkv:83BB o:6863 up:8366 down:3B38 head:3 keep:1/0.625/0.5/1 -attn 0 -mlp 0 | delta +0.3639 latency 3.52 ms memory 305 MB (4.4s)
+gen 2 offspring [38/40] qkv:86BB o:33B3 up:B8B3 down:8BB8 head:B keep:1/1/0.75/1 -attn 0 -mlp 0 | delta +0.1211 latency 5.31 ms memory 696 MB (4.2s)
+gen 2 offspring [39/40] qkv:83BB o:6868 up:8883 down:3B38 head:3 keep:1/1/0.5/0.5 -attn 0 -mlp 3 | delta +0.7277 latency 3.37 ms memory 279 MB (4.4s)
+gen 2 offspring [40/40] qkv:B366 o:8BB3 up:3686 down:B363 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0823 latency 4.64 ms memory 552 MB (4.3s)
+=== generation 2/12 done in 174s (0 reused), HV 0.33133, front 12 points, 40/40 feasible, best delta loss +0.0000, fastest 3.09 ms, smallest 252 MB
+gen 3 offspring [1/40] qkv:83B3 o:3868 up:8863 down:3B3B head:3 keep:1/1/0.5/0.875 -attn 0 -mlp 0 | delta +0.2883 latency 3.77 ms memory 353 MB (4.4s)
+gen 3 offspring [2/40] qkv:8B3B o:B888 up:6BBB down:8BBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0398 latency 6.03 ms memory 848 MB (4.2s)
+gen 3 offspring [3/40] qkv:8336 o:8833 up:B866 down:86B3 head:3 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.1344 latency 3.95 ms memory 410 MB (4.4s)
+gen 3 offspring [4/40] qkv:86BB o:33B8 up:B8B8 down:8B88 head:8 keep:1/1/0.625/1 -attn 0 -mlp 0 | delta +0.2016 latency 4.19 ms memory 450 MB (4.3s)
+gen 3 offspring [5/40] qkv:83BB o:68B3 up:8366 down:3B38 head:3 keep:1/0.75/0.5/1 -attn 0 -mlp 0 | delta +0.3227 latency 3.60 ms memory 321 MB (4.4s)
+gen 3 offspring [6/40] qkv:BB3B o:BBBB up:BBBB down:3B3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0187 latency 6.36 ms memory 920 MB (4.1s)
+gen 3 offspring [7/40] qkv:6668 o:8B83 up:3688 down:8383 head:6 keep:1/0.875/1/1 -attn 0 -mlp 0 | delta +0.1581 latency 3.45 ms memory 293 MB (4.5s)
+gen 3 offspring [8/40] qkv:83B3 o:88B8 up:888B down:8838 head:8 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1748 latency 3.73 ms memory 356 MB (4.4s)
+gen 3 offspring [9/40] qkv:BB36 o:B33B up:B368 down:3B83 head:3 keep:0.75/1/0.875/0.875 -attn 6 -mlp 5 | delta +0.9969 latency 3.31 ms memory 334 MB (4.4s)
+gen 3 offspring [10/40] qkv:B336 o:6386 up:3633 down:3BBB head:3 keep:1/0.5/1/0.5 -attn 0 -mlp 3 | delta +0.6814 latency 3.60 ms memory 322 MB (4.4s)
+gen 3 offspring [11/40] qkv:3363 o:B383 up:3B33 down:8B68 head:8 keep:1/1/0.875/0.625 -attn 5 -mlp 4 | delta +0.8833 latency 3.20 ms memory 299 MB (4.4s)
+gen 3 offspring [12/40] qkv:BB36 o:B66B up:BB68 down:3383 head:3 keep:0.75/1/1/1 -attn 6 -mlp 5 | delta +0.9408 latency 3.42 ms memory 361 MB (4.3s)
+gen 3 offspring [13/40] qkv:6BBB o:B366 up:3863 down:8668 head:6 keep:1/1/1/0.875 -attn 1 -mlp 0 | delta +0.1723 latency 3.53 ms memory 319 MB (4.4s)
+gen 3 offspring [14/40] qkv:83BB o:3663 up:B6B6 down:3BB8 head:3 keep:1/1/0.625/0.625 -attn 0 -mlp 0 | delta +0.3320 latency 4.30 ms memory 470 MB (4.3s)
+gen 3 offspring [15/40] qkv:8868 o:83B3 up:3886 down:8B68 head:B keep:1/1/1/0.875 -attn 0 -mlp 4 | delta +0.4943 latency 4.23 ms memory 476 MB (4.3s)
+gen 3 offspring [16/40] qkv:86BB o:3836 up:B633 down:BBB8 head:3 keep:1/0.625/0.5/1 -attn 0 -mlp 0 | delta +0.3406 latency 4.17 ms memory 438 MB (4.4s)
+gen 3 offspring [17/40] qkv:33BB o:33B3 up:B8B3 down:3B38 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0736 latency 5.25 ms memory 689 MB (4.3s)
+gen 3 offspring [18/40] qkv:3B38 o:BB88 up:B3B3 down:6883 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0666 latency 5.12 ms memory 666 MB (4.2s)
+gen 3 offspring [19/40] qkv:6863 o:8BB6 up:888B down:8868 head:6 keep:0.75/1/1/0.875 -attn 0 -mlp 0 | delta +0.2965 latency 3.70 ms memory 346 MB (4.4s)
+gen 3 offspring [20/40] qkv:BBB6 o:638B up:6B33 down:B888 head:B keep:1/0.625/1/0.625 -attn 1 -mlp 3 | delta +0.5362 latency 4.50 ms memory 541 MB (4.3s)
+gen 3 offspring [21/40] qkv:B366 o:6BBB up:3B3B down:3BBB head:6 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1043 latency 4.82 ms memory 571 MB (4.3s)
+gen 3 offspring [22/40] qkv:8366 o:6BB6 up:3683 down:8683 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0953 latency 4.40 ms memory 505 MB (4.4s)
+gen 3 offspring [23/40] qkv:B386 o:8B83 up:8883 down:88B3 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1058 latency 4.57 ms memory 538 MB (4.3s)
+gen 3 offspring [24/40] qkv:3333 o:3363 up:63B6 down:333B head:B keep:1/0.875/0.875/1 -attn 0 -mlp 0 | delta +0.1067 latency 4.78 ms memory 587 MB (4.3s)
+gen 3 offspring [25/40] qkv:3B36 o:B336 up:3633 down:BB6B head:3 keep:1/0.5/1/0.5 -attn 0 -mlp 3 | delta +0.6757 latency 3.67 ms memory 334 MB (4.4s)
+gen 3 offspring [26/40] qkv:B366 o:6BB6 up:3683 down:B363 head:B keep:1/1/0.875/1 -attn 0 -mlp 4 | delta +0.4195 latency 4.46 ms memory 521 MB (4.3s)
+gen 3 offspring [27/40] qkv:88BB o:6B66 up:8883 down:3B68 head:3 keep:0.75/1/0.5/0.5 -attn 0 -mlp 6 | delta +1.2595 latency 3.23 ms memory 253 MB (4.4s)
+gen 3 offspring [28/40] qkv:3B68 o:B686 up:3B33 down:8368 head:8 keep:1/0.625/1/0.625 -attn 5 -mlp 3 | delta +0.8374 latency 3.12 ms memory 281 MB (4.4s)
+gen 3 offspring [29/40] qkv:8B86 o:B838 up:6B3B down:8B8B head:6 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1261 latency 4.50 ms memory 513 MB (4.3s)
+gen 3 offspring [30/40] qkv:3B38 o:3336 up:3333 down:3333 head:3 keep:1/0.625/1/1 -attn 0 -mlp 0 | delta +0.1805 latency 3.52 ms memory 311 MB (4.5s)
+gen 3 offspring [31/40] qkv:8336 o:8836 up:B866 down:863B head:3 keep:1/1/1/1 -attn 0 -mlp 4 | delta +0.4316 latency 3.83 ms memory 383 MB (4.4s)
+gen 3 offspring [32/40] qkv:86B3 o:68B8 up:8863 down:BB38 head:B keep:1/0.625/0.625/0.875 -attn 0 -mlp 3 | delta +0.5242 latency 4.40 ms memory 504 MB (4.3s)
+gen 3 offspring [33/40] qkv:6B68 o:8886 up:3B33 down:8368 head:8 keep:1/1/0.875/1 -attn 6 -mlp 0 | delta +0.4363 latency 3.45 ms memory 361 MB (4.4s)
+gen 3 offspring [34/40] qkv:83BB o:6663 up:8366 down:3B38 head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1171 latency 3.75 ms memory 353 MB (4.4s)
+gen 3 offspring [35/40] qkv:8833 o:33B3 up:33B6 down:83B3 head:B keep:1/1/0.75/1 -attn 0 -mlp 0 | delta +0.1328 latency 4.73 ms memory 575 MB (4.3s)
+gen 3 offspring [36/40] qkv:BBBB o:3BBB up:6B83 down:BBBB head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0518 latency 5.69 ms memory 760 MB (4.2s)
+gen 3 offspring [37/40] qkv:86B6 o:6663 up:6666 down:6866 head:8 keep:1/1/1/1 -attn 0 -mlp 2 | delta +0.2646 latency 3.36 ms memory 280 MB (4.4s)
+gen 3 offspring [38/40] qkv:83B3 o:B8B8 up:8363 down:3B88 head:3 keep:1/0.625/0.5/1 -attn 0 -mlp 5 | delta +0.7722 latency 3.35 ms memory 278 MB (4.4s)
+gen 3 offspring [39/40] qkv:36BB o:B6B6 up:B6BB down:BBB6 head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0682 latency 5.16 ms memory 649 MB (4.3s)
+gen 3 offspring [40/40] qkv:B338 o:66B3 up:B868 down:3338 head:3 keep:0.75/0.5/1/0.5 -attn 4 -mlp 3 | delta +1.0394 latency 3.23 ms memory 295 MB (4.4s)
+=== generation 3/12 done in 174s (0 reused), HV 0.33328, front 17 points, 40/40 feasible, best delta loss +0.0000, fastest 3.09 ms, smallest 252 MB
+gen 4 offspring [1/40] qkv:B366 o:BBBB up:3B3B down:3BBB head:3 keep:1/1/0.875/0.875 -attn 0 -mlp 0 | delta +0.1150 latency 4.84 ms memory 576 MB (4.3s)
+gen 4 offspring [2/40] qkv:3B68 o:8B88 up:3B33 down:8B68 head:8 keep:1/1/0.875/0.625 -attn 0 -mlp 4 | delta +0.6141 latency 3.52 ms memory 314 MB (4.4s)
+gen 4 offspring [3/40] qkv:3333 o:33B3 up:33B6 down:3833 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0887 latency 4.66 ms memory 566 MB (4.3s)
+gen 4 offspring [4/40] qkv:B6B6 o:B663 up:6666 down:6386 head:8 keep:1/1/1/1 -attn 0 -mlp 5 | delta +0.5673 latency 3.32 ms memory 275 MB (4.4s)
+gen 4 offspring [5/40] qkv:3B36 o:B838 up:3B3B down:3B8B head:6 keep:1/0.5/1/0.625 -attn 0 -mlp 3 | delta +0.5869 latency 3.81 ms memory 370 MB (4.3s)
+gen 4 offspring [6/40] qkv:8868 o:8888 up:6838 down:8B8B head:6 keep:1/1/0.625/1 -attn 0 -mlp 0 | delta +0.2237 latency 3.74 ms memory 346 MB (4.4s)
+gen 4 offspring [7/40] qkv:8366 o:6BB3 up:8686 down:B666 head:3 keep:1/1/1/0.5 -attn 0 -mlp 0 | delta +0.3723 latency 3.64 ms memory 326 MB (4.4s)
+gen 4 offspring [8/40] qkv:3B63 o:B383 up:BBB3 down:8B68 head:8 keep:1/1/0.875/1 -attn 5 -mlp 4 | delta +0.7196 latency 3.86 ms memory 446 MB (4.3s)
+gen 4 offspring [9/40] qkv:83B3 o:B3BB up:B863 down:3B68 head:3 keep:1/1/0.875/1 -attn 0 -mlp 4 | delta +0.4345 latency 3.90 ms memory 393 MB (4.3s)
+gen 4 offspring [10/40] qkv:6688 o:88B6 up:3383 down:8368 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1053 latency 4.36 ms memory 501 MB (4.4s)
+gen 4 offspring [11/40] qkv:88B6 o:8633 up:3883 down:6868 head:B keep:1/1/1/1 -attn 0 -mlp 2 | delta +0.2455 latency 4.25 ms memory 483 MB (4.3s)
+gen 4 offspring [12/40] qkv:33B6 o:6866 up:B633 down:3B6B head:3 keep:1/0.5/0.5/0.5 -attn 0 -mlp 3 | delta +0.8535 latency 3.66 ms memory 343 MB (4.4s)
+gen 4 offspring [13/40] qkv:B3BB o:B868 up:B863 down:3BB6 head:3 keep:1/0.875/0.5/0.5 -attn 0 -mlp 3 | delta +0.7121 latency 3.86 ms memory 381 MB (4.3s)
+gen 4 offspring [14/40] qkv:6366 o:8BB3 up:B386 down:B333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0770 latency 4.94 ms memory 620 MB (4.3s)
+gen 4 offspring [15/40] qkv:6B63 o:8886 up:3B36 down:8B68 head:8 keep:1/1/0.875/1 -attn 1 -mlp 0 | delta +0.1683 latency 3.93 ms memory 405 MB (4.4s)
+gen 4 offspring [16/40] qkv:3338 o:3333 up:3388 down:3333 head:B keep:0.875/1/1/1 -attn 0 -mlp 0 | delta +0.1304 latency 4.31 ms memory 492 MB (4.4s)
+gen 4 offspring [17/40] qkv:BB66 o:6B3B up:3B3B down:8BBB head:6 keep:1/1/1/0.875 -attn 1 -mlp 0 | delta +0.1300 latency 4.74 ms memory 568 MB (4.3s)
+gen 4 offspring [18/40] qkv:B368 o:8BB3 up:3888 down:8363 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0981 latency 4.42 ms memory 510 MB (4.3s)
+gen 4 offspring [19/40] qkv:36BB o:66B6 up:B6BB down:BBB6 head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0567 latency 5.17 ms memory 654 MB (4.2s)
+gen 4 offspring [20/40] qkv:B386 o:B386 up:8888 down:8883 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6211 latency 3.08 ms memory 266 MB (4.4s)
+gen 4 offspring [21/40] qkv:3B38 o:BB88 up:B3B3 down:3383 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0614 latency 5.14 ms memory 670 MB (4.3s)
+gen 4 offspring [22/40] qkv:8B36 o:666B up:B368 down:3863 head:3 keep:0.75/1/1/1 -attn 6 -mlp 2 | delta +0.6729 latency 3.30 ms memory 332 MB (4.4s)
+gen 4 offspring [23/40] qkv:8B86 o:B336 up:6633 down:8B6B head:3 keep:1/1/1/0.75 -attn 0 -mlp 0 | delta +0.1929 latency 3.87 ms memory 374 MB (4.4s)
+gen 4 offspring [24/40] qkv:833B o:6868 up:8883 down:3B38 head:3 keep:1/1/0.875/0.5 -attn 0 -mlp 3 | delta +0.5992 latency 3.39 ms memory 285 MB (4.4s)
+gen 4 offspring [25/40] qkv:B3B3 o:8868 up:B863 down:3B36 head:B keep:1/0.625/0.5/1 -attn 0 -mlp 3 | delta +0.5247 latency 4.56 ms memory 549 MB (4.3s)
+gen 4 offspring [26/40] qkv:B3BB o:BBBB up:3BBB down:BBBB head:B keep:1/1/1/0.625 -attn 0 -mlp 1 | delta +0.2191 latency 6.02 ms memory 836 MB (4.1s)
+gen 4 offspring [27/40] qkv:33BB o:38B8 up:83B3 down:3B68 head:6 keep:1/0.625/0.5/1 -attn 0 -mlp 1 | delta +0.4085 latency 3.65 ms memory 334 MB (4.3s)
+gen 4 offspring [28/40] qkv:8368 o:B683 up:B836 down:8B68 head:8 keep:1/1/0.875/0.875 -attn 6 -mlp 0 | delta +0.5058 latency 3.60 ms memory 385 MB (4.4s)
+gen 4 offspring [29/40] qkv:8668 o:6863 up:6636 down:8366 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1324 latency 3.43 ms memory 290 MB (4.5s)
+gen 4 offspring [30/40] qkv:8B3B o:B338 up:8883 down:3B38 head:3 keep:1/1/1/0.5 -attn 0 -mlp 3 | delta +0.5754 latency 3.50 ms memory 306 MB (4.4s)
+gen 4 offspring [31/40] qkv:8BB3 o:6BBB up:8BBB down:BB3B head:B keep:1/0.75/1/1 -attn 0 -mlp 0 | delta +0.0834 latency 5.93 ms memory 822 MB (4.2s)
+gen 4 offspring [32/40] qkv:B3BB o:33B3 up:38B3 down:3B68 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0779 latency 4.96 ms memory 624 MB (4.2s)
+gen 4 offspring [33/40] qkv:8B36 o:B388 up:3BBB down:8BBB head:B keep:1/1/1/1 -attn 5 -mlp 3 | delta +0.5195 latency 5.30 ms memory 754 MB (4.2s)
+gen 4 offspring [34/40] qkv:8883 o:8888 up:8833 down:8888 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1569 latency 3.40 ms memory 286 MB (4.4s)
+gen 4 offspring [35/40] qkv:6388 o:B666 up:3636 down:3B68 head:8 keep:1/1/0.875/0.875 -attn 5 -mlp 0 | delta +0.4831 latency 3.35 ms memory 318 MB (4.5s)
+gen 4 offspring [36/40] qkv:8666 o:8B83 up:368B down:8383 head:6 keep:1/0.875/1/1 -attn 0 -mlp 0 | delta +0.1408 latency 3.80 ms memory 370 MB (4.4s)
+gen 4 offspring [37/40] qkv:B333 o:8BB3 up:33B6 down:3363 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0841 latency 4.74 ms memory 581 MB (4.3s)
+gen 4 offspring [38/40] qkv:3633 o:6383 up:3333 down:3633 head:3 keep:1/1/1/1 -attn 0 -mlp 1 | delta +0.1491 latency 3.51 ms memory 311 MB (4.5s)
+gen 4 offspring [39/40] qkv:3366 o:B3B3 up:3686 down:B333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0835 latency 4.61 ms memory 546 MB (4.4s)
+gen 4 offspring [40/40] qkv:83B3 o:38B8 up:8863 down:3B38 head:3 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8167 latency 3.28 ms memory 259 MB (4.4s)
+=== generation 4/12 done in 174s (0 reused), HV 0.33979, front 21 points, 40/40 feasible, best delta loss +0.0000, fastest 3.08 ms, smallest 252 MB
+gen 5 offspring [1/40] qkv:83BB o:33B3 up:88B3 down:3B38 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0887 latency 4.90 ms memory 611 MB (4.3s)
+gen 5 offspring [2/40] qkv:B868 o:6386 up:8888 down:8888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6469 latency 3.02 ms memory 257 MB (4.4s)
+gen 5 offspring [3/40] qkv:B6B6 o:B666 up:6666 down:8383 head:8 keep:1/0.875/1/1 -attn 0 -mlp 5 | delta +0.5969 latency 3.31 ms memory 272 MB (4.4s)
+gen 5 offspring [4/40] qkv:8BBB o:B863 up:8366 down:3B38 head:3 keep:1/0.875/0.875/1 -attn 0 -mlp 0 | delta +0.1360 latency 3.78 ms memory 357 MB (4.4s)
+gen 5 offspring [5/40] qkv:83B3 o:6868 up:8863 down:8B68 head:3 keep:1/0.625/0.5/0.625 -attn 0 -mlp 3 | delta +0.7313 latency 3.25 ms memory 255 MB (4.4s)
+gen 5 offspring [6/40] qkv:6B68 o:6B36 up:3B68 down:8883 head:6 keep:1/1/0.875/1 -attn 0 -mlp 3 | delta +0.3417 latency 3.59 ms memory 331 MB (4.4s)
+gen 5 offspring [7/40] qkv:BBBB o:33B3 up:38B3 down:3B68 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0742 latency 5.00 ms memory 632 MB (4.3s)
+gen 5 offspring [8/40] qkv:8B3B o:663B up:B368 down:B863 head:3 keep:1/1/1/1 -attn 6 -mlp 2 | delta +0.5243 latency 3.66 ms memory 404 MB (4.3s)
+gen 5 offspring [9/40] qkv:6B68 o:8386 up:3336 down:3B68 head:3 keep:1/1/1/1 -attn 6 -mlp 0 | delta +0.4102 latency 3.40 ms memory 344 MB (4.4s)
+gen 5 offspring [10/40] qkv:3B38 o:BB88 up:B3B3 down:3B83 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0807 latency 5.26 ms memory 691 MB (4.3s)
+gen 5 offspring [11/40] qkv:3B3B o:BBBB up:BB8B down:333B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0348 latency 5.78 ms memory 799 MB (4.2s)
+gen 5 offspring [12/40] qkv:8383 o:38B8 up:8863 down:8B38 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8475 latency 3.19 ms memory 239 MB (4.4s)
+gen 5 offspring [13/40] qkv:B386 o:BB86 up:8B88 down:B88B head:6 keep:1/0.875/0.875/1 -attn 4 -mlp 0 | delta +0.3236 latency 3.94 ms memory 429 MB (4.4s)
+gen 5 offspring [14/40] qkv:BBB6 o:338B up:3B33 down:B86B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0438 latency 5.24 ms memory 680 MB (4.2s)
+gen 5 offspring [15/40] qkv:83B3 o:63B8 up:886B down:3B38 head:3 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.7985 latency 3.45 ms memory 295 MB (4.4s)
+gen 5 offspring [16/40] qkv:33BB o:63B3 up:3833 down:3B33 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0765 latency 4.65 ms memory 557 MB (4.3s)
+gen 5 offspring [17/40] qkv:83BB o:6663 up:3366 down:3838 head:8 keep:1/1/1/1 -attn 0 -mlp 2 | delta +0.2390 latency 3.44 ms memory 297 MB (4.4s)
+gen 5 offspring [18/40] qkv:B33B o:B883 up:68BB down:BBBB head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0549 latency 5.79 ms memory 790 MB (4.2s)
+gen 5 offspring [19/40] qkv:8B36 o:666B up:B368 down:8863 head:3 keep:0.75/0.5/1/0.875 -attn 6 -mlp 2 | delta +0.8785 latency 3.18 ms memory 305 MB (4.4s)
+gen 5 offspring [20/40] qkv:33B3 o:38B8 up:B866 down:3B38 head:3 keep:1/0.625/0.625/0.5 -attn 0 -mlp 3 | delta +0.7417 latency 3.65 ms memory 340 MB (4.4s)
+gen 5 offspring [21/40] qkv:8386 o:38B3 up:3883 down:8363 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1010 latency 4.36 ms memory 499 MB (4.4s)
+gen 5 offspring [22/40] qkv:6368 o:BB83 up:6688 down:6386 head:6 keep:1/1/0.875/1 -attn 0 -mlp 3 | delta +0.3669 latency 3.35 ms memory 276 MB (4.4s)
+gen 5 offspring [23/40] qkv:836B o:6688 up:6BBB down:8BBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0467 latency 5.94 ms memory 833 MB (4.2s)
+gen 5 offspring [24/40] qkv:3B68 o:B386 up:3B33 down:3B38 head:8 keep:1/0.625/0.875/0.5 -attn 5 -mlp 4 | delta +1.0292 latency 3.08 ms memory 273 MB (4.3s)
+gen 5 offspring [25/40] qkv:B63B o:BB6B up:B63B down:3BB3 head:B keep:1/0.75/1/1 -attn 0 -mlp 0 | delta +0.0995 latency 5.51 ms memory 736 MB (4.2s)
+gen 5 offspring [26/40] qkv:B3BB o:3BBB up:6B83 down:BBBB head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0557 latency 5.64 ms memory 751 MB (4.2s)
+gen 5 offspring [27/40] qkv:BBB8 o:BB3B up:BBBB down:BBBB head:B keep:0.75/1/1/1 -attn 0 -mlp 0 | delta +0.1042 latency 6.51 ms memory 944 MB (4.1s)
+gen 5 offspring [28/40] qkv:3333 o:3333 up:3333 down:8333 head:8 keep:1/1/0.875/1 -attn 0 -mlp 6 | delta +0.7177 latency 3.20 ms memory 254 MB (4.4s)
+gen 5 offspring [29/40] qkv:6388 o:B666 up:3636 down:3368 head:8 keep:1/1/1/0.875 -attn 5 -mlp 0 | delta +0.4679 latency 3.18 ms memory 289 MB (4.5s)
+gen 5 offspring [30/40] qkv:B366 o:B3B3 up:3636 down:BB36 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0757 latency 4.86 ms memory 593 MB (4.3s)
+gen 5 offspring [31/40] qkv:63B8 o:BB86 up:6688 down:3383 head:3 keep:1/0.875/0.875/1 -attn 0 -mlp 5 | delta +0.5988 latency 3.35 ms memory 279 MB (4.4s)
+gen 5 offspring [32/40] qkv:BBBB o:333B up:6883 down:8BB3 head:3 keep:1/0.625/1/1 -attn 1 -mlp 0 | delta +0.2168 latency 3.88 ms memory 385 MB (4.4s)
+gen 5 offspring [33/40] qkv:8888 o:68B3 up:6883 down:8388 head:B keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.1527 latency 4.27 ms memory 490 MB (4.4s)
+gen 5 offspring [34/40] qkv:BBBB o:B66B up:BBB3 down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0137 latency 6.37 ms memory 915 MB (4.1s)
+gen 5 offspring [35/40] qkv:3633 o:3383 up:B3B3 down:3638 head:3 keep:1/1/1/1 -attn 0 -mlp 1 | delta +0.1509 latency 4.09 ms memory 440 MB (4.3s)
+gen 5 offspring [36/40] qkv:86B6 o:6663 up:8666 down:6B66 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1134 latency 4.50 ms memory 525 MB (4.3s)
+gen 5 offspring [37/40] qkv:6BBB o:33B8 up:3BB3 down:8B68 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0555 latency 5.36 ms memory 713 MB (4.2s)
+gen 5 offspring [38/40] qkv:3B38 o:B386 up:3B33 down:3B68 head:8 keep:1/1/0.875/0.5 -attn 4 -mlp 4 | delta +0.8648 latency 3.27 ms memory 304 MB (4.3s)
+gen 5 offspring [39/40] qkv:B368 o:8BB3 up:8686 down:8388 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1151 latency 4.40 ms memory 505 MB (4.3s)
+gen 5 offspring [40/40] qkv:8886 o:8888 up:3888 down:B863 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1406 latency 3.60 ms memory 322 MB (4.4s)
+=== generation 5/12 done in 173s (0 reused), HV 0.34609, front 29 points, 40/40 feasible, best delta loss +0.0000, fastest 3.02 ms, smallest 239 MB
+gen 6 offspring [1/40] qkv:BB68 o:BB86 up:3B3B down:8BB8 head:8 keep:1/0.625/0.875/0.625 -attn 5 -mlp 0 | delta +0.6385 latency 3.85 ms memory 422 MB (4.3s)
+gen 6 offspring [2/40] qkv:8888 o:8888 up:8888 down:8888 head:8 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.2074 latency 3.30 ms memory 274 MB (4.5s)
+gen 6 offspring [3/40] qkv:83BB o:6668 up:8366 down:8B38 head:6 keep:1/0.625/0.875/0.625 -attn 0 -mlp 3 | delta +0.5776 latency 3.32 ms memory 270 MB (4.4s)
+gen 6 offspring [4/40] qkv:6386 o:B666 up:3686 down:BB63 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1210 latency 3.87 ms memory 372 MB (4.4s)
+gen 6 offspring [5/40] qkv:BB8B o:BB68 up:633B down:3B83 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0516 latency 5.08 ms memory 648 MB (4.3s)
+gen 6 offspring [6/40] qkv:B868 o:6B66 up:6388 down:386B head:8 keep:1/1/0.875/1 -attn 5 -mlp 0 | delta +0.4204 latency 3.37 ms memory 325 MB (4.4s)
+gen 6 offspring [7/40] qkv:BB3B o:BBBB up:BB3B down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0120 latency 6.42 ms memory 920 MB (4.1s)
+gen 6 offspring [8/40] qkv:3333 o:8333 up:33B3 down:8333 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0856 latency 3.88 ms memory 390 MB (4.4s)
+gen 6 offspring [9/40] qkv:B368 o:BBBB up:6688 down:3386 head:6 keep:1/1/1/1 -attn 1 -mlp 2 | delta +0.2903 latency 3.49 ms memory 309 MB (4.4s)
+gen 6 offspring [10/40] qkv:63BB o:63B8 up:3B33 down:8B38 head:B keep:1/1/1/1 -attn 0 -mlp 6 | delta +0.6581 latency 4.46 ms memory 531 MB (4.3s)
+gen 6 offspring [11/40] qkv:833B o:B888 up:6BBB down:8BBB head:B keep:1/0.625/1/0.5 -attn 2 -mlp 0 | delta +0.4511 latency 5.24 ms memory 699 MB (4.2s)
+gen 6 offspring [12/40] qkv:BB3B o:BBBB up:BB8B down:3BBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0259 latency 6.20 ms memory 879 MB (4.1s)
+gen 6 offspring [13/40] qkv:838B o:6663 up:6366 down:3B38 head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1234 latency 3.71 ms memory 346 MB (4.5s)
+gen 6 offspring [14/40] qkv:8388 o:8888 up:8888 down:8888 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1705 latency 3.36 ms memory 276 MB (4.6s)
+gen 6 offspring [15/40] qkv:BBB6 o:3B8B up:3B33 down:386B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0477 latency 5.09 ms memory 650 MB (4.3s)
+gen 6 offspring [16/40] qkv:3866 o:B3B8 up:3686 down:B833 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0915 latency 4.59 ms memory 542 MB (4.4s)
+gen 6 offspring [17/40] qkv:33BB o:63B3 up:3883 down:3833 head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0925 latency 4.43 ms memory 514 MB (4.4s)
+gen 6 offspring [18/40] qkv:8363 o:8866 up:8833 down:8B68 head:3 keep:1/0.625/0.5/0.625 -attn 0 -mlp 3 | delta +0.7429 latency 3.21 ms memory 247 MB (4.4s)
+gen 6 offspring [19/40] qkv:3BBB o:B3BB up:BBB3 down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 6 | delta +0.5805 latency 5.48 ms memory 738 MB (4.2s)
+gen 6 offspring [20/40] qkv:8383 o:38B3 up:8863 down:3B38 head:3 keep:1/1/0.5/0.875 -attn 0 -mlp 1 | delta +0.3512 latency 3.57 ms memory 314 MB (4.4s)
+gen 6 offspring [21/40] qkv:3368 o:B3B3 up:3636 down:3338 head:B keep:1/1/0.875/1 -attn 5 -mlp 0 | delta +0.3883 latency 4.11 ms memory 496 MB (4.5s)
+gen 6 offspring [22/40] qkv:8833 o:883B up:68B3 down:8836 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1208 latency 3.80 ms memory 370 MB (4.5s)
+gen 6 offspring [23/40] qkv:BBBB o:333B up:6683 down:6B38 head:B keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.2648 latency 4.45 ms memory 525 MB (4.4s)
+gen 6 offspring [24/40] qkv:6388 o:B666 up:36B6 down:3368 head:8 keep:1/1/1/0.875 -attn 5 -mlp 0 | delta +0.4574 latency 3.51 ms memory 361 MB (4.5s)
+gen 6 offspring [25/40] qkv:8868 o:38B3 up:3883 down:3368 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1062 latency 4.36 ms memory 499 MB (4.5s)
+gen 6 offspring [26/40] qkv:8B3B o:BB83 up:BB8B down:633B head:B keep:1/1/0.875/1 -attn 0 -mlp 1 | delta +0.1178 latency 5.62 ms memory 771 MB (4.3s)
+gen 6 offspring [27/40] qkv:3B33 o:3333 up:33B3 down:8363 head:8 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1138 latency 3.78 ms memory 369 MB (4.5s)
+gen 6 offspring [28/40] qkv:8B83 o:38B8 up:8863 down:8B38 head:8 keep:1/0.75/0.5/1 -attn 0 -mlp 3 | delta +0.5863 latency 3.34 ms memory 272 MB (4.5s)
+gen 6 offspring [29/40] qkv:3BBB o:BBBB up:BBBB down:B33B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0087 latency 6.36 ms memory 920 MB (4.2s)
+gen 6 offspring [30/40] qkv:63B8 o:B666 up:6636 down:3B68 head:8 keep:1/1/0.875/0.875 -attn 5 -mlp 0 | delta +0.4865 latency 3.37 ms memory 323 MB (4.4s)
+gen 6 offspring [31/40] qkv:3833 o:3333 up:3333 down:3333 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0907 latency 3.56 ms memory 321 MB (4.6s)
+gen 6 offspring [32/40] qkv:BB3B o:B3BB up:BBBB down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0135 latency 6.51 ms memory 950 MB (4.1s)
+gen 6 offspring [33/40] qkv:8383 o:8883 up:8833 down:8388 head:8 keep:0.875/1/1/1 -attn 0 -mlp 0 | delta +0.1896 latency 3.40 ms memory 284 MB (4.4s)
+gen 6 offspring [34/40] qkv:B868 o:6386 up:68B8 down:8B88 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6108 latency 3.48 ms memory 354 MB (4.4s)
+gen 6 offspring [35/40] qkv:86B6 o:6663 up:6666 down:6866 head:8 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.3415 latency 3.32 ms memory 273 MB (4.4s)
+gen 6 offspring [36/40] qkv:3BB6 o:B388 up:3B63 down:3B68 head:8 keep:1/0.625/0.875/0.625 -attn 5 -mlp 4 | delta +0.9115 latency 3.13 ms memory 283 MB (4.4s)
+gen 6 offspring [37/40] qkv:8868 o:83BB up:B883 down:8B6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0837 latency 5.11 ms memory 649 MB (4.3s)
+gen 6 offspring [38/40] qkv:3333 o:3336 up:8333 down:6333 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0944 latency 3.54 ms memory 315 MB (4.5s)
+gen 6 offspring [39/40] qkv:BBBB o:B6B3 up:3BBB down:B6B8 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0279 latency 5.97 ms memory 839 MB (4.2s)
+gen 6 offspring [40/40] qkv:B868 o:6383 up:3888 down:6888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6113 latency 3.05 ms memory 263 MB (4.5s)
+=== generation 6/12 done in 175s (0 reused), HV 0.34917, front 33 points, 40/40 feasible, best delta loss +0.0000, fastest 3.02 ms, smallest 239 MB
+gen 7 offspring [1/40] qkv:8386 o:38B3 up:8663 down:8338 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8421 latency 3.11 ms memory 225 MB (4.5s)
+gen 7 offspring [2/40] qkv:3363 o:3336 up:8333 down:8333 head:3 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.3072 latency 3.39 ms memory 289 MB (4.5s)
+gen 7 offspring [3/40] qkv:BBB6 o:336B up:BBB3 down:B8BB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0288 latency 6.09 ms memory 861 MB (4.2s)
+gen 7 offspring [4/40] qkv:B38B o:B386 up:3B83 down:8883 head:B keep:1/0.875/1/1 -attn 5 -mlp 0 | delta +0.3708 latency 4.40 ms memory 564 MB (4.3s)
+gen 7 offspring [5/40] qkv:8883 o:8888 up:8833 down:8B8B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1216 latency 3.87 ms memory 375 MB (4.5s)
+gen 7 offspring [6/40] qkv:333B o:BB33 up:3B3B down:33BB head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0517 latency 4.72 ms memory 559 MB (4.4s)
+gen 7 offspring [7/40] qkv:B336 o:BBB3 up:3636 down:BB36 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0708 latency 4.90 ms memory 600 MB (4.3s)
+gen 7 offspring [8/40] qkv:6388 o:6663 up:3688 down:3888 head:8 keep:1/1/0.875/0.875 -attn 6 -mlp 0 | delta +0.5222 latency 3.02 ms memory 265 MB (4.5s)
+gen 7 offspring [9/40] qkv:86B6 o:3663 up:36B6 down:3B66 head:8 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1245 latency 3.94 ms memory 398 MB (4.5s)
+gen 7 offspring [10/40] qkv:B338 o:6383 up:8388 down:8888 head:8 keep:1/0.625/0.875/1 -attn 5 -mlp 6 | delta +1.1093 latency 2.83 ms memory 228 MB (4.5s)
+gen 7 offspring [11/40] qkv:BBB6 o:6383 up:3833 down:B86B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0573 latency 4.85 ms memory 596 MB (4.4s)
+gen 7 offspring [12/40] qkv:BBBB o:B6BB up:6B83 down:BBBB head:B keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0522 latency 5.68 ms memory 759 MB (4.2s)
+gen 7 offspring [13/40] qkv:8888 o:8833 up:8838 down:8888 head:3 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.1809 latency 3.38 ms memory 292 MB (4.5s)
+gen 7 offspring [14/40] qkv:8363 o:B3B3 up:363B down:3B38 head:6 keep:1/1/0.875/1 -attn 0 -mlp 2 | delta +0.2545 latency 3.95 ms memory 400 MB (4.5s)
+gen 7 offspring [15/40] qkv:3366 o:B3B3 up:BB86 down:B333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0691 latency 5.27 ms memory 693 MB (4.5s)
+gen 7 offspring [16/40] qkv:3B3B o:BBBB up:BB8B down:333B head:B keep:1/1/1/1 -attn 2 -mlp 0 | delta +0.0972 latency 5.64 ms memory 792 MB (4.2s)
+gen 7 offspring [17/40] qkv:86B8 o:6666 up:6666 down:3868 head:8 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1601 latency 3.43 ms memory 289 MB (4.5s)
+gen 7 offspring [18/40] qkv:3833 o:3333 up:3333 down:8333 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0952 latency 3.55 ms memory 318 MB (4.5s)
+gen 7 offspring [19/40] qkv:6363 o:6BB8 up:B386 down:BB33 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0689 latency 5.14 ms memory 656 MB (4.4s)
+gen 7 offspring [20/40] qkv:6363 o:8BB8 up:B686 down:BB33 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0750 latency 5.12 ms memory 653 MB (4.3s)
+gen 7 offspring [21/40] qkv:833B o:8866 up:8836 down:6B68 head:3 keep:1/0.625/0.5/0.625 -attn 0 -mlp 1 | delta +0.5788 latency 3.36 ms memory 272 MB (4.5s)
+gen 7 offspring [22/40] qkv:BBBB o:B68B up:3B33 down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0289 latency 5.53 ms memory 733 MB (4.3s)
+gen 7 offspring [23/40] qkv:BBB6 o:3BBB up:8888 down:BBBB head:8 keep:1/0.625/0.875/1 -attn 0 -mlp 0 | delta +0.2175 latency 4.25 ms memory 438 MB (4.4s)
+gen 7 offspring [24/40] qkv:3B3B o:BBBB up:BB8B down:3838 head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0806 latency 4.70 ms memory 562 MB (4.3s)
+gen 7 offspring [25/40] qkv:BB33 o:B3BB up:B333 down:BB33 head:B keep:1/1/1/1 -attn 2 -mlp 0 | delta +0.1114 latency 5.18 ms memory 684 MB (4.3s)
+gen 7 offspring [26/40] qkv:BB6B o:B3BB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0119 latency 6.70 ms memory 985 MB (4.1s)
+gen 7 offspring [27/40] qkv:8888 o:3888 up:8836 down:8B68 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1579 latency 3.60 ms memory 321 MB (4.5s)
+gen 7 offspring [28/40] qkv:BBBB o:63B3 up:6863 down:6868 head:B keep:1/1/1/1 -attn 0 -mlp 4 | delta +0.4085 latency 4.34 ms memory 501 MB (4.3s)
+gen 7 offspring [29/40] qkv:3863 o:3336 up:3833 down:8333 head:8 keep:1/0.875/1/1 -attn 0 -mlp 0 | delta +0.1428 latency 3.44 ms memory 294 MB (4.5s)
+gen 7 offspring [30/40] qkv:B868 o:338B up:3B88 down:6886 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5597 latency 3.26 ms memory 306 MB (4.5s)
+gen 7 offspring [31/40] qkv:BBBB o:3BB3 up:3BBB down:B6B8 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0259 latency 5.97 ms memory 839 MB (4.2s)
+gen 7 offspring [32/40] qkv:3333 o:8388 up:3363 down:833B head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1014 latency 3.67 ms memory 338 MB (4.5s)
+gen 7 offspring [33/40] qkv:B386 o:38B8 up:8868 down:6B36 head:B keep:1/0.625/0.625/0.5 -attn 0 -mlp 1 | delta +0.5968 latency 4.21 ms memory 464 MB (4.4s)
+gen 7 offspring [34/40] qkv:3BBB o:BBBB up:36BB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0141 latency 6.08 ms memory 845 MB (4.2s)
+gen 7 offspring [35/40] qkv:6386 o:B663 up:3636 down:6366 head:8 keep:1/1/1/1 -attn 6 -mlp 3 | delta +0.6465 latency 3.01 ms memory 269 MB (4.4s)
+gen 7 offspring [36/40] qkv:8388 o:8888 up:8888 down:3888 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1610 latency 3.37 ms memory 278 MB (4.5s)
+gen 7 offspring [37/40] qkv:83B6 o:886B up:8863 down:3338 head:3 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8201 latency 3.19 ms memory 243 MB (4.5s)
+gen 7 offspring [38/40] qkv:63B6 o:88B3 up:8883 down:33B8 head:B keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8117 latency 4.10 ms memory 445 MB (4.4s)
+gen 7 offspring [39/40] qkv:BB3B o:BBBB up:B33B down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0169 latency 6.10 ms memory 848 MB (4.2s)
+gen 7 offspring [40/40] qkv:8363 o:6B68 up:B366 down:BB33 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0833 latency 4.28 ms memory 463 MB (4.4s)
+=== generation 7/12 done in 176s (0 reused), HV 0.35387, front 37 points, 40/40 feasible, best delta loss +0.0000, fastest 3.01 ms, smallest 225 MB
+gen 8 offspring [1/40] qkv:6888 o:B888 up:3886 down:8388 head:8 keep:1/1/1/1 -attn 1 -mlp 3 | delta +0.4164 latency 3.26 ms memory 268 MB (4.5s)
+gen 8 offspring [2/40] qkv:B6B8 o:B6B3 up:38B8 down:B6B8 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0690 latency 5.19 ms memory 668 MB (4.3s)
+gen 8 offspring [3/40] qkv:8B86 o:38B3 up:866B down:B3BB head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8038 latency 3.71 ms memory 342 MB (4.5s)
+gen 8 offspring [4/40] qkv:BBBB o:338B up:3B33 down:B86B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0343 latency 5.28 ms memory 689 MB (4.3s)
+gen 8 offspring [5/40] qkv:38B8 o:6336 up:388B down:B8B8 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5760 latency 3.80 ms memory 414 MB (4.4s)
+gen 8 offspring [6/40] qkv:BB6B o:B68B up:6B6B down:BB6B head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0619 latency 4.90 ms memory 590 MB (4.3s)
+gen 8 offspring [7/40] qkv:BBBB o:BBBB up:3BBB down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0079 latency 6.27 ms memory 893 MB (4.2s)
+gen 8 offspring [8/40] qkv:8BBB o:BB6B up:B3B3 down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0244 latency 5.86 ms memory 805 MB (4.2s)
+gen 8 offspring [9/40] qkv:6386 o:B383 up:8888 down:3888 head:8 keep:0.75/0.5/1/1 -attn 5 -mlp 0 | delta +0.7809 latency 2.99 ms memory 246 MB (4.5s)
+gen 8 offspring [10/40] qkv:8383 o:B833 up:8B63 down:8B38 head:3 keep:1/1/0.5/0.5 -attn 0 -mlp 3 | delta +0.7105 latency 3.55 ms memory 319 MB (4.5s)
+gen 8 offspring [11/40] qkv:B33B o:333B up:33B3 down:33B3 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0493 latency 5.03 ms memory 640 MB (4.4s)
+gen 8 offspring [12/40] qkv:BBBB o:B68B up:3BBB down:B6B8 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0304 latency 5.97 ms memory 839 MB (4.2s)
+gen 8 offspring [13/40] qkv:6386 o:3863 up:3633 down:8B66 head:8 keep:1/1/0.875/1 -attn 6 -mlp 3 | delta +0.6540 latency 3.09 ms memory 284 MB (4.6s)
+gen 8 offspring [14/40] qkv:8386 o:38B3 up:8863 down:8338 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8546 latency 3.10 ms memory 224 MB (4.6s)
+gen 8 offspring [15/40] qkv:866B o:6863 up:B666 down:6866 head:8 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.3338 latency 3.66 ms memory 348 MB (4.5s)
+gen 8 offspring [16/40] qkv:3B8B o:BB68 up:633B down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0367 latency 5.44 ms memory 714 MB (4.3s)
+gen 8 offspring [17/40] qkv:3333 o:3B3B up:333B down:B3B3 head:8 keep:1/1/0.875/1 -attn 0 -mlp 6 | delta +0.6830 latency 3.89 ms memory 393 MB (4.4s)
+gen 8 offspring [18/40] qkv:366B o:66B6 up:3666 down:6666 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0806 latency 4.39 ms memory 506 MB (4.5s)
+gen 8 offspring [19/40] qkv:B368 o:66B3 up:3686 down:B368 head:B keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.1223 latency 4.53 ms memory 541 MB (4.5s)
+gen 8 offspring [20/40] qkv:B3B6 o:386B up:3863 down:B368 head:B keep:1/0.625/0.875/0.875 -attn 0 -mlp 3 | delta +0.4316 latency 4.42 ms memory 511 MB (4.5s)
+gen 8 offspring [21/40] qkv:8386 o:8663 up:8638 down:6866 head:8 keep:1/1/1/1 -attn 6 -mlp 0 | delta +0.4696 latency 3.06 ms memory 276 MB (4.7s)
+gen 8 offspring [22/40] qkv:B36B o:6383 up:3B8B down:6888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5320 latency 3.60 ms memory 384 MB (4.7s)
+gen 8 offspring [23/40] qkv:B33B o:BBBB up:BBB3 down:8B38 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0512 latency 5.78 ms memory 799 MB (4.2s)
+gen 8 offspring [24/40] qkv:BBB6 o:B68B up:3B33 down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0385 latency 5.48 ms memory 724 MB (4.3s)
+gen 8 offspring [25/40] qkv:BB6B o:BB6B up:86B8 down:8B8B head:B keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1063 latency 5.21 ms memory 669 MB (4.3s)
+gen 8 offspring [26/40] qkv:86B6 o:63B3 up:B6B6 down:68B6 head:B keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.2878 latency 5.03 ms memory 649 MB (4.4s)
+gen 8 offspring [27/40] qkv:3333 o:3333 up:B333 down:33B3 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0760 latency 4.08 ms memory 429 MB (4.5s)
+gen 8 offspring [28/40] qkv:B363 o:6668 up:BB66 down:BBB3 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0714 latency 4.80 ms memory 573 MB (4.4s)
+gen 8 offspring [29/40] qkv:B388 o:6666 up:B688 down:8883 head:8 keep:1/1/0.875/0.875 -attn 3 -mlp 0 | delta +0.3015 latency 3.55 ms memory 350 MB (8.4s)
+gen 8 offspring [30/40] qkv:333B o:3BB8 up:3836 down:36BB head:6 keep:1/0.625/1/1 -attn 0 -mlp 0 | delta +0.1794 latency 3.92 ms memory 381 MB (5.3s)
+gen 8 offspring [31/40] qkv:3BB3 o:BBB3 up:BB3B down:BB3B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0343 latency 5.32 ms memory 682 MB (4.4s)
+gen 8 offspring [32/40] qkv:BBBB o:B6B3 up:3B33 down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0269 latency 5.53 ms memory 734 MB (4.3s)
+gen 8 offspring [33/40] qkv:8383 o:B8B8 up:8866 down:6338 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8524 latency 3.14 ms memory 230 MB (5.2s)
+gen 8 offspring [34/40] qkv:BBB6 o:BBBB up:6BBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0135 latency 6.40 ms memory 917 MB (7.9s)
+gen 8 offspring [35/40] qkv:BBBB o:BBBB up:BBBB down:3383 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0221 latency 6.00 ms memory 854 MB (4.2s)
+gen 8 offspring [36/40] qkv:B33B o:B3B3 up:BBB3 down:8B6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0396 latency 5.89 ms memory 822 MB (4.3s)
+gen 8 offspring [37/40] qkv:6BB6 o:BB6B up:63BB down:BBBB head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0525 latency 5.13 ms memory 633 MB (4.3s)
+gen 8 offspring [38/40] qkv:6366 o:8B63 up:3688 down:3883 head:8 keep:1/1/0.875/0.875 -attn 6 -mlp 0 | delta +0.5103 latency 3.05 ms memory 272 MB (4.5s)
+gen 8 offspring [39/40] qkv:8BB6 o:838B up:8B36 down:383B head:3 keep:1/1/0.625/0.625 -attn 0 -mlp 0 | delta +0.3445 latency 3.93 ms memory 392 MB (4.5s)
+gen 8 offspring [40/40] qkv:BBB3 o:B6B3 up:3BBB down:B638 head:B keep:1/1/0.5/1 -attn 0 -mlp 0 | delta +0.1949 latency 5.47 ms memory 734 MB (4.3s)
+=== generation 8/12 done in 185s (0 reused), HV 0.35639, front 40 points, 40/40 feasible, best delta loss +0.0000, fastest 2.99 ms, smallest 224 MB
+gen 9 offspring [1/40] qkv:BBBB o:338B up:3333 down:B363 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0458 latency 4.78 ms memory 583 MB (4.3s)
+gen 9 offspring [2/40] qkv:6BB6 o:BB6B up:66B6 down:6B66 head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0929 latency 4.18 ms memory 442 MB (4.5s)
+gen 9 offspring [3/40] qkv:8336 o:BB33 up:3B3B down:33B8 head:3 keep:1/1/1/1 -attn 1 -mlp 1 | delta +0.1738 latency 4.34 ms memory 495 MB (4.4s)
+gen 9 offspring [4/40] qkv:636B o:B383 up:8BBB down:3888 head:8 keep:0.75/0.5/1/1 -attn 5 -mlp 3 | delta +0.8862 latency 3.67 ms memory 405 MB (4.4s)
+gen 9 offspring [5/40] qkv:B6B8 o:338B up:3B63 down:886B head:3 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5116 latency 3.59 ms memory 371 MB (4.5s)
+gen 9 offspring [6/40] qkv:3333 o:3B36 up:6333 down:6B33 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0857 latency 3.78 ms memory 359 MB (4.5s)
+gen 9 offspring [7/40] qkv:3388 o:6663 up:3688 down:3888 head:8 keep:1/1/0.875/1 -attn 6 -mlp 0 | delta +0.4654 latency 3.04 ms memory 271 MB (4.5s)
+gen 9 offspring [8/40] qkv:BBBB o:B6B3 up:3B33 down:BB6B head:B keep:1/1/1/1 -attn 2 -mlp 0 | delta +0.0933 latency 5.39 ms memory 726 MB (4.2s)
+gen 9 offspring [9/40] qkv:3BBB o:BBBB up:B6BB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0092 latency 6.41 ms memory 917 MB (4.1s)
+gen 9 offspring [10/40] qkv:66B6 o:6663 up:6666 down:6866 head:8 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.3387 latency 3.32 ms memory 273 MB (4.5s)
+gen 9 offspring [11/40] qkv:33B3 o:333B up:BB33 down:3383 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0671 latency 4.28 ms memory 478 MB (4.5s)
+gen 9 offspring [12/40] qkv:36B6 o:6633 up:6666 down:6866 head:8 keep:1/1/1/1 -attn 0 -mlp 5 | delta +0.5752 latency 3.24 ms memory 259 MB (4.5s)
+gen 9 offspring [13/40] qkv:8363 o:88B6 up:3833 down:8B68 head:3 keep:1/1/0.5/0.625 -attn 0 -mlp 3 | delta +0.6312 latency 3.37 ms memory 279 MB (4.5s)
+gen 9 offspring [14/40] qkv:6BBB o:BBBB up:3BB8 down:BBBB head:3 keep:1/1/1/1 -attn 5 -mlp 0 | delta +0.3224 latency 4.89 ms memory 635 MB (4.3s)
+gen 9 offspring [15/40] qkv:333B o:BB3B up:BB3B down:3BBB head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0651 latency 5.23 ms memory 662 MB (4.3s)
+gen 9 offspring [16/40] qkv:8B63 o:6383 up:B883 down:6888 head:6 keep:1/1/1/1 -attn 5 -mlp 0 | delta +0.4168 latency 3.50 ms memory 362 MB (4.4s)
+gen 9 offspring [17/40] qkv:BBBB o:B3BB up:38BB down:3B3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0271 latency 5.69 ms memory 773 MB (4.2s)
+gen 9 offspring [18/40] qkv:B33B o:B33B up:33B3 down:3363 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0512 latency 4.87 ms memory 609 MB (4.3s)
+gen 9 offspring [19/40] qkv:8888 o:8883 up:8888 down:8888 head:8 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.3899 latency 3.21 ms memory 253 MB (4.4s)
+gen 9 offspring [20/40] qkv:3338 o:3B33 up:6333 down:33B3 head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1067 latency 3.73 ms memory 349 MB (4.5s)
+gen 9 offspring [21/40] qkv:3333 o:3333 up:3B33 down:383B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0749 latency 4.07 ms memory 427 MB (4.4s)
+gen 9 offspring [22/40] qkv:B66B o:66B6 up:3B6B down:B63B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0357 latency 5.52 ms memory 741 MB (4.2s)
+gen 9 offspring [23/40] qkv:338B o:38B3 up:8863 down:833B head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8214 latency 3.26 ms memory 253 MB (4.4s)
+gen 9 offspring [24/40] qkv:BB36 o:BBBB up:B888 down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0554 latency 5.66 ms memory 753 MB (4.2s)
+gen 9 offspring [25/40] qkv:B366 o:6B86 up:8868 down:3888 head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1297 latency 3.49 ms memory 301 MB (4.4s)
+gen 9 offspring [26/40] qkv:3383 o:3633 up:6333 down:33B3 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0879 latency 3.74 ms memory 353 MB (4.5s)
+gen 9 offspring [27/40] qkv:8386 o:8663 up:8638 down:6866 head:8 keep:1/1/1/0.875 -attn 6 -mlp 0 | delta +0.5146 latency 3.04 ms memory 270 MB (4.5s)
+gen 9 offspring [28/40] qkv:8363 o:8833 up:8833 down:8B68 head:3 keep:1/0.625/0.5/0.625 -attn 0 -mlp 3 | delta +0.7422 latency 3.22 ms memory 248 MB (4.5s)
+gen 9 offspring [29/40] qkv:8BBB o:BB6B up:33B3 down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0295 latency 5.54 ms memory 733 MB (4.2s)
+gen 9 offspring [30/40] qkv:BB3B o:BBB6 up:33BB down:3333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0375 latency 5.28 ms memory 698 MB (4.2s)
+gen 9 offspring [31/40] qkv:6333 o:3363 up:3333 down:8B33 head:8 keep:1/1/0.875/1 -attn 0 -mlp 4 | delta +0.4500 latency 3.38 ms memory 285 MB (4.4s)
+gen 9 offspring [32/40] qkv:BBBB o:B663 up:8B33 down:BB6B head:B keep:1/0.625/1/1 -attn 0 -mlp 0 | delta +0.1226 latency 5.20 ms memory 664 MB (4.2s)
+gen 9 offspring [33/40] qkv:B386 o:8B63 up:B68B down:3883 head:6 keep:1/0.75/0.875/0.875 -attn 3 -mlp 0 | delta +0.3114 latency 3.87 ms memory 418 MB (4.4s)
+gen 9 offspring [34/40] qkv:BB3B o:BBB3 up:3BBB down:B3BB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0154 latency 6.18 ms memory 878 MB (4.2s)
+gen 9 offspring [35/40] qkv:B8B8 o:BB6B up:33B8 down:BB3B head:3 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.2601 latency 4.38 ms memory 487 MB (4.3s)
+gen 9 offspring [36/40] qkv:6386 o:BB83 up:8B88 down:B888 head:8 keep:0.75/0.5/1/1 -attn 5 -mlp 0 | delta +0.7173 latency 3.34 ms memory 315 MB (4.4s)
+gen 9 offspring [37/40] qkv:BBBB o:368B up:3B33 down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0270 latency 5.69 ms memory 764 MB (4.2s)
+gen 9 offspring [38/40] qkv:8386 o:38B8 up:8863 down:8338 head:6 keep:1/1/0.5/0.5 -attn 0 -mlp 3 | delta +0.7569 latency 3.15 ms memory 234 MB (4.5s)
+gen 9 offspring [39/40] qkv:6333 o:B386 up:B688 down:6383 head:6 keep:1/0.875/0.875/1 -attn 0 -mlp 3 | delta +0.3734 latency 3.64 ms memory 342 MB (4.5s)
+gen 9 offspring [40/40] qkv:B886 o:BB88 up:3B83 down:886B head:B keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.2908 latency 4.73 ms memory 578 MB (4.4s)
+=== generation 9/12 done in 175s (0 reused), HV 0.36114, front 40 points, 40/40 feasible, best delta loss +0.0000, fastest 2.99 ms, smallest 224 MB
+gen 10 offspring [1/40] qkv:6888 o:6668 up:3888 down:B888 head:8 keep:1/1/0.875/0.875 -attn 6 -mlp 0 | delta +0.5202 latency 3.20 ms memory 299 MB (4.5s)
+gen 10 offspring [2/40] qkv:8BBB o:6863 up:363B down:8366 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0629 latency 4.79 ms memory 595 MB (4.3s)
+gen 10 offspring [3/40] qkv:3333 o:3333 up:3333 down:3333 head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1052 latency 3.54 ms memory 315 MB (4.5s)
+gen 10 offspring [4/40] qkv:3333 o:3333 up:3B33 down:386B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0575 latency 4.89 ms memory 612 MB (4.3s)
+gen 10 offspring [5/40] qkv:3B88 o:8663 up:3688 down:3888 head:8 keep:1/1/0.875/1 -attn 6 -mlp 0 | delta +0.4629 latency 3.07 ms memory 277 MB (4.4s)
+gen 10 offspring [6/40] qkv:BB3B o:BBBB up:BBBB down:BB83 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0213 latency 6.35 ms memory 918 MB (4.1s)
+gen 10 offspring [7/40] qkv:B386 o:B383 up:8388 down:B883 head:8 keep:0.75/0.875/1/1 -attn 5 -mlp 0 | delta +0.5530 latency 3.28 ms memory 303 MB (4.4s)
+gen 10 offspring [8/40] qkv:BBBB o:BB3B up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0017 latency 6.74 ms memory 994 MB (4.1s)
+gen 10 offspring [9/40] qkv:8B86 o:38BB up:3863 down:8338 head:8 keep:1/0.625/1/0.625 -attn 0 -mlp 3 | delta +0.5967 latency 3.31 ms memory 265 MB (4.4s)
+gen 10 offspring [10/40] qkv:8668 o:6663 up:6868 down:6888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6031 latency 3.00 ms memory 252 MB (4.5s)
+gen 10 offspring [11/40] qkv:6368 o:3633 up:3683 down:3888 head:8 keep:1/1/1/0.875 -attn 6 -mlp 0 | delta +0.4886 latency 3.06 ms memory 276 MB (4.5s)
+gen 10 offspring [12/40] qkv:BBB3 o:3B8B up:BB33 down:B86B head:B keep:1/1/1/1 -attn 0 -mlp 2 | delta +0.1610 latency 5.46 ms memory 731 MB (4.2s)
+gen 10 offspring [13/40] qkv:33BB o:B8B6 up:B36B down:BBB8 head:B keep:1/1/1/0.5 -attn 0 -mlp 1 | delta +0.3472 latency 5.41 ms memory 711 MB (4.2s)
+gen 10 offspring [14/40] qkv:BB66 o:BBBB up:38B8 down:BB86 head:8 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.1211 latency 4.34 ms memory 479 MB (4.3s)
+gen 10 offspring [15/40] qkv:3333 o:6333 up:3B38 down:383B head:8 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.1130 latency 3.96 ms memory 402 MB (4.4s)
+gen 10 offspring [16/40] qkv:333B o:B333 up:3B3B down:33BB head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0530 latency 4.68 ms memory 552 MB (4.4s)
+gen 10 offspring [17/40] qkv:8686 o:38B3 up:8883 down:8338 head:6 keep:1/0.625/0.5/1 -attn 1 -mlp 3 | delta +0.6572 latency 3.15 ms memory 245 MB (4.4s)
+gen 10 offspring [18/40] qkv:B888 o:6383 up:3888 down:6888 head:8 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.3515 latency 3.28 ms memory 269 MB (4.5s)
+gen 10 offspring [19/40] qkv:BBBB o:BBBB up:3BBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0042 latency 6.46 ms memory 929 MB (4.1s)
+gen 10 offspring [20/40] qkv:8388 o:8883 up:8688 down:8888 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1647 latency 3.37 ms memory 278 MB (4.4s)
+gen 10 offspring [21/40] qkv:B668 o:BBBB up:6BB6 down:BB3B head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0758 latency 4.91 ms memory 587 MB (4.3s)
+gen 10 offspring [22/40] qkv:3333 o:3333 up:3333 down:8333 head:8 keep:1/1/1/1 -attn 0 -mlp 6 | delta +0.7017 latency 3.21 ms memory 257 MB (4.4s)
+gen 10 offspring [23/40] qkv:BBB6 o:338B up:3B33 down:B83B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0607 latency 4.43 ms memory 494 MB (4.4s)
+gen 10 offspring [24/40] qkv:8888 o:6883 up:8888 down:8688 head:8 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.3895 latency 3.21 ms memory 254 MB (4.5s)
+gen 10 offspring [25/40] qkv:BBBB o:BBBB up:BBBB down:36BB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0096 latency 6.39 ms memory 927 MB (4.1s)
+gen 10 offspring [26/40] qkv:6BBB o:338B up:3833 down:3368 head:B keep:1/0.625/1/1 -attn 0 -mlp 0 | delta +0.1622 latency 4.44 ms memory 515 MB (4.3s)
+gen 10 offspring [27/40] qkv:8386 o:68B3 up:8663 down:8338 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8422 latency 3.11 ms memory 224 MB (4.4s)
+gen 10 offspring [28/40] qkv:83BB o:BB63 up:63B3 down:BBBB head:B keep:1/1/0.5/0.875 -attn 0 -mlp 0 | delta +0.2273 latency 5.22 ms memory 661 MB (4.3s)
+gen 10 offspring [29/40] qkv:B8B6 o:6683 up:3686 down:6866 head:8 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.3463 latency 3.37 ms memory 283 MB (4.4s)
+gen 10 offspring [30/40] qkv:33B3 o:636B up:BB38 down:3383 head:3 keep:1/1/0.875/1 -attn 1 -mlp 0 | delta +0.1275 latency 4.17 ms memory 464 MB (4.4s)
+gen 10 offspring [31/40] qkv:3BB6 o:BBB3 up:3B3B down:BB3B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0427 latency 5.00 ms memory 610 MB (4.4s)
+gen 10 offspring [32/40] qkv:6B86 o:3BB3 up:86B3 down:833B head:6 keep:1/1/0.5/1 -attn 0 -mlp 2 | delta +0.3982 latency 3.75 ms memory 352 MB (4.6s)
+gen 10 offspring [33/40] qkv:638B o:B386 up:8B8B down:38B3 head:B keep:0.75/0.5/1/1 -attn 4 -mlp 0 | delta +0.5607 latency 4.69 ms memory 609 MB (4.4s)
+gen 10 offspring [34/40] qkv:3388 o:3663 up:3383 down:3888 head:3 keep:1/1/1/1 -attn 6 -mlp 0 | delta +0.4038 latency 3.16 ms memory 298 MB (4.4s)
+gen 10 offspring [35/40] qkv:3333 o:3B33 up:3333 down:3336 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0849 latency 3.60 ms memory 326 MB (4.5s)
+gen 10 offspring [36/40] qkv:8888 o:8888 up:8868 down:8888 head:8 keep:1/1/1/0.5 -attn 0 -mlp 0 | delta +0.4286 latency 3.27 ms memory 256 MB (4.5s)
+gen 10 offspring [37/40] qkv:8868 o:8883 up:8888 down:8888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6732 latency 2.98 ms memory 247 MB (4.5s)
+gen 10 offspring [38/40] qkv:8B3B o:BB6B up:B3B3 down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0320 latency 5.82 ms memory 796 MB (4.2s)
+gen 10 offspring [39/40] qkv:B6BB o:6663 up:B6B6 down:68B3 head:8 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.2995 latency 4.20 ms memory 462 MB (4.3s)
+gen 10 offspring [40/40] qkv:6BB6 o:BBBB up:6B6B down:BB63 head:B keep:0.875/1/1/1 -attn 0 -mlp 0 | delta +0.0777 latency 5.58 ms memory 748 MB (4.2s)
+=== generation 10/12 done in 174s (0 reused), HV 0.36326, front 40 points, 40/40 feasible, best delta loss +0.0000, fastest 2.98 ms, smallest 224 MB
+gen 11 offspring [1/40] qkv:3BB6 o:BBBB up:BB3B down:BBBB head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0327 latency 5.56 ms memory 724 MB (4.2s)
+gen 11 offspring [2/40] qkv:8338 o:3333 up:3B38 down:383B head:3 keep:1/1/1/1 -attn 4 -mlp 0 | delta +0.2781 latency 3.82 ms memory 414 MB (4.4s)
+gen 11 offspring [3/40] qkv:BBB6 o:366B up:333B down:3838 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0799 latency 4.03 ms memory 420 MB (4.4s)
+gen 11 offspring [4/40] qkv:3336 o:38B3 up:8663 down:8333 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3 | delta +0.8200 latency 3.12 ms memory 227 MB (4.4s)
+gen 11 offspring [5/40] qkv:8868 o:8888 up:8888 down:8888 head:8 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.2062 latency 3.30 ms memory 274 MB (4.5s)
+gen 11 offspring [6/40] qkv:83BB o:BB3B up:33B3 down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0327 latency 5.50 ms memory 725 MB (4.3s)
+gen 11 offspring [7/40] qkv:BBBB o:B6B3 up:3BBB down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0117 latency 6.18 ms memory 878 MB (4.1s)
+gen 11 offspring [8/40] qkv:8386 o:38B3 up:886B down:8333 head:3 keep:1/1/0.5/0.625 -attn 0 -mlp 0 | delta +0.4297 latency 3.55 ms memory 315 MB (4.4s)
+gen 11 offspring [9/40] qkv:66B6 o:6BB3 up:666B down:6866 head:8 keep:1/1/1/1 -attn 0 -mlp 3 | delta +0.3230 latency 3.74 ms memory 362 MB (4.4s)
+gen 11 offspring [10/40] qkv:BBBB o:BBBB up:BBB6 down:3363 head:B keep:1/1/1/1 -attn 0 -mlp 1 | delta +0.0920 latency 5.57 ms memory 760 MB (4.2s)
+gen 11 offspring [11/40] qkv:3BBB o:BBBB up:B8BB down:BB8B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0330 latency 5.37 ms memory 690 MB (4.2s)
+gen 11 offspring [12/40] qkv:8888 o:38B3 up:8863 down:8338 head:6 keep:1/0.625/1/0.5 -attn 0 -mlp 3 | delta +0.7086 latency 3.19 ms memory 242 MB (4.4s)
+gen 11 offspring [13/40] qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 1 | delta +0.0552 latency 6.65 ms memory 974 MB (4.1s)
+gen 11 offspring [14/40] qkv:B36B o:BB83 up:3BBB down:8BBB head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0647 latency 5.21 ms memory 659 MB (4.2s)
+gen 11 offspring [15/40] qkv:B8BB o:B883 up:388B down:6B63 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0671 latency 5.00 ms memory 634 MB (4.3s)
+gen 11 offspring [16/40] qkv:8663 o:3333 up:6B63 down:383B head:8 keep:1/1/1/1 -attn 4 -mlp 0 | delta +0.2844 latency 3.75 ms memory 400 MB (4.4s)
+gen 11 offspring [17/40] qkv:3BBB o:BBB3 up:36BB down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0193 latency 5.85 ms memory 802 MB (4.2s)
+gen 11 offspring [18/40] qkv:366B o:6663 up:6663 down:6888 head:8 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.3218 latency 3.29 ms memory 272 MB (4.4s)
+gen 11 offspring [19/40] qkv:3388 o:3383 up:3B83 down:B68B head:3 keep:1/1/1/1 -attn 6 -mlp 0 | delta +0.3616 latency 3.88 ms memory 445 MB (4.4s)
+gen 11 offspring [20/40] qkv:8383 o:3333 up:3333 down:3338 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1024 latency 3.55 ms memory 318 MB (4.5s)
+gen 11 offspring [21/40] qkv:8888 o:8883 up:8888 down:8888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6701 latency 2.98 ms memory 247 MB (4.5s)
+gen 11 offspring [22/40] qkv:3B3B o:BB63 up:3B3B down:33BB head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0498 latency 4.76 ms memory 567 MB (4.3s)
+gen 11 offspring [23/40] qkv:BBB3 o:BBB3 up:3B33 down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0293 latency 5.53 ms memory 732 MB (4.2s)
+gen 11 offspring [24/40] qkv:333B o:B333 up:3B33 down:33B6 head:6 keep:1/0.625/1/0.875 -attn 0 -mlp 3 | delta +0.4144 latency 3.68 ms memory 344 MB (4.4s)
+gen 11 offspring [25/40] qkv:BB3B o:B666 up:33B6 down:3333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0567 latency 4.86 ms memory 609 MB (4.3s)
+gen 11 offspring [26/40] qkv:66B6 o:6663 up:666B down:6886 head:8 keep:1/1/1/1 -attn 0 -mlp 2 | delta +0.2500 latency 3.70 ms memory 355 MB (4.4s)
+gen 11 offspring [27/40] qkv:33B3 o:333B up:3B33 down:33B3 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0502 latency 4.99 ms memory 632 MB (4.3s)
+gen 11 offspring [28/40] qkv:8388 o:6663 up:3688 down:3888 head:8 keep:1/1/0.875/0.875 -attn 6 -mlp 0 | delta +0.5212 latency 3.02 ms memory 265 MB (4.5s)
+gen 11 offspring [29/40] qkv:8386 o:8888 up:8888 down:8888 head:8 keep:1/1/0.5/1 -attn 1 -mlp 0 | delta +0.3715 latency 3.21 ms memory 254 MB (4.5s)
+gen 11 offspring [30/40] qkv:86B8 o:883B up:6888 down:B868 head:B keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5733 latency 4.14 ms memory 500 MB (4.3s)
+gen 11 offspring [31/40] qkv:8B88 o:6BBB up:8BB8 down:3636 head:8 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.3060 latency 3.92 ms memory 403 MB (4.4s)
+gen 11 offspring [32/40] qkv:3338 o:6663 up:3838 down:6888 head:3 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.3196 latency 3.32 ms memory 279 MB (4.5s)
+gen 11 offspring [33/40] qkv:3BB6 o:3383 up:333B down:B333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0510 latency 4.98 ms memory 633 MB (4.3s)
+gen 11 offspring [34/40] qkv:BBBB o:3BBB up:3BBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0058 latency 6.42 ms memory 922 MB (4.1s)
+gen 11 offspring [35/40] qkv:B386 o:86B3 up:8638 down:6866 head:B keep:1/1/1/0.875 -attn 6 -mlp 1 | delta +0.4808 latency 3.95 ms memory 477 MB (4.3s)
+gen 11 offspring [36/40] qkv:BBBB o:BBB3 up:3B33 down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0238 latency 5.57 ms memory 741 MB (4.2s)
+gen 11 offspring [37/40] qkv:63B3 o:B33B up:BB33 down:3383 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0681 latency 4.32 ms memory 484 MB (4.4s)
+gen 11 offspring [38/40] qkv:8B3B o:BB66 up:33BB down:3333 head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0768 latency 4.31 ms memory 482 MB (4.4s)
+gen 11 offspring [39/40] qkv:BBBB o:BBBB up:3BB3 down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0172 latency 5.94 ms memory 821 MB (4.2s)
+gen 11 offspring [40/40] qkv:33BB o:B333 up:3B3B down:BBBB head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0381 latency 5.11 ms memory 633 MB (4.3s)
+=== generation 11/12 done in 173s (0 reused), HV 0.36385, front 40 points, 40/40 feasible, best delta loss +0.0000, fastest 2.98 ms, smallest 224 MB
+gen 12 offspring [1/40] qkv:BBBB o:BBB3 up:3B3B down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0143 latency 5.90 ms memory 813 MB (4.1s)
+gen 12 offspring [2/40] qkv:33BB o:B333 up:3B3B down:BBBB head:B keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.0491 latency 5.87 ms memory 817 MB (4.2s)
+gen 12 offspring [3/40] qkv:6BBB o:B6B3 up:3B63 down:6B3B head:3 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.0872 latency 4.39 ms memory 495 MB (4.3s)
+gen 12 offspring [4/40] qkv:3B88 o:36B3 up:BBB3 down:3888 head:3 keep:1/1/1/1 -attn 6 -mlp 0 | delta +0.3644 latency 4.21 ms memory 530 MB (4.3s)
+gen 12 offspring [5/40] qkv:8686 o:66B3 up:3668 down:3838 head:8 keep:1/1/0.875/0.875 -attn 0 -mlp 0 | delta +0.1912 latency 3.42 ms memory 285 MB (4.5s)
+gen 12 offspring [6/40] qkv:3BB3 o:33B3 up:B33B down:333B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0529 latency 4.53 ms memory 525 MB (4.4s)
+gen 12 offspring [7/40] qkv:36BB o:B6B3 up:3B8B down:BB68 head:B keep:1/1/1/1 -attn 3 -mlp 0 | delta +0.1601 latency 5.35 ms memory 736 MB (4.2s)
+gen 12 offspring [8/40] qkv:BB3B o:3BBB up:33BB down:B333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0328 latency 5.48 ms memory 734 MB (4.2s)
+gen 12 offspring [9/40] qkv:B866 o:888B up:888B down:8888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.6232 latency 3.40 ms memory 338 MB (4.4s)
+gen 12 offspring [10/40] qkv:3BBB o:BBB3 up:36B3 down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0288 latency 5.52 ms memory 731 MB (4.2s)
+gen 12 offspring [11/40] qkv:8668 o:3663 up:6868 down:6888 head:6 keep:0.75/0.5/1/0.5 -attn 3 -mlp 3 | delta +1.0082 latency 2.89 ms memory 213 MB (4.5s)
+gen 12 offspring [12/40] qkv:3BBB o:B3BB up:3B3B down:B8BB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0184 latency 5.85 ms memory 803 MB (4.2s)
+gen 12 offspring [13/40] qkv:BB38 o:3833 up:8888 down:6388 head:B keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5639 latency 3.95 ms memory 466 MB (4.3s)
+gen 12 offspring [14/40] qkv:6366 o:6366 up:6663 down:6836 head:3 keep:1/1/1/0.875 -attn 0 -mlp 0 | delta +0.1465 latency 3.46 ms memory 298 MB (4.5s)
+gen 12 offspring [15/40] qkv:B33B o:3B36 up:33B3 down:3333 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0530 latency 4.83 ms memory 604 MB (4.3s)
+gen 12 offspring [16/40] qkv:8BB6 o:3833 up:8863 down:B3B8 head:6 keep:1/1/0.875/1 -attn 0 -mlp 3 | delta +0.3525 latency 3.71 ms memory 348 MB (4.4s)
+gen 12 offspring [17/40] qkv:BBBB o:B6BB up:6BBB down:B8B8 head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0285 latency 5.99 ms memory 842 MB (4.2s)
+gen 12 offspring [18/40] qkv:33B3 o:B33B up:3B3B down:B3B3 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0511 latency 4.72 ms memory 559 MB (4.3s)
+gen 12 offspring [19/40] qkv:8388 o:6633 up:3B38 down:3888 head:8 keep:1/1/0.875/0.875 -attn 5 -mlp 0 | delta +0.4743 latency 3.43 ms memory 346 MB (4.4s)
+gen 12 offspring [20/40] qkv:BBBB o:BBBB up:3BBB down:BBBB head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0216 latency 5.64 ms memory 742 MB (4.2s)
+gen 12 offspring [21/40] qkv:3668 o:6B6B up:68B8 down:B888 head:6 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5747 latency 3.62 ms memory 378 MB (4.3s)
+gen 12 offspring [22/40] qkv:B3BB o:BB6B up:338B down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0295 latency 5.71 ms memory 765 MB (4.2s)
+gen 12 offspring [23/40] qkv:8388 o:3863 up:8883 down:8386 head:6 keep:1/0.625/0.5/0.5 -attn 6 -mlp 3 | delta +1.1368 latency 2.71 ms memory 206 MB (4.4s)
+gen 12 offspring [24/40] qkv:3333 o:BB33 up:3B33 down:BB33 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0682 latency 4.36 ms memory 479 MB (4.4s)
+gen 12 offspring [25/40] qkv:BB6B o:6663 up:66B3 down:688B head:8 keep:1/0.5/1/1 -attn 5 -mlp 0 | delta +0.5231 latency 3.67 ms memory 392 MB (4.4s)
+gen 12 offspring [26/40] qkv:BBB6 o:B368 up:3B33 down:383B head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0769 latency 4.19 ms memory 449 MB (4.4s)
+gen 12 offspring [27/40] qkv:8B38 o:3663 up:3338 down:3838 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.1099 latency 3.56 ms memory 318 MB (4.5s)
+gen 12 offspring [28/40] qkv:8888 o:38B3 up:8863 down:8338 head:8 keep:1/0.625/1/1 -attn 0 -mlp 0 | delta +0.2496 latency 3.38 ms memory 278 MB (4.5s)
+gen 12 offspring [29/40] qkv:BBB6 o:3B8B up:36B3 down:BB3B head:3 keep:1/1/0.875/1 -attn 0 -mlp 0 | delta +0.0762 latency 4.59 ms memory 520 MB (4.4s)
+gen 12 offspring [30/40] qkv:886B o:6B63 up:3B33 down:366B head:8 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0927 latency 4.08 ms memory 426 MB (4.4s)
+gen 12 offspring [31/40] qkv:3633 o:3633 up:3B36 down:366B head:6 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0913 latency 4.01 ms memory 414 MB (4.4s)
+gen 12 offspring [32/40] qkv:3B33 o:B3B3 up:333B down:3333 head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0699 latency 4.01 ms memory 415 MB (4.4s)
+gen 12 offspring [33/40] qkv:B38B o:BBBB up:BBBB down:8B3B head:B keep:1/0.625/0.625/0.5 -attn 0 -mlp 0 | delta +0.4863 latency 5.48 ms memory 728 MB (4.2s)
+gen 12 offspring [34/40] qkv:366B o:6B63 up:3663 down:6B8B head:8 keep:1/0.5/1/1 -attn 1 -mlp 0 | delta +0.2945 latency 3.66 ms memory 340 MB (4.4s)
+gen 12 offspring [35/40] qkv:33BB o:3333 up:3B63 down:3B8B head:3 keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0594 latency 4.33 ms memory 477 MB (4.4s)
+gen 12 offspring [36/40] qkv:BBBB o:BBBB up:3BBB down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 1 | delta +0.0638 latency 6.17 ms memory 873 MB (4.1s)
+gen 12 offspring [37/40] qkv:3BB3 o:BB33 up:B68B down:BB3B head:3 keep:1/1/1/1 -attn 1 -mlp 0 | delta +0.0821 latency 4.86 ms memory 594 MB (4.3s)
+gen 12 offspring [38/40] qkv:BBBB o:BBBB up:B6BB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0074 latency 6.45 ms memory 925 MB (4.1s)
+gen 12 offspring [39/40] qkv:3BBB o:BBB3 up:3BBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0080 latency 6.38 ms memory 914 MB (4.1s)
+gen 12 offspring [40/40] qkv:3BBB o:BBB3 up:3B33 down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0 | delta +0.0257 latency 5.53 ms memory 732 MB (4.2s)
+=== generation 12/12 done in 173s (0 reused), HV 0.36462, front 40 points, 40/40 feasible, best delta loss +0.0000, fastest 2.98 ms, smallest 224 MB
+
+Final front (40 points, sorted by latency_ms); uncompressed: latency 6.78 ms, memory 1001 MB
+   delta  latency  memory bits/w  configuration
+ +0.6701    2.98ms    247MB   3.84  qkv:8888 o:8883 up:8888 down:8888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0
+ +0.7809    2.99ms    246MB   3.82  qkv:6386 o:B383 up:8888 down:3888 head:8 keep:0.75/0.5/1/1 -attn 5 -mlp 0
+ +0.6031    3.00ms    252MB   3.92  qkv:8668 o:6663 up:6868 down:6888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0
+ +0.5212    3.02ms    265MB   4.14  qkv:8388 o:6663 up:3688 down:3888 head:8 keep:1/1/0.875/0.875 -attn 6 -mlp 0
+ +0.4629    3.07ms    277MB   4.33  qkv:3B88 o:8663 up:3688 down:3888 head:8 keep:1/1/0.875/1 -attn 6 -mlp 0
+ +0.8546    3.10ms    224MB   3.42  qkv:8386 o:38B3 up:8863 down:8338 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3
+ +0.8200    3.12ms    227MB   3.47  qkv:3336 o:38B3 up:8663 down:8333 head:6 keep:1/0.625/0.5/0.5 -attn 0 -mlp 3
+ +0.6572    3.15ms    245MB   3.77  qkv:8686 o:38B3 up:8883 down:8338 head:6 keep:1/0.625/0.5/1 -attn 1 -mlp 3
+ +0.7569    3.15ms    234MB   3.59  qkv:8386 o:38B8 up:8863 down:8338 head:6 keep:1/1/0.5/0.5 -attn 0 -mlp 3
+ +0.4038    3.16ms    298MB   4.67  qkv:3388 o:3663 up:3383 down:3888 head:3 keep:1/1/1/1 -attn 6 -mlp 0
+ +0.7086    3.19ms    242MB   3.72  qkv:8888 o:38B3 up:8863 down:8338 head:6 keep:1/0.625/1/0.5 -attn 0 -mlp 3
+ +0.3715    3.21ms    254MB   3.91  qkv:8386 o:8888 up:8888 down:8888 head:8 keep:1/1/0.5/1 -attn 1 -mlp 0
+ +0.3515    3.28ms    269MB   4.15  qkv:B888 o:6383 up:3888 down:6888 head:8 keep:1/0.5/1/1 -attn 1 -mlp 0
+ +0.3218    3.29ms    272MB   4.21  qkv:366B o:6663 up:6663 down:6888 head:8 keep:1/0.5/1/1 -attn 1 -mlp 0
+ +0.2074    3.30ms    274MB   4.23  qkv:8888 o:8888 up:8888 down:8888 head:8 keep:1/1/1/1 -attn 1 -mlp 0
+ +0.1756    3.36ms    275MB   4.25  qkv:8888 o:8888 up:8888 down:8888 head:8 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.1569    3.40ms    286MB   4.42  qkv:8883 o:8888 up:8833 down:8888 head:8 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.1223    3.43ms    291MB   4.50  qkv:6666 o:6666 up:6666 down:6666 head:6 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0944    3.54ms    315MB   4.89  qkv:3333 o:3336 up:8333 down:6333 head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0843    3.57ms    321MB   5.00  qkv:3333 o:3333 up:3333 down:3333 head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0699    4.01ms    415MB   6.52  qkv:3B33 o:B3B3 up:333B down:3333 head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0671    4.28ms    478MB   7.53  qkv:33B3 o:333B up:BB33 down:3383 head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0594    4.33ms    477MB   7.51  qkv:33BB o:3333 up:3B63 down:3B8B head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0529    4.53ms    525MB   8.29  qkv:3BB3 o:33B3 up:B33B down:333B head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0511    4.72ms    559MB   8.85  qkv:33B3 o:B33B up:3B3B down:B3B3 head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0458    4.78ms    583MB   9.24  qkv:BBBB o:338B up:3333 down:B363 head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0427    5.00ms    610MB   9.67  qkv:3BB6 o:BBB3 up:3B3B down:BB3B head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0381    5.11ms    633MB  10.04  qkv:33BB o:B333 up:3B3B down:BBBB head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0375    5.28ms    698MB  11.09  qkv:BB3B o:BBB6 up:33BB down:3333 head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0343    5.32ms    682MB  10.84  qkv:3BB3 o:BBB3 up:BB3B down:BB3B head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0216    5.64ms    742MB  11.80  qkv:BBBB o:BBBB up:3BBB down:BBBB head:3 keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0193    5.85ms    802MB  12.79  qkv:3BBB o:BBB3 up:36BB down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0143    5.90ms    813MB  12.95  qkv:BBBB o:BBB3 up:3B3B down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0141    6.08ms    845MB  13.48  qkv:3BBB o:BBBB up:36BB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0117    6.18ms    878MB  14.01  qkv:BBBB o:B6B3 up:3BBB down:BB6B head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0079    6.27ms    893MB  14.25  qkv:BBBB o:BBBB up:3BBB down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0058    6.42ms    922MB  14.73  qkv:BBBB o:3BBB up:3BBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0042    6.46ms    929MB  14.84  qkv:BBBB o:BBBB up:3BBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0017    6.74ms    994MB  15.89  qkv:BBBB o:BB3B up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0
+ +0.0000    6.78ms   1001MB  16.00  qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0
+Plot: compress_runs/qwen_hw_3obj\front.png
+Scoring 6 front solutions on wikitext2 (32 windows), c4 (32 windows)
+  2.98 ms 247 MB: wikitext2 ppl 32.87 (base 14.33), c4 ppl 49.46 (base 22.33) (33s)
+  3.15 ms 234 MB: wikitext2 ppl 44.46 (base 14.33), c4 ppl 54.86 (base 22.33) (33s)
+  3.40 ms 286 MB: wikitext2 ppl 17.18 (base 14.33), c4 ppl 26.78 (base 22.33) (33s)
+  4.53 ms 525 MB: wikitext2 ppl 15.40 (base 14.33), c4 ppl 23.42 (base 22.33) (33s)
+  5.85 ms 802 MB: wikitext2 ppl 14.56 (base 14.33), c4 ppl 22.83 (base 22.33) (32s)
+  6.78 ms 1001 MB: wikitext2 ppl 14.33 (base 14.33), c4 ppl 22.33 (base 22.33) (33s)
+Done. Test scores in compress_runs/qwen_hw_3obj\test_scores.json
+               predicted  measured   error    eager  fake loss  real loss  configuration
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 290/290 [00:00<00:00, 9008.72it/s]
+USDT:2026-10-19 11:04:00 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:00 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:00 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:00 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:00 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:00 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+ uncompressed     6.77ms    6.80ms   -0.4%  34.64ms     2.8926     2.8926  qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 290/290 [00:00<00:00, 8125.13it/s]
+USDT:2026-10-19 11:04:08 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:08 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:08 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:08 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:08 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:08 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+   front #317     2.97ms    2.96ms   +0.3%  27.23ms     3.4952     3.4958  qkv:8888 o:8883 up:8888 down:8888 head:8 keep:1/0.5/1/1 -attn 5 -mlp 0
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 290/290 [00:00<00:00, 8814.63it/s]
+USDT:2026-10-19 11:04:16 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:16 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:16 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:16 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:16 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:16 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+   front #348     3.14ms    3.10ms   +1.1%  31.71ms     3.6098     3.6122  qkv:8386 o:38B8 up:8863 down:8338 head:6 keep:1/1/0.5/0.5 -attn 0 -mlp 3
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 290/290 [00:00<00:00, 7370.29it/s]
+USDT:2026-10-19 11:04:24 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:24 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:24 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:24 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:24 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:24 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+   front #351     3.39ms    3.36ms   +0.9%  33.23ms     3.0372     3.0386  qkv:8883 o:8888 up:8833 down:8888 head:8 keep:1/1/1/1 -attn 0 -mlp 0
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 290/290 [00:00<00:00, 7848.32it/s]
+USDT:2026-10-19 11:04:31 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:31 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:31 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:31 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:32 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:32 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+   front #321     4.52ms    4.51ms   +0.1%  31.63ms     2.9489     2.9494  qkv:3BB3 o:33B3 up:B33B down:333B head:3 keep:1/1/1/1 -attn 0 -mlp 0
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 290/290 [00:00<00:00, 9305.77it/s]
+USDT:2026-10-19 11:04:37 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:37 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:37 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:37 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:38 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:38 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+   front #339     5.84ms    5.86ms   -0.4%  32.92ms     2.9091     2.9095  qkv:3BBB o:BBB3 up:36BB down:BB3B head:B keep:1/1/1/1 -attn 0 -mlp 0
+
+Loading weights:   0%|          | 0/290 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 290/290 [00:00<00:00, 9017.73it/s]
+USDT:2026-10-19 11:04:42 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:42 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:43 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:43 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+USDT:2026-10-19 11:04:43 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:52] profiler_start
+USDT:2026-10-19 11:04:43 2564:9748 C:\actions-runner\_work\pytorch\pytorch\third_party\kineto\libkineto\src\SyncActivityProfilerHandler.cpp:59] profiler_stop
+   front #318     6.77ms    6.82ms   -0.7%  30.33ms     2.8926     2.8926  qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0
+
+speedup over the uncompressed model (predicted / measured GPU time / eager wall-clock):
+  front #317: 2.28x / 2.30x / 1.27x
+  front #348: 2.16x / 2.19x / 1.09x
+  front #351: 2.00x / 2.02x / 1.04x
+  front #321: 1.50x / 1.51x / 1.10x
+  front #339: 1.16x / 1.16x / 1.05x
+  front #318: 1.00x / 1.00x / 1.14x
+Results in compress_runs/qwen_hw_3obj\validation.json

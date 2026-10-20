@@ -1,0 +1,35 @@
+# nanochat d34 (2.2B, karpathy/nanochat-d34), hardware-aware search (scripts/compress_search_hw.py),
+# scenario 2 of 2: objectives delta_loss + predicted decode latency + deployed memory (weights + KV
+# cache), memory still capped by the GPU. Everything else as d34_hw_2obj.yaml:
+#   python -m scripts.compress_run configs/compress/d34_hw_3obj.yaml --smoke    # quick check first
+#   python -m scripts.compress_run configs/compress/d34_hw_3obj.yaml
+model: nanochat:base:d34
+download: karpathy/nanochat-d34
+nanochat_base_dir: ~/.cache/nanochat-d34
+out_dir: compress_runs/d34_hw_3obj
+eval_batch_size: 2
+
+search:
+  method: hw
+  objectives: [latency, memory]
+  pop_size: 100
+  n_gen: 10
+  seed: 42
+  max_delta_loss: 1.0
+  memory_budget_mb: 20000
+  latency_batch: 1
+  latency_context: 1024
+  bands: 4
+
+calibration:
+  seqs: 128
+  seq_len: 2048
+
+test:
+  seq_len: 2048
+  wikitext_seqs: -1
+  c4_seqs: 256
+  max_points: 10
+
+validate:
+  points: 8
