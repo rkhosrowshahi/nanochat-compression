@@ -1,0 +1,24 @@
+5 solutions selected, 6 evaluations to run (incl. the uncompressed model) on ['piqa', 'arc_easy', 'arc_challenge', 'hellaswag', 'winogrande', 'boolq', 'mmlu', 'gsm8k']
+[uncompressed] 988.1 MB | piqa: acc,none=0.705 acc_norm,none=0.704, arc_easy: acc,none=0.655 acc_norm,none=0.592, arc_challenge: acc,none=0.304 acc_norm,none=0.331, hellaswag: acc,none=0.405 acc_norm,none=0.524, winogrande: acc,none=0.560, boolq: acc,none=0.678, mmlu: acc,none=0.470, gsm8k: exact_match,strict-match=0.203 exact_match,flexible-extract=0.312 | 6579s
+[#60] 308.7 MB | piqa: acc,none=0.671 acc_norm,none=0.675, arc_easy: acc,none=0.602 acc_norm,none=0.562, arc_challenge: acc,none=0.293 acc_norm,none=0.310, hellaswag: acc,none=0.379 acc_norm,none=0.477, winogrande: acc,none=0.572, boolq: acc,none=0.561, mmlu: acc,none=0.383, gsm8k: exact_match,strict-match=0.114 exact_match,flexible-extract=0.126 | 6600s
+[#75] 309.8 MB | piqa: acc,none=0.683 acc_norm,none=0.692, arc_easy: acc,none=0.622 acc_norm,none=0.552, arc_challenge: acc,none=0.285 acc_norm,none=0.320, hellaswag: acc,none=0.393 acc_norm,none=0.500, winogrande: acc,none=0.564, boolq: acc,none=0.497, mmlu: acc,none=0.450, gsm8k: exact_match,strict-match=0.183 exact_match,flexible-extract=0.097 | 6787s
+[#88] 371.5 MB | piqa: acc,none=0.690 acc_norm,none=0.695, arc_easy: acc,none=0.651 acc_norm,none=0.610, arc_challenge: acc,none=0.301 acc_norm,none=0.328, hellaswag: acc,none=0.402 acc_norm,none=0.520, winogrande: acc,none=0.542, boolq: acc,none=0.666, mmlu: acc,none=0.461, gsm8k: exact_match,strict-match=0.218 exact_match,flexible-extract=0.267 | 7283s
+[#91] 413.8 MB | piqa: acc,none=0.704 acc_norm,none=0.702, arc_easy: acc,none=0.649 acc_norm,none=0.596, arc_challenge: acc,none=0.299 acc_norm,none=0.337, hellaswag: acc,none=0.407 acc_norm,none=0.525, winogrande: acc,none=0.559, boolq: acc,none=0.643, mmlu: acc,none=0.465, gsm8k: exact_match,strict-match=0.205 exact_match,flexible-extract=0.276 | 12981s
+[#98] 495.0 MB | piqa: acc,none=0.701 acc_norm,none=0.702, arc_easy: acc,none=0.663 acc_norm,none=0.599, arc_challenge: acc,none=0.309 acc_norm,none=0.335, hellaswag: acc,none=0.405 acc_norm,none=0.524, winogrande: acc,none=0.566, boolq: acc,none=0.684, mmlu: acc,none=0.470, gsm8k: exact_match,strict-match=0.198 exact_match,flexible-extract=0.317 | 10272s
+
+# Qwen/Qwen2.5-0.5B-Instruct: benchmarks of compressed models
+
+| Model | Calib. loss vs. uncompressed | Size (MB) | Smaller by | Bits/weight | PIQA (0-shot) | ARC-e (0-shot) | ARC-c (0-shot) | HellaSwag (0-shot) | WinoGrande (0-shot) | BoolQ (0-shot) | MMLU (5-shot) | GSM8K (5-shot) | Average | Accuracy kept |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Uncompressed (bfloat16) | - | 988 | 1.00x | 16.00 | 70.4 | 59.2 | 33.1 | 52.4 | 56.0 | 67.8 | 47.0 | 31.2 | 52.1 | 100.0% |
+| #98 | +0.12% | 495 | 2.00x | 8.02 | 70.2 | 59.9 | 33.5 | 52.4 | 56.6 | 68.4 | 47.0 | 31.7 | 52.5 | 100.6% |
+| #91 | +1.00% | 414 | 2.39x | 6.70 | 70.2 | 59.6 | 33.7 | 52.5 | 55.9 | 64.3 | 46.5 | 27.6 | 51.3 | 98.4% |
+| #88 | +1.61% | 372 | 2.66x | 6.01 | 69.5 | 61.0 | 32.8 | 52.0 | 54.2 | 66.6 | 46.1 | 26.7 | 51.1 | 98.0% |
+| #75 | +4.75% | 310 | 3.19x | 5.01 | 69.2 | 55.2 | 32.0 | 50.0 | 56.4 | 49.7 | 45.0 | 9.7 | 45.9 | 88.0% |
+| #60 | +9.87% | 309 | 3.20x | 5.00 | 67.5 | 56.2 | 31.0 | 47.7 | 57.2 | 56.1 | 38.3 | 12.6 | 45.8 | 87.9% |
+
+Scores are accuracy in percent (higher is better); 'Accuracy kept' is the average relative to the uncompressed model's. 'Calib. loss vs. uncompressed' is how much higher (in percent) each solution's loss on the search's calibration data is.
+Metrics: PIQA acc_norm (±1.1 standard error); ARC-e acc_norm (±1.0 standard error); ARC-c acc_norm (±1.4 standard error); HellaSwag acc_norm (±0.5 standard error); WinoGrande acc (±1.4 standard error); BoolQ acc (±0.8 standard error); MMLU acc (±0.4 standard error); GSM8K exact match (±1.3 standard error).
+
+
+Results in compress_runs/local_50_log2_autok_calib_fixed_8x2048_maxdelta1_emb_ecsq\benchmarks.json, questions in compress_runs/local_50_log2_autok_calib_fixed_8x2048_maxdelta1_emb_ecsq\samples

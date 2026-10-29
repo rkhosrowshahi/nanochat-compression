@@ -119,7 +119,7 @@ capability 8.6, 28 SMs, 1.5\,MB L2 cache, 128-bit GDDR6 at 15\,Gb/s, i.e.\ 240\,
 2.13 and CUDA 12.6 on Windows 11, using only kernels that ship with PyTorch (no Triton, torchao, vLLM or
 FLUTE).
 
-\paragraph{Fake quantization does not change latency.}
+\paragraph{Quantization does not change latency.}
 The search wrote the dequantized weights back into the dense bf16 matrices, and the forward pass
 multiplies them with a dense cuBLAS kernel, which reads every 16-bit weight whatever its value.
 Table~\ref{tab:fakequant} confirms that a matrix with 3 distinct values and 93\% zeros is multiplied
