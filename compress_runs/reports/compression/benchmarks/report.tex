@@ -1,4 +1,5 @@
-% Technical report: downstream benchmarks of Pareto-optimal compressed models (UBQ-ECSQ, Qwen2.5-0.5B-Instruct).
+% Technical report: downstream benchmarks of Pareto-optimal compressed models of Qwen2.5-0.5B-Instruct
+% (UBQ-ECSQ storage compression and hardware-aware compression).
 % Build from this folder:  latexmk -pdf report.tex
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
@@ -19,7 +20,7 @@
 \setlist{itemsep=2pt, topsep=4pt}
 
 \title{Downstream Benchmarks of Pareto-Optimal Compressed Models:\\
-Qwen2.5-0.5B-Instruct with UBQ-ECSQ}
+Qwen2.5-0.5B-Instruct}
 \author{Rasa Khosrowshahli}
 \date{October 2026}
 
@@ -27,19 +28,23 @@ Qwen2.5-0.5B-Instruct with UBQ-ECSQ}
 \maketitle
 
 \begin{abstract}
-A multi-objective evolutionary search (NSGA-II) over global quantization and pruning parameters
-produced a Pareto front of 100 compressed versions of Qwen2.5-0.5B-Instruct, trading calibration loss
-against encoded model size (239--495\,MB, against 988\,MB in bf16). Solutions at calibration-loss
-increases of 0\%, 1\%, 2\%, 5\% and 10\% over the uncompressed model are evaluated, together with the
-uncompressed model, on eight standard benchmarks: six zero-shot commonsense and reasoning tasks (PIQA,
-ARC-Easy, ARC-Challenge, HellaSwag, WinoGrande, BoolQ), 5-shot MMLU and 5-shot GSM8K. At 8.0 bits per
-weight the model is $2.00\times$ smaller with no loss of accuracy. At 6.0--6.7 bits per weight
-($2.39$--$2.66\times$ smaller) it keeps 98\% of the average accuracy. At 5.0 bits per weight
-($3.2\times$ smaller) it keeps 88\%, with most of the loss on GSM8K and BoolQ.
+Two multi-objective evolutionary searches (NSGA-II) compress Qwen2.5-0.5B-Instruct. The first
+(UBQ-ECSQ) trades calibration loss against encoded storage size, with global quantization and pruning
+parameters; the second (hardware-aware) trades calibration loss against predicted GPU decode latency,
+with a per-layer-group choice among bf16 and int4 kernel formats, MLP pruning and sublayer removal.
+From each Pareto front, the solutions at calibration-loss increases of 0\%, 1\%, 2\%, 5\% and 10\% are
+evaluated, with the uncompressed model, on eight standard benchmarks: six zero-shot commonsense and
+reasoning tasks (PIQA, ARC-Easy, ARC-Challenge, HellaSwag, WinoGrande, BoolQ), 5-shot MMLU and 5-shot
+GSM8K. UBQ-ECSQ: at 8.0 bits per weight the model is $2.00\times$ smaller with no loss of accuracy; at
+6.0--6.7 bits per weight ($2.39$--$2.66\times$ smaller) it keeps 98\% of the average accuracy; at 5.0
+bits per weight ($3.2\times$ smaller) it keeps 88\%. Hardware-aware: $1.56\times$ faster decoding
+keeps 98.8\% of the accuracy, and $1.98\times$ faster decoding with $3.4\times$ less memory (4.5 bits
+per weight, almost all int4) keeps 95.1\%; removing sublayers costs far more accuracy than it saves
+time.
 \end{abstract}
 
 % =====================================================================================================
-\section{Compression scheme}
+\section{UBQ-ECSQ compression scheme}
 
 All 169 weight matrices of the model are compressed, including the token embedding, which is tied to
 the output head (494.0M weights, 100\% of the parameters). Every matrix uses the same five parameters
@@ -58,7 +63,7 @@ Encoded size is the smaller of a dense code ($\lceil\log_2 k_\text{used}\rceil$ 
 bitmap code (1 bit per weight plus a code per non-zero), plus a 16-bit scale per row and a lookup table
 per matrix. Sizes are in MB ($10^6$ bytes); bits per weight include scales and tables.
 
-\section{Search}
+\section{UBQ-ECSQ search}
 
 \begin{itemize}
   \item \textbf{Objectives (minimized):} $\dloss$, the next-token cross-entropy on the calibration set
@@ -71,7 +76,7 @@ per matrix. Sizes are in MB ($10^6$ bytes); bits per weight include scales and t
   \item \textbf{NSGA-II:} population 100, 50 generations, seed 42.
 \end{itemize}
 
-\section{Pareto fronts}
+\section{UBQ-ECSQ Pareto fronts}
 
 Figure~\ref{fig:front} shows the final front on the objective of the search, the calibration loss.
 Figure~\ref{fig:testfront} scores the same 100 solutions on held-out text: perplexity on the full
@@ -102,7 +107,7 @@ uncompressed model.}
 \label{fig:testfront}
 \end{figure}
 
-\section{Selected models}
+\section{Selected UBQ-ECSQ models}
 
 The calibration error of a solution is $\dloss/\mathcal{L}_0$. For each level (0, 1, 2, 5, 10\%) the
 smallest solution within it is selected. No solution has zero error, so the most accurate one (0.12\%)
@@ -138,32 +143,36 @@ is the storage with Huffman-coded codes (reported only, not optimized). None of 
 
 All models are evaluated with the same harness (lm-evaluation-harness 0.4.13), in bf16, on full
 evaluation splits, without a chat template, with fixed seeds. Compressed weights are reconstructed in
-place, so the models differ only in their weight values.
+place, so the models differ only in their weight values. The hardware-aware models were evaluated on a
+second machine together with their own uncompressed reference, which agrees with the first within one
+standard error on every task; each model is compared with the reference from its own machine.
 
-\begin{table}[htbp]
+\begin{table}[!ht]
 \centering
-\small
-\begin{tabular}{llrcl}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l>{\raggedright\arraybackslash}p{7.2cm}lrcl}
 \toprule
-Benchmark & Split & Questions & Shots & Metric \\
+Benchmark & What it tests & Split & Questions & Shots & Metric \\
 \midrule
-PIQA          & validation & 1{,}838  & 0 & accuracy, length-normalized \\
-ARC-Easy      & test       & 2{,}376  & 0 & accuracy, length-normalized \\
-ARC-Challenge & test       & 1{,}172  & 0 & accuracy, length-normalized \\
-HellaSwag     & validation & 10{,}042 & 0 & accuracy, length-normalized \\
-WinoGrande    & validation & 1{,}267  & 0 & accuracy \\
-BoolQ         & validation & 3{,}270  & 0 & accuracy \\
-MMLU          & test       & 14{,}042 & 5 & accuracy (57 subjects) \\
-GSM8K         & test       & 1{,}319  & 5 & exact match of the final number \\
+PIQA          & Physical commonsense: the right way to do an everyday task & validation & 1{,}838 & 0 & acc.\ (norm.) \\
+ARC-Easy      & Grade-school science questions & test & 2{,}376 & 0 & acc.\ (norm.) \\
+ARC-Challenge & Harder grade-school science questions (retrieval-resistant) & test & 1{,}172 & 0 & acc.\ (norm.) \\
+HellaSwag     & Commonsense: the most plausible continuation of an everyday scene & validation & 10{,}042 & 0 & acc.\ (norm.) \\
+WinoGrande    & Commonsense pronoun resolution (fill in the blank, two options) & validation & 1{,}267 & 0 & accuracy \\
+BoolQ         & Reading comprehension: yes/no questions about a Wikipedia passage & validation & 3{,}270 & 0 & accuracy \\
+MMLU          & Knowledge and reasoning in 57 subjects (STEM, humanities, law, medicine, \dots) & test & 14{,}042 & 5 & accuracy \\
+GSM8K         & Multi-step grade-school math word problems, solved in writing & test & 1{,}319 & 5 & exact match \\
 \bottomrule
 \end{tabular}
-\caption{Benchmarks. Multiple-choice tasks pick the answer with the highest log-likelihood; GSM8K
-generates a solution and compares the extracted final number with the reference.}
+\caption{Benchmarks. Multiple-choice tasks pick the answer with the highest log-likelihood (acc.\ (norm.):
+log-likelihood normalized by answer length); GSM8K generates a solution and compares the extracted final
+number with the reference.}
 \label{tab:protocol}
 \end{table}
 
 \clearpage
-\section{Results}
+\section{UBQ-ECSQ results}
 
 \begin{table}[!ht]
 \centering
@@ -228,6 +237,169 @@ Avg.\ kept is the compressed model's average accuracy as a percentage of the unc
         error of Q10 and lower test perplexity, and is better on MMLU (45.0 against 38.3), but worse on
         BoolQ and GSM8K; the two averages are equal. Below about 6 bits per weight, models need a
         benchmark check before use.
+\end{itemize}
+
+% =====================================================================================================
+\clearpage
+\section{Hardware-aware compression}
+
+\subsection{Scheme and search}
+
+The compressed model is the deployed model: every choice maps onto a kernel that runs on the GPU, and
+the cost is the decode latency and memory of that model, not a storage size.
+\begin{itemize}
+  \item \textbf{Formats:} bf16, or int4 with an asymmetric bf16 scale and zero per group of 32, 64 or
+        128 input weights (g32, g64, g128), on PyTorch's int4 matrix-multiplication kernel. The
+        clipping of each int4 group minimizes the activation-weighted error and is solved per group,
+        not searched.
+  \item \textbf{Genes (23):} the format of each of four roles (attention q/k/v, attention output, MLP
+        up/gate, MLP down) in each of four depth bands of 6 layers (16 genes); the format of the output
+        head, tied to the token embedding (1); the fraction of MLP neurons kept per band, from
+        $\{1, 0.875, 0.75, 0.625, 0.5\}$, by activation-weighted importance (4); the number of attention
+        and of MLP sublayers removed, 0--6 each, in a fixed order ranked by the loss increase of removing
+        each sublayer alone (2).
+  \item \textbf{Objectives (minimized):} $\dloss$ on the same calibration set as above
+        ($\mathcal{L}_0 = 2.8854$ nats), and the decode latency of one token (batch 1, 1024 tokens of
+        context), predicted from per-kernel times measured on an RTX 3060 GPU. Memory (weights plus the
+        KV cache of 1024 tokens; 1001\,MB uncompressed) is reported, not optimized.
+  \item \textbf{Constraint:} $\dloss \le 1.0$ nats. \textbf{NSGA-II:} population 40, 12 generations,
+        seed 42.
+\end{itemize}
+
+\subsection{Pareto fronts}
+
+The final front has 40 solutions from 2.85 to 6.78\,ms and 239 to 1001\,MB (Figure~\ref{fig:hwfront}).
+With formats alone, $\dloss$ stays at or below 0.18 nats (6\%) down to 3.36\,ms, the model with every
+matrix in int4 g128; every faster solution prunes MLP neurons or removes sublayers, and $\dloss$ rises
+to 0.20--0.81 nats. Five solutions spread along the front and the uncompressed model were scored on 32
+windows each of WikiText-2 test and C4 validation (Figure~\ref{fig:hwtest}).
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/hw_pareto_front_latency.pdf}
+  \caption{Against predicted decode latency (objective)}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/hw_pareto_front_memory.pdf}
+  \caption{Against deployed memory (reported)}
+\end{subfigure}
+\caption{Final Pareto front (40 solutions) of calibration $\dloss$, with the front of the initial
+population and the uncompressed model.}
+\label{fig:hwfront}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/hw_test_front_wikitext2_latency.pdf}
+  \caption{WikiText-2 test}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/hw_test_front_c4_latency.pdf}
+  \caption{C4 validation}
+\end{subfigure}
+\caption{Test perplexity of five solutions of the final front and the uncompressed model against
+predicted decode latency.}
+\label{fig:hwtest}
+\end{figure}
+
+\FloatBarrier
+\subsection{Selected models}
+
+For each level (0, 1, 2, 5, 10\%) the fastest solution within it is selected (H0--H10). As above, no
+solution has zero error, so the most accurate one (0.16\%) stands for the 0\% level.
+
+\begin{table}[!ht]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lrrrrrrrlc}
+\toprule
+Model & Calib. & Decode & Faster & Memory & Smaller & Bits/w & int4 & Formats & Removed \\
+      & err.\ (\%) & (ms) & by & (MB) & by & & (\%) & q/k/v\,\,out\,\,\,up\,\,\,down\,\,head & attn./MLP \\
+\midrule
+Uncompressed & 0.00 & 6.78 & 1.00$\times$ & 1001 & 1.00$\times$ & 16.00 & 0  & \texttt{BBBB BBBB BBBB BBBB B} & 0/0 \\
+\addlinespace
+H0  (0\%)  & 0.16 & 6.74 & 1.01$\times$ & 992 & 1.01$\times$ & 15.86 & 1  & \texttt{B3BB BBBB BBBB BBBB B} & 0/0 \\
+H1  (1\%)  & 0.75 & 5.61 & 1.21$\times$ & 761 & 1.31$\times$ & 12.13 & 35 & \texttt{BBBB 633B B36B B33B B} & 0/0 \\
+H2  (2\%)  & 1.99 & 4.35 & 1.56$\times$ & 479 & 2.09$\times$ & 7.55  & 77 & \texttt{33B3 B333 33B3 B36B 3} & 0/0 \\
+H5  (5\%)  & 4.84 & 3.43 & 1.98$\times$ & 291 & 3.43$\times$ & 4.51  & 99 & \texttt{3B38 3386 8888 8833 8} & 0/0 \\
+H10 (10\%) & 8.90 & 3.28 & 2.07$\times$ & 271 & 3.70$\times$ & 4.19  & 97 & \texttt{8836 6888 8888 8368 8} & 1/1 \\
+\bottomrule
+\end{tabular}
+\caption{Selected hardware-aware solutions. Formats: one character per depth band (bands 1--4) for
+attention q/k/v, attention output, MLP up/gate and MLP down, then the output head; B = bf16, 3/6/8 =
+int4 with groups of 32/64/128. Bits/w counts weights only; memory includes the 13\,MB KV cache. None
+prunes MLP neurons.}
+\label{tab:hwmodels}
+\end{table}
+
+\clearpage
+\subsection{Results}
+
+\begin{table}[!ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+Model & Decode & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
+      & (ms)   &      &       &       &         &        &       & 5-shot & 5-shot &       \\
+\midrule
+Uncompressed & 6.78 & 70.6 & 59.2 & 33.0 & 52.4 & 55.2 & 67.7 & 47.0 & 30.3 & 51.9 \\
+\addlinespace
+H0  (0\%)    & 6.74 & 70.7 & 59.6 & 33.4 & 52.0 & 55.6 & 66.9 & 46.5 & 31.1 & 52.0 \\
+H1  (1\%)    & 5.61 & 70.1 & 60.0 & 32.7 & 51.4 & 56.0 & 67.6 & 46.7 & 27.9 & 51.5 \\
+H2  (2\%)    & 4.35 & 69.7 & 59.7 & 32.8 & 51.0 & 56.7 & 66.1 & 45.9 & 28.5 & 51.3 \\
+H5  (5\%)    & 3.43 & 69.0 & 58.0 & 31.5 & 49.4 & 55.0 & 66.5 & 44.8 & 20.5 & 49.4 \\
+H10 (10\%)   & 3.28 & 67.3 & 49.7 & 29.0 & 46.4 & 52.4 & 63.8 & 37.6 &  4.9 & 43.9 \\
+\midrule
+Std. error   &      & 1.1  & 1.0  & 1.4  & 0.5  & 1.4  & 0.8  & 0.4  & 1.3  &      \\
+\bottomrule
+\end{tabular}
+\caption{Accuracy (\%, higher is better) of the hardware-aware models, with the unweighted average.}
+\label{tab:hwresults}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+Model & Decode & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg.\ kept \\
+      & (ms)   &      &       &       &         &        &       &      &       & (\%)       \\
+\midrule
+H0  (0\%)  & 6.74 & $+0.2$ & $+0.4$ & $+0.3$ & $-0.4$ & $+0.4$ & $-0.9$ & $-0.5$ & $+0.8$  & 100.1 \\
+H1  (1\%)  & 5.61 & $-0.5$ & $+0.8$ & $-0.3$ & $-0.9$ & $+0.9$ & $-0.1$ & $-0.3$ & $-2.4$  & 99.3 \\
+H2  (2\%)  & 4.35 & $-0.8$ & $+0.5$ & $-0.3$ & $-1.4$ & $+1.5$ & $-1.6$ & $-1.1$ & $-1.8$  & 98.8 \\
+H5  (5\%)  & 3.43 & $-1.5$ & $-1.1$ & $-1.5$ & $-2.9$ & $-0.2$ & $-1.2$ & $-2.2$ & $-9.8$  & 95.1 \\
+H10 (10\%) & 3.28 & $-3.3$ & $-9.5$ & $-4.0$ & $-5.9$ & $-2.8$ & $-3.9$ & $-9.4$ & $-25.4$ & 84.6 \\
+\bottomrule
+\end{tabular}
+\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss).}
+\label{tab:hwdelta}
+\end{table}
+
+\FloatBarrier
+\paragraph{Observations.}
+\begin{itemize}
+  \item \textbf{The 0\% level brings no speed-up.} H0 changes one band of one role to int4 (1\% of the
+        weights) and is 1.01$\times$ faster; any larger change costs measurable calibration loss.
+  \item \textbf{1--2\% calibration error: up to 1.56$\times$ faster at 98.8\% accuracy.} H1 and H2 stay
+        within 1.6 points on every benchmark except GSM8K ($-2.4$ and $-1.8$).
+  \item \textbf{Almost-all-int4 is the efficient point.} H5 is 1.98$\times$ faster with 3.43$\times$ less
+        memory and keeps 95.1\%: the commonsense tasks and MMLU lose at most 2.9 points, GSM8K 9.8.
+  \item \textbf{Removing sublayers does not pay.} H10 removes one attention and one MLP sublayer for
+        0.15\,ms (4\%) over H5 and loses another 5.5 points of average accuracy (84.6\% kept); GSM8K
+        falls to 4.9\%, ARC-Easy and MMLU by 9.5 and 9.4 points.
+  \item \textbf{Calibration loss ranks these models correctly:} accuracy falls monotonically with the
+        level, unlike the UBQ-ECSQ models at 5--10\%.
+  \item \textbf{Against UBQ-ECSQ:} H5 at 4.5 bits per weight keeps 95.1\%, the UBQ-ECSQ models at
+        5.0 bits per weight 88\% (BoolQ 66.5 against 49.7, GSM8K 20.5 against 9.7). The UBQ-ECSQ sizes
+        are entropy-coded storage that must be decoded before use; the hardware-aware models run
+        directly on int4 kernels.
 \end{itemize}
 
 \end{document}
