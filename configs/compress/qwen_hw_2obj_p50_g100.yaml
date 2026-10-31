@@ -1,0 +1,34 @@
+# qwen_hw_2obj.yaml with a longer search: population 50, 100 generations, in its own run folder. Objectives
+# delta_loss + predicted decode latency (1 sequence, 1024 tokens of context); memory is only a constraint.
+# The same settings as qwen_hw_3obj_p50_g100.yaml, so the fronts compare directly:
+#   python -m scripts.compress_run configs/compress/qwen_hw_2obj_p50_g100.yaml
+#   python -m scripts.compress_compare --run-dirs compress_runs/qwen_hw_2obj_p50_g100 compress_runs/qwen_hw_3obj_p50_g100 \
+#       --labels "2 objectives" "3 objectives" --x latency --out compress_runs/comparisons/qwen_hw_2obj_vs_3obj_p50_g100/qwen_hw_fronts_latency
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/qwen_hw_2obj_p50_g100
+eval_batch_size: 1
+
+search:
+  method: hw
+  objectives: [latency]
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  max_delta_loss: 1.0
+  memory_budget_mb: 7000   # an 8 GB GPU with room for activations (never binds for this model)
+  latency_batch: 1
+  latency_context: 1024
+  bands: 4
+
+calibration:
+  seqs: 8                  # the same batch as the other Qwen runs (shared through the cache)
+  seq_len: 2048
+
+test:                      # a quick local check; the server configs use the full test sets
+  seq_len: 2048
+  wikitext_seqs: 32
+  c4_seqs: 32
+  max_points: 6
+
+validate:
+  points: 6

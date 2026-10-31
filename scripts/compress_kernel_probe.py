@@ -49,6 +49,7 @@ parser.add_argument("--model", type=str, default="Qwen/Qwen2.5-32B-Instruct", he
 parser.add_argument("--formats", type=str, default=",".join(FORMATS))
 parser.add_argument("--batches", type=str, default="1,4,16,64", help="sequences decoding together")
 parser.add_argument("--prefill-batch", type=int, default=2048, help="tokens processed together during prompt processing")
+parser.add_argument("--attention-chunk", type=int, default=256, help="prompt tokens attending together when timing prompt attention (memory grows with it)")
 parser.add_argument("--context", type=int, default=32000, help="tokens each agent keeps in the KV cache")
 parser.add_argument("--new-tokens", type=int, default=2000, help="tokens processed per turn (the rest of the prompt is cached)")
 parser.add_argument("--gen-tokens", type=int, default=300, help="tokens generated per turn")
@@ -208,6 +209,22 @@ def time_cell(fmt, rows, cols, bias, batch):
     return hw.graph_time_us(fns), size
 
 
+@torch.no_grad()
+def time_prompt_attention(chunk):
+    """GPU time in us per token, one layer, of attention during prompt processing. All tokens of a chunk read
+    the same cache together, unlike decode, where every sequence reads its own cache for its one token."""
+    d, n_kv = layout.head_dim, layout.n_kv_head
+    q = torch.randn(1, n_kv, layout.n_head // n_kv * chunk, d, device=device, dtype=torch.bfloat16)
+    k = torch.randn(1, n_kv, args.context, d, device=device, dtype=torch.bfloat16)
+    v = torch.randn(1, n_kv, args.context, d, device=device, dtype=torch.bfloat16)
+
+    def call():
+        a = torch.softmax((q @ k.transpose(-1, -2)).float() * d ** -0.5, dim=-1).to(q.dtype)
+        return a @ v
+
+    return hw.graph_time_us([call]) / chunk
+
+
 def report_error(e):
     return f"{type(e).__name__}: {str(e).splitlines()[0][:140]}" if str(e) else type(e).__name__
 
@@ -273,6 +290,12 @@ for batch in sorted({*batches}):
         save()
     print(f"  attention at batch {batch}, context {args.context}: {results['attention'][key]}", flush=True)
 
+if "prompt_attention" not in results:
+    results["prompt_attention"] = time_prompt_attention(args.attention_chunk)
+    torch.cuda.empty_cache()
+    save()
+print(f"  attention of a prompt chunk of {args.attention_chunk} over one cache: {results['prompt_attention']:.1f} us per token", flush=True)
+
 
 # -----------------------------------------------------------------------------
 # tables
@@ -302,7 +325,7 @@ def decode_us(fmt, batch):
 
 
 def prefill_us(fmt):
-    return gemm_us(fmt, args.prefill_batch, with_head=False) + layout.n_layer * attention_us(max(batches))
+    return gemm_us(fmt, args.prefill_batch, with_head=False) + layout.n_layer * results["prompt_attention"]
 
 
 def weights_gb(fmt):
@@ -326,8 +349,9 @@ def table(header, rows):
 lines = [f"# Formats on {gpu.name}, shapes of {args.model}", "",
          f"torch {torch.__version__}. {layout.n_layer} layers. KV cache: {kv_gb:.2f} GB per agent at {args.context} tokens. "
          "Times are GPU kernel times of the matrix products and of attention over the cache; norms, activations and "
-         f"launch overhead are not included. Attention during prompt processing is estimated from batch {max(batches)}. "
-         "A dash means the kernel cannot run at that batch or shape.", "", "## Availability", ""]
+         f"launch overhead are not included. Attention during prompt processing is measured on chunks of {args.attention_chunk} tokens "
+         "reading one cache. A batch larger than the agents that fit in memory cannot be served at this context. "
+         "A dash means the kernel failed for at least one matrix shape at that batch (see Failures).", "", "## Availability", ""]
 lines += table(["Format", "Works", "Check against the dense product"],
                [[f, "yes" if results["verify"][f]["ok"] else "no",
                  f"error {results['verify'][f]['error']:.1e}" if results["verify"][f]["ok"] else results["verify"][f]["reason"]]
@@ -362,7 +386,12 @@ for f in usable:
     rows.append([f, fmt_number(w, ".1f"), *[fmt_number(a, ".0f") for a in agents]])
 lines += table(["Format", "Weights (GB)", *[f"{v:.0f} GB GPU" for v in vrams]], rows)
 
-md = "\n".join(lines) + "\n"
+failures = [[k.replace("|", ", "), c["error"]] for k, c in results["cells"].items() if "error" in c and k.split("|")[0] in usable]
+if failures:
+    lines += ["", "## Failures", ""]
+    lines += table(["Format, shape, batch", "Reason"], failures)
+
+md ="\n".join(lines) + "\n"
 with open(os.path.join(out_dir, "probe.md"), "w", encoding="utf-8") as f:
     f.write(md)
 print("\n" + md, flush=True)
