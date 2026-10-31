@@ -36,6 +36,13 @@ scripts/compress_hw_validate.py). Keys:
     test:               seq_len, wikitext_seqs, c4_seqs, max_delta_loss, max_points
     validate:           points, val_seqs
     (no include: lm_head and the embeddings are genes)
+
+search.method: mix runs the search that mixes weight sharing + pruning with those formats
+(scripts/compress_search_mix.py), which also scores its final front itself; its steps are search and plot.
+Calibration and test keys as for hw, no validate. Search keys:
+    search:             method: mix, pop_size, n_gen, seed, objectives (from time, size, memory), max_delta_loss,
+                        memory_budget_mb, serve_batch, prompt_batch, context, new_tokens, gen_tokens, vram_gb,
+                        reserve, formats, bands, mlp_keep, max_skip, no_embeddings, clip_ratios, importance_seqs
 """
 
 import argparse
@@ -63,6 +70,10 @@ TEST = {"seq_len": "seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_t
 # search.method: hw (scripts/compress_search_hw.py)
 SEARCH_HW = {"method", "pop_size", "n_gen", "seed", "objectives", "max_delta_loss", "memory_budget_mb", "latency_batch",
              "latency_context", "formats", "bands", "mlp_keep", "max_skip", "no_embeddings", "clip_ratios", "importance_seqs"}
+# search.method: mix (scripts/compress_search_mix.py)
+SEARCH_MIX = {"method", "pop_size", "n_gen", "seed", "objectives", "max_delta_loss", "memory_budget_mb", "serve_batch", "prompt_batch",
+              "context", "new_tokens", "gen_tokens", "vram_gb", "reserve", "formats", "bands", "mlp_keep", "max_skip", "no_embeddings",
+              "clip_ratios", "importance_seqs"}
 CALIBRATION_HW = {k: v for k, v in CALIBRATION.items() if k != "every"}
 TEST_HW = {"seq_len": "test_seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_test_seqs",
            "max_delta_loss": "test_max_delta_loss", "max_points": "test_max_points"}
@@ -73,7 +84,7 @@ parser.add_argument("config", help="YAML file, e.g. configs/compress/d34_emb.yam
 parser.add_argument("--set", nargs="+", default=[], metavar="KEY=VALUE",
                     help="override config values, dotted for sections: search.n_gen=20 eval_batch_size=8")
 parser.add_argument("--steps", nargs="+", default=None, choices=["search", "score", "plot", "validate"],
-                    help="default: search score plot (search.method hw: search plot validate)")
+                    help="default: search score plot (search.method hw: search plot validate; mix: search plot)")
 parser.add_argument("--smoke", action="store_true",
                     help="quick check: population 4 (hw: 8), 2 generations, 8 calibration windows, 4 test windows, into <out_dir>_smoke")
 args = parser.parse_args()
@@ -111,15 +122,16 @@ for item in args.set:
     node[last] = yaml.safe_load(value)  # so 20 is an int, true a bool, [a, b] a list
 check_keys(cfg, TOP, "the top level")
 search, calib, test, validate = (dict(cfg.get(s) or {}) for s in ("search", "calibration", "test", "validate"))
-hw = search.get("method") == "hw"
-check_keys(search, SEARCH_HW if hw else SEARCH, "search")
+mix = search.get("method") == "mix"
+hw = mix or search.get("method") == "hw"  # mix runs like hw, with its own script and no validation
+check_keys(search, SEARCH_MIX if mix else SEARCH_HW if hw else SEARCH, "search")
 check_keys(calib, CALIBRATION_HW if hw else CALIBRATION, "calibration")
 check_keys(test, TEST_HW if hw else TEST, "test")
-check_keys(validate, VALIDATE if hw else {}, "validate")
+check_keys(validate, VALIDATE if hw and not mix else {}, "validate")
 if hw and cfg.get("include"):
-    sys.exit(f"{args.config}: search.method hw has no 'include': lm_head and the embeddings are genes of the search")
-steps = args.steps or (["search", "plot", "validate"] if hw else ["search", "score", "plot"])
-if "validate" in steps and not hw:
+    sys.exit(f"{args.config}: search.method {search['method']} has no 'include': lm_head and the embeddings are genes of the search")
+steps = args.steps or (["search", "plot"] if mix else ["search", "plot", "validate"] if hw else ["search", "score", "plot"])
+if "validate" in steps and (mix or not hw):
     sys.exit("--steps validate is for search.method hw")
 assert "model" in cfg, f"{args.config}: 'model' is required"
 out_dir = cfg.get("out_dir") or os.path.join("compress_runs", os.path.splitext(os.path.basename(args.config))[0])
@@ -182,16 +194,18 @@ py = [sys.executable, "-u", "-m"]
 if hw:
     search.pop("method")
     if {"search", "score"} & set(steps):  # one script: rerun, it resumes, then scores what is missing
-        run("search", py + ["scripts.compress_search_hw"] + flags({k: v for k, v in common.items() if k != "include"})
+        run("search", py + ["scripts.compress_search_mix" if mix else "scripts.compress_search_hw"] + flags({k: v for k, v in common.items() if k != "include"})
             + flags(search) + flags({CALIBRATION_HW[k]: v for k, v in calib.items()})
             + flags({TEST_HW[k]: v for k, v in test.items()})
             + ["--eval-batch-size", str(batch), "--out-dir", out_dir], log=False)  # it writes run.log itself
     if "plot" in steps:
         run("plot", py + ["scripts.compress_plot", "--run-dir", out_dir, "--all"])
+        if mix:  # --all covers latency and memory: stored size is the other objective
+            run("plot", py + ["scripts.compress_plot", "--run-dir", out_dir, "--x", "size", "--last-gen"])
     if "validate" in steps:
         run("validate", py + ["scripts.compress_hw_validate", "--run-dir", out_dir]
             + flags({VALIDATE[k]: v for k, v in validate.items()}))
-    print(f"\nDone: {out_dir} (test scores in test_scores.json, plots next to them, validation.json)", flush=True)
+    print(f"\nDone: {out_dir} (test scores in test_scores.json, plots next to them{'' if mix else ', validation.json'})", flush=True)
     sys.exit(0)
 if "search" in steps:  # its own end-of-run test scoring is off (0 windows): the score step does it resumably
     run("search", py + ["scripts.compress_search"] + flags(common) + flags(search)

@@ -1,0 +1,38 @@
+# Qwen2.5-0.5B-Instruct, weight sharing + pruning mixed with hardware-aware formats in one search
+# (scripts/compress_search_mix.py). Objectives delta_loss + GPU time of an agent's turn + stored size; deployed
+# memory and the agents that fit are logged for every solution. Genes: bf16, an int4 group size or shared (UBQ-ECSQ)
+# per role (qkv, o, up, down) and depth band (4 bands), lm_head (tied to the embedding), the MLP width kept per band
+# and one sharing candidate (k, c, pruning, merge). Kernel times are measured on this GPU; it should be idle.
+#   python -m scripts.compress_run configs/compress/qwen_mix.yaml
+# Test settings as in qwen_hw_*_p50_g100.yaml. Their time is one decode at 1 sequence and 1024 tokens of context, so
+# compare accuracy and size across the runs, not time or memory.
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/qwen_mix
+eval_batch_size: 1
+
+search:
+  method: mix
+  objectives: [time, size]   # add memory to optimize the deployed memory too
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  max_delta_loss: 1.0
+  # the workload: an agent's turn, with these agents decoding together
+  serve_batch: 4
+  prompt_batch: 256
+  context: 32000             # tokens each agent keeps in the KV cache
+  new_tokens: 2000           # prompt tokens processed per turn (the rest is cached)
+  gen_tokens: 300            # tokens generated per turn
+  vram_gb: 80                # for the agents_fit column only; memory_budget_mb would make memory a constraint
+  reserve: 0.1
+  bands: 4
+
+calibration:
+  seqs: 8                    # the same batch as the other Qwen runs (shared through the cache)
+  seq_len: 2048
+
+test:
+  seq_len: 2048
+  wikitext_seqs: 32
+  c4_seqs: 32
+  max_points: 6
