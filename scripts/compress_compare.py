@@ -126,6 +126,10 @@ def save(fig, ax, details):
 
 CALIB_KEYS = ["calib_dataset", "calib_split", "data_seed", "seq_len", "calib_seqs", "calib_every"]
 configs = [json.load(open(os.path.join(d, "config.json"))) for d in args.run_dirs]
+LATENCY_LABEL = "Predicted decode latency (ms per token)"
+if "prompt_us" in configs[0]["baseline"]:  # compress_search_mix: its latency_ms is the GPU time of an agent's turn
+    LATENCY_LABEL = "Predicted GPU time of a turn (ms)"
+    X_LABEL = LATENCY_LABEL if args.x == "latency" else X_LABEL
 calib = {tuple(c["args"].get(k) for k in CALIB_KEYS) for c in configs}
 if len(calib) > 1 or any(c["args"].get("calib_every", 1) != 0 for c in configs):
     print("warning: the runs were not all scored on one fixed calibration batch, so their delta_loss "
@@ -196,7 +200,7 @@ if args.three_d:  # compress_search_hw fronts over deployed memory (x) and predi
     ax.scatter(base["memory_mb"], base["latency_ms"], base_z, marker="D", s=30, color="black", depthshade=False,
                label="Uncompressed")
     ax.set_xlabel("Deployed memory (MB)")
-    ax.set_ylabel("Predicted decode latency (ms per token)")
+    ax.set_ylabel(LATENCY_LABEL)
     ax.set_zlabel(r"$\Delta$ Calibration loss (nats)" if args.metric == "calib" else METRIC_NAME[args.metric])
     ax.set_title(args.title)
     save(fig, ax, details)

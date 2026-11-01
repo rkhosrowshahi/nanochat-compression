@@ -1,0 +1,40 @@
+# Step 1 after qwen_mix.yaml: the KV cache as a decision of the search (scripts/compress_search_kv.py). Objectives
+# delta_loss + GPU time of an agent's turn + deployed memory (weights + KV cache). Genes: bf16 or an int4 group size per
+# role (qkv, o, up, down) and depth band (4 bands), lm_head (tied to the embedding), the MLP width kept per band, and per
+# band the precision of the cached keys and values (bf16, int8, int4) and the fraction of the context kept.
+# Kernel times are measured on this GPU; it should be idle.
+#   python -m scripts.compress_run configs/compress/qwen_kv.yaml
+# The same workload and test settings as qwen_mix.yaml, so turn time and memory compare directly. The loss of a window
+# below 1 is a proxy (2048-token calibration windows against 32000 tokens of context), see nanochat/compress_kv.py.
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/qwen_kv
+eval_batch_size: 1
+
+search:
+  method: kv
+  objectives: [time, memory]
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  max_delta_loss: 1.0
+  # the workload: an agent's turn, with these agents decoding together
+  serve_batch: 4
+  prompt_batch: 256
+  context: 32000             # tokens each agent keeps in the KV cache at window 1
+  new_tokens: 2000           # prompt tokens processed per turn (the rest is cached)
+  gen_tokens: 300            # tokens generated per turn
+  vram_gb: 80                # for the agents_fit column only; memory_budget_mb would make memory a constraint
+  reserve: 0.1
+  bands: 4
+  kv_precisions: bf16,int8,int4
+  kv_windows: 1.0,0.75,0.5,0.25
+
+calibration:
+  seqs: 8                    # the same batch as the other Qwen runs (shared through the cache)
+  seq_len: 2048
+
+test:
+  seq_len: 2048
+  wikitext_seqs: 32
+  c4_seqs: 32
+  max_points: 6

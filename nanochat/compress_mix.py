@@ -81,14 +81,18 @@ class MixCompressor(HWCompressor):
     decode table (its batch: the agents served together), prompt_table the one from build_prompt_table."""
 
     def __init__(self, model, layout, table, prompt_table, act_sq, removal_order, new_tokens=2000, gen_tokens=300,
-                 vram_gb=80.0, reserve=0.1, **kw):
+                 vram_gb=80.0, reserve=0.1, sharing=True, **kw):
+        """sharing=False: no `shared` format and no sharing genes (the searches of compress_kv.py and
+        compress_mix_simple.py): the deployed formats and the cost of a turn only."""
         super().__init__(model, layout, table, act_sq, removal_order, **kw)
         self.prompt_table = prompt_table
         self.new_tokens, self.gen_tokens = new_tokens, gen_tokens
         self.vram_mb, self.reserve = 1e3 * vram_gb, reserve
-        self.formats = (*self.formats, SHARED)
-        self.genes = [(n, len(self.formats) if not n.startswith(("keep_", "skip_")) else k) for n, k in self.genes]
-        self.genes += [(n, len(o)) for n, o in zip(SHARE_GENES, (SHARE_K, SHARE_C, SHARE_PRUNE, SHARE_RHO))]
+        self.sharing = sharing
+        if sharing:
+            self.formats = (*self.formats, SHARED)
+            self.genes = [(n, len(self.formats) if not n.startswith(("keep_", "skip_")) else k) for n, k in self.genes]
+            self.genes += [(n, len(o)) for n, o in zip(SHARE_GENES, (SHARE_K, SHARE_C, SHARE_PRUNE, SHARE_RHO))]
         self._format_genes = [i for i, (n, _) in enumerate(self.genes) if not n.startswith(("keep_", "skip_", "share_"))]
         self._share_genes = [i for i, (n, _) in enumerate(self.genes) if n.startswith("share_")]
         self._level_stats, self._ladders = {}, OrderedDict()
@@ -100,6 +104,8 @@ class MixCompressor(HWCompressor):
         """Integer genes; the sharing genes are zeroed when no group is shared, so those configurations are
         recognized as the same model."""
         genes = list(super().decode(x))
+        if not self.sharing:
+            return tuple(genes)
         shared = self.formats.index(SHARED)
         if not any(genes[i] == shared for i in self._format_genes):
             for i in self._share_genes:
@@ -107,9 +113,11 @@ class MixCompressor(HWCompressor):
         return tuple(genes)
 
     def config(self, genes):
-        g = dict(zip((name for name, _ in self.genes), genes))
-        beta = SHARE_PRUNE[g["share_prune"]]
-        share = Candidate(SHARE_K[g["share_k"]], SHARE_C[g["share_c"]], -beta, beta, SHARE_RHO[g["share_rho"]])
+        share = None
+        if self.sharing:
+            g = dict(zip((name for name, _ in self.genes), genes))
+            beta = SHARE_PRUNE[g["share_prune"]]
+            share = Candidate(SHARE_K[g["share_k"]], SHARE_C[g["share_c"]], -beta, beta, SHARE_RHO[g["share_rho"]])
         base = super().config(genes)
         return MixConfig(base.fmt, base.lm_head, base.embed, base.keep, base.skip_attn, base.skip_mlp, share)
 

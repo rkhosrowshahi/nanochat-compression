@@ -164,7 +164,8 @@ if args.y == "log":
 if args.x != "bins":
     ax.plot(baseline_mb, 0, "D", color="black", label="Uncompressed")
     ax.set_xlim(0, 1.05 * baseline_mb)  # from 0, so values read as fractions of the original
-    ax.set_xlabel({"size": "Model size (MB)", "latency": "Predicted decode latency (ms per token)",
+    turn = "prompt_us" in front.columns  # compress_search_mix: its latency_ms is the GPU time of an agent's turn
+    ax.set_xlabel({"size": "Model size (MB)", "latency": "Predicted GPU time of a turn (ms)" if turn else "Predicted decode latency (ms per token)",
                    "memory": "Deployed memory: weights + KV cache (MB)"}[args.x])
 else:  # the uncompressed model has no bins (16-bit floats), so it has no point here
     shown = pd.concat([front[X], pop[X] if args.with_init_pop or args.with_pop_every_gen else front[X]])
@@ -180,7 +181,7 @@ else:
     ax.set_ylim(-0.02 * y_max, y_max * 1.05)
 ax.set_ylabel(r"$\Delta$ Calibration loss (nats)")
 ax.grid(True, alpha=0.3)
-legend = ax.legend(loc="upper right")
+legend = ax.legend(loc="upper left" if args.x in ("latency", "memory") and "prompt_us" in front.columns else "upper right")  # those points hug the right edge
 front_label = next(t for t in legend.get_texts() if t.get_text() == "Pareto front")  # gets the front size per frame
 title = ax.set_title("")
 bar = None

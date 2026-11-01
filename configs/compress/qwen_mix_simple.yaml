@@ -1,0 +1,42 @@
+# Step 3 after qwen_mix.yaml: the mix split in two. A search over the deployed model only, objectives delta_loss + GPU time
+# of an agent's turn + deployed memory (scripts/compress_search_mix_simple.py), then an optional storage step on its final
+# front (scripts/compress_storage.py): grids of k levels for the matrices that stay in bf16, which changes the stored size
+# and the loss, never the time or the GPU memory. No pruning, merge or clipping genes: the mix front left them off in
+# 97-98% of its solutions.
+#   python -m scripts.compress_run configs/compress/qwen_mix_simple.yaml
+#   python -m scripts.compress_run configs/compress/qwen_mix_simple.yaml --steps storage     # the storage step alone
+# The same workload and test settings as qwen_mix.yaml.
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/qwen_mix_simple
+eval_batch_size: 1
+
+search:
+  method: mix_simple
+  objectives: [time, memory]
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  max_delta_loss: 1.0
+  # the workload: an agent's turn, with these agents decoding together
+  serve_batch: 4
+  prompt_batch: 256
+  context: 32000             # tokens each agent keeps in the KV cache
+  new_tokens: 2000           # prompt tokens processed per turn (the rest is cached)
+  gen_tokens: 300            # tokens generated per turn
+  vram_gb: 80                # for the agents_fit column only; memory_budget_mb would make memory a constraint
+  reserve: 0.1
+  bands: 4
+
+calibration:
+  seqs: 8                    # the same batch as the other Qwen runs (shared through the cache)
+  seq_len: 2048
+
+test:
+  seq_len: 2048
+  wikitext_seqs: 32
+  c4_seqs: 32
+  max_points: 6
+
+storage:
+  k: 17,33,65,129,257        # the grids tried for each solution's bf16 matrices
+  max_points: 6              # solutions of the storage front scored on the test sets

@@ -31,7 +31,7 @@
 \title{Hardware-Aware Multi-Objective Compression of Language Models:\\
 Minimizing Loss, Decode Latency and Memory Together}
 \author{Rasa Khosrowshahli}
-\date{October 2026}
+\date{November 2026}
 
 \begin{document}
 \maketitle
@@ -57,7 +57,14 @@ larger loss. A two-objective search with objectives \{loss, latency\} (memory as
 three-objective search with objectives \{loss, latency, memory\} and the same budget produce nearly the
 same front (three-objective
 hypervolume 0.3655 vs 0.3646), because latency and memory are almost collinear on this model; the
-two-objective search converged faster in every objective space.
+two-objective search converged faster in every objective space. Longer searches on an NVIDIA A100 80\,GB
+(population 50, 100 generations) confirm the ordering of the two scenarios and show that the gains depend
+on the GPU: uniform int4 is only $1.16\times$ faster there, and the fastest solutions are $1.33\times$
+faster in GPU time but only $1.05\times$ in eager wall-clock time. A third search mixes weight sharing
+and pruning with these formats and MLP width pruning, for the GPU time of an agent's turn at 32{,}000
+tokens of context. Attention over the KV cache takes 66\% of that turn, so its time moves by at most
+2.2\% below the uncompressed model. Sharing nearly halves the stored size at the lowest loss but barely
+changes GPU memory.
 \end{abstract}
 
 \tableofcontents
@@ -107,17 +114,20 @@ This report describes a hardware-aware redesign built on four principles:
   \item an NSGA-II search with two variants, objectives \{loss, latency\} under a memory constraint and
         objectives \{loss, latency, memory\} (Section~\ref{sec:search});
   \item a study on Qwen2.5-0.5B-Instruct on an RTX 3060 comparing the two variants by hypervolume
-        (Section~\ref{sec:experiments}).
+        (Section~\ref{sec:experiments}), repeated with longer searches on an A100
+        (Sections~\ref{sec:a100-3obj} and~\ref{sec:a100-2obj});
+  \item a search that mixes weight sharing, pruning and hardware-aware formats, with the GPU time of an
+        agent's turn as its objective (Section~\ref{sec:mix}).
 \end{itemize}
 
 % =====================================================================================================
 \section{Motivation: what the GPU can accelerate}
 \label{sec:motivation}
 
-All measurements in this report were made on an NVIDIA GeForce RTX 3060 8\,GB (Ampere, compute
+All measurements up to Section~\ref{sec:experiments} were made on an NVIDIA GeForce RTX 3060 8\,GB (Ampere, compute
 capability 8.6, 28 SMs, 1.5\,MB L2 cache, 128-bit GDDR6 at 15\,Gb/s, i.e.\ 240\,GB/s), with PyTorch
 2.13 and CUDA 12.6 on Windows 11, using only kernels that ship with PyTorch (no Triton, torchao, vLLM or
-FLUTE).
+FLUTE). Sections~\ref{sec:a100-3obj}--\ref{sec:mix} use an NVIDIA A100 80\,GB.
 
 \paragraph{Quantization does not change latency.}
 The search wrote the dequantized weights back into the dense bf16 matrices, and the forward pass
@@ -722,6 +732,557 @@ memory and latency decrease together on this model.}
 \end{figure}
 
 % =====================================================================================================
+\section{Hardware-aware search with three objectives on an A100}
+\label{sec:a100-3obj}
+
+This section and the next repeat the two scenarios of Section~\ref{sec:experiments} with a longer search
+on a server GPU.
+
+\subsection{Setup}
+\begin{itemize}
+  \item \textbf{Hardware.} NVIDIA A100 80\,GB PCIe, PyTorch 2.13 with CUDA 12.6 on Linux. The latency table
+        is measured on this GPU; both searches use the same table.
+  \item \textbf{Search.} Objectives \{loss, latency, memory\}, the same 23 genes, population 50, 100
+        generations, seed 42. The search evaluated 4953 distinct configurations, about 0.26\,s each, in
+        21 minutes.
+  \item \textbf{Calibration and constraints.} As in Section~\ref{sec:experiments}: the same 8 windows of
+        2048 tokens (uncompressed loss 2.8857 nats on this machine), $\dloss\le1$ nat, $M\le7000$\,MB.
+  \item \textbf{Workload.} Decoding one sequence at 1024 tokens of context. The uncompressed model's
+        predicted step takes 3.95\,ms and needs 1000.6\,MB.
+  \item \textbf{Test.} Six points of the final front on 32 windows of 2048 tokens of WikiText-2 test and
+        of C4 validation, then six points built as deployed models.
+\end{itemize}
+
+\subsection{Anatomy of a decode step on the A100}
+Table~\ref{tab:anatomy-a100} repeats Table~\ref{tab:anatomy} on the A100. The step takes 3.95\,ms against
+6.78\,ms on the RTX 3060, and the matrix products take 35\% of it against 73\%. Int4 everywhere therefore
+reaches only $3947/3407=1.16\times$, against about $2\times$ on the RTX 3060. Even free matrix products
+would reach only $3947/2546=1.55\times$.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+& \multicolumn{2}{c}{bf16} & \multicolumn{2}{c}{int4, group 128} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Part of the step & \us & share & \us & share \\
+\midrule
+MLP products (gate, up, down) $\times24$          & 719  & 18\% & 425  & 12\% \\
+Attention products ($q,k,v,o$) $\times24$          & 520  & 13\% & 354  & 10\% \\
+Attention over 1024 cached tokens $\times24$       & 301  & 8\%  & 301  & 9\%  \\
+Output head ($151936\times896$)                    & 163  & 4\%  & 82   & 2\%  \\
+Norms, rotary, activations, residuals $\times24$   & 921  & 23\% & 921  & 27\% \\
+Fixed (embedding, final norm, logits)              & 1324 & 34\% & 1324 & 39\% \\
+\midrule
+Total                                              & 3947 &      & 3407 &      \\
+\bottomrule
+\end{tabular}
+\caption{Predicted GPU time of one decode step of Qwen2.5-0.5B-Instruct (batch 1, 1024 tokens of
+context) on the A100.}
+\label{tab:anatomy-a100}
+\end{table}
+
+\subsection{The front}
+The final front has 50 solutions from 2.92 to 3.95\,ms and from 214 to 1001\,MB
+(Figure~\ref{fig:a100-3obj-front}). Formats alone give most of the memory and little of the time: int4
+with groups of 32 everywhere costs 0.084 nats at 3.45\,ms and 321\,MB, and groups of 128 cost 0.175 nats
+at 3.41\,ms and 275\,MB. Going faster takes structural changes: of the 50 solutions, 28 remove attention
+sublayers, 14 remove MLP sublayers and 23 prune MLP neurons.
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_3obj_front_latency.pdf}
+  \caption{Against predicted decode latency.}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_3obj_front_memory.pdf}
+  \caption{Against deployed memory.}
+\end{subfigure}
+\caption{Three-objective search on the A100: final front (50 solutions), initial front and the
+uncompressed model.}
+\label{fig:a100-3obj-front}
+\end{figure}
+
+\subsection{Test perplexity}
+Table~\ref{tab:a100-3obj-test} and Figure~\ref{fig:a100-3obj-test} give the scored points. The test sets
+follow the calibration loss. The point at 0.091 nats costs 11\% WikiText-2 and 10\% C4 perplexity for
+$3.1\times$ less memory and a $1.13\times$ faster decode step.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rrrrrl}
+\toprule
+Latency (ms) & Memory (MB) & $\dloss$ (nats) & WikiText-2 & C4 & Configuration \\
+\midrule
+3.95 & 1001 & 0     & 14.34 & 22.33 & uncompressed \\
+\midrule
+3.73 & 638 & 0.030 & 14.64 & 23.08 & int4 in up and part of down \\
+3.48 & 325  & 0.091 & 15.92 & 24.65 & mostly int4 \\
+3.23 & 277  & 0.312 & 21.37 & 32.11 & int4, MLP pruned in 2 bands, $-3$ attn \\
+3.07 & 321  & 0.492 & 27.93 & 38.47 & mostly int4, MLP 5/8 in 1 band, $-6$ attn \\
+2.92 & 222  & 0.998 & 60.31 & 69.15 & int4, MLP pruned in 2 bands, $-6$ attn, $-4$ MLP \\
+\bottomrule
+\end{tabular}
+\caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of points of the
+final three-objective front.}
+\label{tab:a100-3obj-test}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_3obj_test_wikitext2.pdf}
+  \caption{WikiText-2 test.}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_3obj_test_c4.pdf}
+  \caption{C4 validation.}
+\end{subfigure}
+\caption{Test perplexity of the scored points of the three-objective search against predicted decode
+latency.}
+\label{fig:a100-3obj-test}
+\end{figure}
+
+\subsection{Validation against the deployed models}
+\label{sec:a100-3obj-validation}
+Table~\ref{tab:a100-3obj-validation} compares six deployed models with the prediction, as in
+Table~\ref{tab:validation}. The simulated and deployed losses differ by at most 0.003 nats. The latency
+model is 0.6--2.7\% below the measured GPU time, a small systematic underestimate that did not appear on
+the RTX 3060.
+
+The eager wall-clock column limits what these gains mean in practice. An eager forward takes 10.8--12.4\,ms
+whatever the configuration, against 2.9--3.9\,ms of GPU time, so a GPU-time gain of $1.32\times$ is only
+$1.06\times$ on the clock, and the compressed models without sublayer removal are slower than the
+uncompressed model ($0.92$--$0.95\times$).
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{P{3.9cm}rrrrrrrr}
+\toprule
+& \multicolumn{3}{c}{GPU time (ms)} & Eager & \multicolumn{2}{c}{Loss (nats)} & \multicolumn{2}{c}{Speedup} \\
+\cmidrule(lr){2-4}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+Configuration & pred. & meas. & error & (ms) & sim. & deployed & GPU & eager \\
+\midrule
+int4, MLP pruned in 2 bands, $-6$ attn, $-4$ MLP  & 2.83 & 2.90 & $-2.7\%$ & 10.81 & 3.9098 & 3.9119 & 1.32 & 1.06 \\
+mostly int4, MLP 5/8 in 1 band, $-6$ attn  & 2.98 & 3.05 & $-2.1\%$ & 11.21 & 3.4023 & 3.4052 & 1.26 & 1.02 \\
+int4, MLP pruned in 2 bands, $-3$ attn            & 3.13 & 3.17 & $-1.4\%$ & 11.99 & 3.1785 & 3.1786 & 1.21 & 0.95 \\
+mostly int4                                       & 3.36 & 3.44 & $-2.3\%$ & 12.37 & 2.9839 & 2.9832 & 1.11 & 0.92 \\
+bf16 attention and head, int4 MLP                 & 3.61 & 3.63 & $-0.6\%$ & 12.04 & 2.9206 & 2.9202 & 1.05 & 0.95 \\
+uncompressed                                      & 3.83 & 3.87 & $-1.1\%$ & 11.39 & 2.8916 & 2.8916 & 0.99 & 1.00 \\
+\bottomrule
+\end{tabular}
+\caption{Three-objective search: predicted against measured GPU time of the deployed models (one token,
+batch 1), eager wall-clock time, calibration loss on two windows, and the measured speedup over a
+separately timed uncompressed reference (3.83\,ms, 11.41\,ms eager).}
+\label{tab:a100-3obj-validation}
+\end{table}
+
+% =====================================================================================================
+\section{Hardware-aware search with two objectives on an A100}
+\label{sec:a100-2obj}
+
+\subsection{Setup}
+The hardware, calibration batch, constraints, workload, budget and test sets are those of
+Section~\ref{sec:a100-3obj}; memory is only a constraint, which never binds. The search evaluated 4975
+distinct configurations, about 0.27\,s each, in 22 minutes.
+
+\subsection{The front}
+The final front has 50 solutions from 2.90 to 3.95\,ms and from 220 to 1001\,MB
+(Figure~\ref{fig:a100-2obj-front}). Of the 50, 38 remove attention sublayers, 20 remove MLP sublayers and
+23 prune MLP neurons. Table~\ref{tab:a100-2obj-test} gives the scored points. The test sets follow the
+calibration loss here too: the point at 0.088 nats costs 9\% WikiText-2 and 8\% C4 perplexity at 3.50\,ms
+and 387\,MB.
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_2obj_front_latency.pdf}
+  \caption{Against predicted decode latency (objective).}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_2obj_front_memory.pdf}
+  \caption{Against deployed memory (reported).}
+\end{subfigure}
+\caption{Two-objective search on the A100: final front (50 solutions), initial front and the uncompressed
+model.}
+\label{fig:a100-2obj-front}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{rrrrrl}
+\toprule
+Latency (ms) & Memory (MB) & $\dloss$ (nats) & WikiText-2 & C4 & Configuration \\
+\midrule
+3.95 & 1001 & 0     & 14.34 & 22.33 & uncompressed \\
+\midrule
+3.50& 387  & 0.088 & 15.65 & 24.21 & mostly int4 \\
+3.24 & 284  & 0.230 & 18.74 & 28.10 & int4, $-3$ attn \\
+3.06 & 291  & 0.402 & 24.65 & 33.99 & int4, MLP 7/8 in 1 band, $-6$ attn \\
+2.96 & 237  & 0.636 & 33.82 & 46.29 & int4, MLP 5/8 in 2 bands, $-6$ attn, $-1$ MLP \\
+2.90 & 220  & 0.990 & 50.95 & 62.69 & int4, MLP 5/8 in 2 bands, $-6$ attn, $-5$ MLP \\
+\bottomrule
+\end{tabular}
+\caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of points of the
+final two-objective front.}
+\label{tab:a100-2obj-test}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_2obj_test_wikitext2.pdf}
+  \caption{WikiText-2 test.}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_2obj_test_c4.pdf}
+  \caption{C4 validation.}
+\end{subfigure}
+\caption{Test perplexity of the scored points of the two-objective search against predicted decode
+latency.}
+\label{fig:a100-2obj-test}
+\end{figure}
+
+\subsection{Validation against the deployed models}
+Table~\ref{tab:a100-2obj-validation} shows the same pattern as Section~\ref{sec:a100-3obj-validation}: the
+latency model is 1.0--2.9\% below the measured GPU time, the losses differ by at most 0.002 nats, and a
+GPU-time gain of up to $1.33\times$ is at most $1.05\times$ on the eager clock.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{P{3.9cm}rrrrrrrr}
+\toprule
+& \multicolumn{3}{c}{GPU time (ms)} & Eager & \multicolumn{2}{c}{Loss (nats)} & \multicolumn{2}{c}{Speedup} \\
+\cmidrule(lr){2-4}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+Configuration & pred. & meas. & error & (ms) & sim. & deployed & GPU & eager \\
+\midrule
+int4, MLP 5/8 in 2 bands, $-6$ attn, $-5$ MLP & 2.81 & 2.89 & $-2.7\%$ & 11.22 & 3.8935 & 3.8947 & 1.33 & 1.05 \\
+int4, MLP 5/8 in 2 bands, $-6$ attn, $-1$ MLP & 2.87 & 2.96 & $-2.9\%$ & 11.53 & 3.5279 & 3.5274 & 1.29 & 1.03 \\
+int4, MLP 7/8 in 1 band, $-6$ attn            & 2.97 & 3.00 & $-1.1\%$ & 11.65 & 3.3040 & 3.3042 & 1.28 & 1.02 \\
+int4, $-3$ attn                                      & 3.13 & 3.22 & $-2.7\%$ & 12.34 & 3.1046 & 3.1054 & 1.19 & 0.96 \\
+mostly int4                                          & 3.38 & 3.44 & $-1.6\%$ & 13.01 & 2.9748 & 2.9747 & 1.11 & 0.91 \\
+uncompressed                                         & 3.83 & 3.87 & $-1.0\%$ & 11.89 & 2.8916 & 2.8916 & 0.99 & 1.00 \\
+\bottomrule
+\end{tabular}
+\caption{Two-objective search: predicted against measured GPU time of the deployed models (one token,
+batch 1), eager wall-clock time, calibration loss on two windows, and the measured speedup over a
+separately timed uncompressed reference (3.83\,ms, 11.83\,ms eager).}
+\label{tab:a100-2obj-validation}
+\end{table}
+
+\subsection{Two objectives against three}
+Table~\ref{tab:a100-hv} and Figure~\ref{fig:a100-compare} compare both searches. Each objective is divided
+by one shared value (0.955 nats, 3.95\,ms, 1000.6\,MB), with reference point $(1,1,1)$.
+\begin{itemize}
+  \item \textbf{In all three objectives, the two-objective search is ahead from generation 8 on,} and ends
+        3.7\% higher (0.1514 against 0.1460). The lead shrinks to 1.5\% over every feasible solution each
+        search evaluated (0.1567 with 580 non-dominated points against 0.1543 with 426). The same
+        ordering appeared on the RTX 3060 (Table~\ref{tab:hv}).
+  \item \textbf{In \{loss, memory\}, the three-objective search is ahead,} by 1.2\% at the end.
+  \item \textbf{The practical differences are small and uneven} (Table~\ref{tab:a100-budget}). Latency
+        agrees within 1.2\%. The three-objective search has less memory at low loss, up to 10\% at
+        $\dloss\le0.05$, and about the same elsewhere.
+  \item \textbf{100 generations were more than needed.} In all three objectives, the two-objective search
+        reaches its final level by generation 50, and its hypervolume drifts slightly down afterwards, since
+        the front is limited to the current population.
+\end{itemize}
+Against the short runs of Section~\ref{sec:experiments}, the tenfold budget mainly improves the low-loss
+end: the smallest weights at $\dloss\le0.05$ fall from 561 to 476\,MB (two objectives) and from 555 to
+430\,MB (three objectives), and change little at 0.1--0.3 nats. Times cannot be compared across the two
+GPUs. With one seed per scenario, these differences are indicative only.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{rcccccc}
+\toprule
+Objectives & \multicolumn{2}{c}{\{loss, latency, memory\}} & \multicolumn{2}{c}{\{loss, latency\}} & \multicolumn{2}{c}{\{loss, memory\}} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Generation & 2 obj. & 3 obj. & 2 obj. & 3 obj. & 2 obj. & 3 obj. \\
+\midrule
+1   & 0.1202          & \textbf{0.1218} & 0.1686          & 0.1686          & 0.6584          & \textbf{0.6670} \\
+5   & 0.1356          & \textbf{0.1381} & 0.1902          & \textbf{0.1906} & 0.6783          & \textbf{0.6938} \\
+10  & \textbf{0.1455} & 0.1403          & \textbf{0.2009} & 0.1926          & 0.6960          & \textbf{0.7039} \\
+25  & \textbf{0.1497} & 0.1406          & \textbf{0.2051} & 0.1946          & \textbf{0.7004} & 0.6971          \\
+50  & \textbf{0.1516} & 0.1422          & \textbf{0.2063} & 0.1941          & 0.7055          & \textbf{0.7099} \\
+75  & \textbf{0.1515} & 0.1439          & \textbf{0.2068} & 0.1958          & 0.7032          & \textbf{0.7116} \\
+100 & \textbf{0.1514} & 0.1460          & \textbf{0.2069} & 0.1992          & 0.6989          & \textbf{0.7072} \\
+\bottomrule
+\end{tabular}
+\caption{Hypervolume of the fronts of the A100 searches with one shared normalization, in all three
+objectives and in the two projections.}
+\label{tab:a100-hv}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{rrrrr}
+\toprule
+& \multicolumn{2}{c}{Fastest (ms)} & \multicolumn{2}{c}{Smallest weights (MB)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+$\dloss$ up to (nats) & 2 obj. & 3 obj. & 2 obj. & 3 obj. \\
+\midrule
+0.02 & 3.76 & 3.77 & 756 & 725 \\
+0.05 & 3.59 & 3.60 & 476 & 430 \\
+0.1  & 3.44 & 3.44 & 295 & 299 \\
+0.2  & 3.26 & 3.30 & 263 & 263 \\
+0.3  & 3.18 & 3.19 & 250 & 249 \\
+0.5  & 3.02 & 3.03 & 229 & 228 \\
+1.0  & 2.90 & 2.92 & 207 & 202 \\
+\bottomrule
+\end{tabular}
+\caption{Best latency and best deployed weights within each loss budget, over all evaluated solutions of
+each search. Each column is its own solution: the fastest and the smallest are usually different models.}
+\label{tab:a100-budget}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_fronts_latency.pdf}
+  \caption{Latency.}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_fronts_memory.pdf}
+  \caption{Memory.}
+\end{subfigure}\\[6pt]
+\begin{subfigure}{0.72\linewidth}
+  \includegraphics[width=\linewidth]{figures/a100_hv_3d.pdf}
+  \caption{Hypervolume in \{loss, latency, memory\}.}
+\end{subfigure}
+\caption{Final fronts of the two A100 searches against predicted decode latency (a) and deployed memory
+(b), and their hypervolume per generation with one shared normalization (c).}
+\label{fig:a100-compare}
+\end{figure}
+
+% =====================================================================================================
+\section{Mixing weight sharing, pruning and architecture optimization}
+\label{sec:mix}
+
+The searches above never touch the storage formats of Section~\ref{sec:motivation}, and they time one
+decode step. This search brings weight sharing and pruning back into one optimization with the deployed
+formats and the width of the MLPs, and it times the work of an agent: a turn with prompt tokens and
+generated tokens, over a long KV cache.
+
+\subsection{Method}
+\paragraph{One format per matrix group.}
+Stacking the methods does not work: measured on this model, codes of a shared grid pushed through the
+int4 grid lose their sharing and add loss, and pruning on top of int4 adds loss without shrinking the
+codes. So a group has one format: bf16, int4 with groups of 32, 64 or 128, or \emph{shared}. A shared
+matrix is compressed by UBQ-ECSQ with one codebook for all shared matrices of the model. No GPU kernel
+reads these codes, so a shared matrix is expanded and runs as bf16: sharing changes the stored size and the
+accuracy, not the time or the GPU memory. Within a configuration the order is fixed: neurons are removed
+first, each kept matrix is put in its format, and the codes are entropy coded for storage last.
+
+\paragraph{Genes.}
+The 16 role and band genes and the head gene take one of the five formats. Four genes hold the MLP width
+per band, the only architecture decision in this run, since sublayer removal was turned off
+($s_{\text{attn}}=s_{\text{mlp}}=0$). Four genes hold the one sharing candidate: grid levels
+$k\in\{17,33,65,129,257\}$, clipping $c\in\{1,0.9,0.8,0.7\}$, the pruning interval
+$\beta\in\{0,0.1,0.2,0.3,0.5\}$ in row standard deviations and the merge ratio
+$\rho\in\{1,0.75,0.5,0.25\}$; they are zeroed when no group is shared. The search space has
+$5^{21}\cdot400\approx1.9\times10^{17}$ configurations.
+
+\paragraph{Objectives.}
+$\dloss$, the stored size $S(x)$ and the GPU time of one agent's turn,
+\begin{equation}
+  T_{\text{turn}}(x) = N_{\text{new}}\,\frac{T_{256}(x)-t_{\text{head}}(x)}{256}
+                     + N_{\text{gen}}\,\frac{T_{4}(x)}{4},
+  \label{eq:turn}
+\end{equation}
+where $T_\beta$ is Eq.~\eqref{eq:latency} at batch $\beta$ from a table measured at that batch. Only
+decoding needs logits for every token, so the head is left out of the prompt term. Each decoding
+sequence reads its own cache of 32{,}000 tokens, while prompt tokens read one shared cache together in
+chunks of 256. The workload is $N_{\text{new}}=2000$ new prompt tokens and $N_{\text{gen}}=300$ generated
+tokens per turn, with 4 agents decoding together. $S(x)$ is the size under an ideal entropy coder, plus
+scales, tables and the codebook; it is a computed size, not a written file. Deployed memory, with the KV
+cache of the 4 agents, and the number of agents that fit on 80\,GB with 10\% kept free are reported, not
+optimized.
+
+\paragraph{Search.}
+$\dloss\le1$ nat, the same calibration batch, population 50, 100 generations, seed 42, on the A100: 4992
+distinct configurations, about 0.32\,s each, in 27 minutes.
+
+\subsection{The turn time barely changes}
+\label{sec:mix-time}
+The uncompressed turn takes 1018\,ms (303\us{} per prompt token, 1369\us{} per generated token), and the
+final front spans only 995--1070\,ms (Figure~\ref{fig:mix-front}). Table~\ref{tab:turn} shows why: attention
+over the KV cache is 66\% of the turn and all weight products together are 13\%, so weight compression has
+little to work with. Int4 everywhere makes the turn slower, 1054\,ms with groups of 128, because it costs
+more on prompts (75\,ms) than it saves when decoding (38\,ms). The fastest solution within $\dloss\le0.1$
+takes 1004\,ms (1.3\% faster). The fastest on the front, 995\,ms, keeps about 60\% of the MLP neurons and
+costs 0.74 nats, which raises WikiText-2 perplexity from 14.3 to 49.5.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+& \multicolumn{2}{c}{bf16} & \multicolumn{2}{c}{int4, group 128} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Part of the turn & ms & share & ms & share \\
+\midrule
+Attention over the KV cache, prompt tokens        & 567  & 56\% & 567  & 54\% \\
+Attention over the KV cache, generated tokens     & 102  & 10\% & 102  & 10\% \\
+Fixed parts, norms, activations, residuals        & 212  & 21\% & 212  & 20\% \\
+Attention and MLP products, prompt tokens         & 16   & 2\%  & 91   & 9\%  \\
+Attention and MLP products, generated tokens      & 107  & 10\% & 74   & 7\%  \\
+Output head, generated tokens                     & 13   & 1\%  & 8    & 1\%  \\
+\midrule
+Total                                             & 1018 &      & 1054 &      \\
+\bottomrule
+\end{tabular}
+\caption{Predicted GPU time of one agent's turn (Eq.~\ref{eq:turn}) of Qwen2.5-0.5B-Instruct on the A100,
+with 32{,}000 tokens of context.}
+\label{tab:turn}
+\end{table}
+
+\subsection{Stored size against GPU memory}
+\label{sec:mix-size}
+The front spans 158--947\,MB of stored size (Figure~\ref{fig:mix-front}), against 988\,MB uncompressed.
+Table~\ref{tab:mix-size} compares the smallest stored solution within each loss budget with the deployed
+weights of that same solution and with the smallest deployed weights of the three-objective search of
+Section~\ref{sec:a100-3obj}. For int4 models the stored size is only 3--7\% below the deployed size, so the
+last column is a fair rough reference. Sharing nearly halves the stored size at $\dloss\le0.02$, saves about 27\% at
+0.05 nats and about 20\% at 0.5--1 nats, and adds little around 0.1--0.2 nats, where int4 everywhere is already 244--301\,MB stored. It
+does so at a cost in GPU memory: the smallest stored solutions keep large matrices in bf16 when running.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{rrrr}
+\toprule
+$\dloss$ up to & Mix: smallest & Same solution, & 3 obj.: smallest \\
+(nats) & stored (MB) & deployed (MB) & deployed (MB) \\
+\midrule
+0.02 & 374 & 966 & 725 \\
+0.05 & 312 & 873 & 430 \\
+0.1  & 272 & 423 & 299 \\
+0.2  & 235 & 417 & 263 \\
+0.5  & 187 & 793 & 228 \\
+1.0  & 158 & 654 & 202 \\
+\bottomrule
+\end{tabular}
+\caption{Stored size of the mixed search against deployed weights, over all evaluated solutions,
+without the KV cache. The uncompressed model takes 988\,MB in both columns.}
+\label{tab:mix-size}
+\end{table}
+
+\noindent GPU memory is limited by the KV cache in this workload: it takes 1573 of the 2561\,MB deployed for
+4 agents, and every solution fits 180--182 agents on 80\,GB. On this model, weight compression therefore
+does not change how many agents share a GPU.
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/mix_front_size.pdf}
+  \caption{Stored size (objective).}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/mix_front_time.pdf}
+  \caption{GPU time of a turn (objective).}
+\end{subfigure}\\[6pt]
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/mix_front_memory.pdf}
+  \caption{Deployed memory, 4 agents (reported).}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/mix_hv.pdf}
+  \caption{Hypervolume per generation.}
+\end{subfigure}
+\caption{Mixed search: final front (50 solutions), initial front and the uncompressed model. A front in
+three objectives is not ordered along any one axis, so it does not form a curve in these projections.}
+\label{fig:mix-front}
+\end{figure}
+
+\subsection{What the search chose}
+Over the non-dominated solutions among all evaluations (426 within $\dloss\le1$), 99\% use int4 and sharing
+together, so the mixture does get used. Sharing goes mostly to the MLP (74\% of the up genes, 62\% of the
+down genes), which are the largest matrices and the ones on which int4 costs most on prompts; attention
+projections mostly take int4 with groups of 128 (52\%). The extra sharing genes are almost unused: where
+sharing is used, 97\% of the solutions have no clipping ($c=1$), 98\% no pruning ($\beta=0$) and 98\% no
+merge ($\rho=1$). The grid level $k$ does vary, from $k=17$ (37\%) to $k=257$ (11\%). Pruning and merging
+therefore add little on this model once formats and MLP width are available.
+
+\subsection{Test perplexity}
+Table~\ref{tab:mix-test} and Figure~\ref{fig:mix-test} give six points of the final front on 32 windows each.
+Low-loss points hold up on held-out text (0.055 nats on calibration, 0.081 on WikiText-2 and 0.066 on C4),
+and high-loss points are optimistic (0.740 becomes 1.24 and 1.08), so the calibration batch of 8 windows
+overstates what MLP pruning keeps.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{rrrrrr}
+\toprule
+Turn (ms) & Stored (MB) & Deployed, 4 agents (MB) & $\dloss$ (nats) & WikiText-2 & C4 \\
+\midrule
+1018 & 988 & 2561 & 0     & 14.34 & 22.33 \\
+\midrule
+1013 & 914 & 2521 & 0.020 & 14.82 & 22.81 \\
+1070 & 346 & 2101 & 0.055 & 15.56 & 23.84 \\
+1040 & 232 & 2212 & 0.283 & 20.04 & 31.21 \\
+1021 & 192 & 2270 & 0.459 & 27.55 & 39.67 \\
+1007 & 214 & 2117 & 0.592 & 35.71 & 48.86 \\
+ 995 & 207 & 2024 & 0.740 & 49.49 & 65.61 \\
+\bottomrule
+\end{tabular}
+\caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of points of the
+final front of the mixed search.}
+\label{tab:mix-test}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/mix_test_wikitext2.pdf}
+  \caption{WikiText-2 test.}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/mix_test_c4.pdf}
+  \caption{C4 validation.}
+\end{subfigure}
+\caption{Test perplexity of the scored points of the mixed search against stored size.}
+\label{fig:mix-test}
+\end{figure}
+
+\subsection{Search behavior}
+The hypervolume peaks at generation 46 (0.0397) and ends lower (0.0352), since NSGA-II keeps only 50
+solutions of a front that has hundreds, spread over three objectives. Over all evaluations it is 0.0438.
+This loses good solutions: within $\dloss\le0.02$ the smallest stored size is 374\,MB over all evaluations
+but 700\,MB in the final population. Test scoring sees only the final population, so the best low-loss
+solutions of Table~\ref{tab:mix-size} have a calibration loss and no test score.
+
+\subsection{Limitations}
+\begin{itemize}
+  \item \textbf{Prediction only.} This search has no validation step: the turn times are not checked
+        against a real run, and the deployed models with shared matrices are checked only on a small
+        random model. Eager execution adds overhead that the turn time leaves out, as in
+        Tables~\ref{tab:a100-3obj-validation} and~\ref{tab:a100-2obj-validation}.
+  \item \textbf{The model is not the target.} Qwen2.5-0.5B weights are small next to its KV cache at this
+        context. On the shapes of Qwen2.5-32B the same A100 fits no agent in bf16 (65.5\,GB of weights)
+        and 6 with int4 groups of 128 (17.4\,GB), measured by a separate kernel probe, so the memory
+        conclusion above does not carry over. Its turn-time ranking does not change: at batch 4 the
+        matrix products with int4 save 3.9\,ms per generated token and cost 3.3\,ms more per prompt
+        token, about 5.5\,s more per turn of this workload.
+  \item \textbf{The KV cache is not a decision.} The largest part of both the time and the memory is outside
+        the search space.
+  \item \textbf{Other limits.} One seed, one workload, sublayer removal off, and perplexity only: none of
+        the A100 solutions has been run on the downstream benchmarks or on agent tasks.
+\end{itemize}
+
+% =====================================================================================================
 \section{Discussion}
 \label{sec:discussion}
 
@@ -743,12 +1304,13 @@ and the same uncompressed model measured 28.0 and 34.6\,ms in two processes.
 
 \paragraph{Limitations.}
 \begin{itemize}
-  \item One seed per scenario and 480 evaluations: the comparison of Section~\ref{sec:experiments} is
-        indicative only.
+  \item One seed per scenario: the comparisons of Sections~\ref{sec:experiments}
+        and~\ref{sec:a100-2obj} are indicative only.
   \item The kernel menu is that of this machine: no LUT, 2:4 or fused int8 kernels, and no
         FlashAttention.
-  \item The workload is decoding at batch 1; prompt processing is not modeled, and the tinygemm int4
-        kernel is 3--5$\times$ slower than bf16 on long prompts (Table~\ref{tab:menu}).
+  \item The hardware-aware searches model decoding at batch 1 only, and the tinygemm int4 kernel is
+        3--5$\times$ slower than bf16 on long prompts on the RTX 3060 (Table~\ref{tab:menu}); the search of
+        Section~\ref{sec:mix} models prompts as well.
   \item Structurally pruned models are not fine-tuned afterwards, which makes structural pruning look
         worse than it is after a short recovery training \cite{ma2023llmpruner}.
   \item The loss is measured on 8 calibration windows, and the local test sets on 32 windows each.
@@ -771,7 +1333,8 @@ and the same uncompressed model measured 28.0 and 34.6\,ms in two processes.
   \item \textbf{Per-layer genes.} Decisions per layer instead of per band, seeded by a separable
         sensitivity model solved as a knapsack problem under a latency budget, as in HAWQ-V3
         \cite{yao2021hawqv3}, with the same model screening offspring.
-  \item \textbf{A workload objective} that covers prompt processing and generation.
+  \item \textbf{KV-cache size and precision as decisions,} since the cache dominates the turn time and
+        the memory of Section~\ref{sec:mix}.
   \item \textbf{Statistics.} Several seeds per scenario, compared by the mean final hypervolume and a
         Mann--Whitney U test.
   \item \textbf{Recovery fine-tuning} of the structurally pruned points of the final front.
