@@ -1,0 +1,1007 @@
+{
+  "info": {
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "gpu_memory_gb": 84.98774016,
+    "torch": "2.13.0+cu126",
+    "model": "Qwen/Qwen2.5-32B-Instruct",
+    "n_layer": 64,
+    "n_head": 40,
+    "n_kv_head": 8,
+    "head_dim": 128,
+    "shapes": [
+      [
+        1024,
+        5120,
+        true,
+        128
+      ],
+      [
+        5120,
+        5120,
+        false,
+        64
+      ],
+      [
+        5120,
+        5120,
+        true,
+        64
+      ],
+      [
+        5120,
+        27648,
+        false,
+        64
+      ],
+      [
+        27648,
+        5120,
+        false,
+        128
+      ],
+      [
+        152064,
+        5120,
+        false,
+        1
+      ]
+    ],
+    "context": 32000
+  },
+  "verify": {
+    "bf16": {
+      "ok": true,
+      "error": 0.004735053051263094
+    },
+    "int4_g32": {
+      "ok": true,
+      "error": 0.0045403423719108105
+    },
+    "int4_g64": {
+      "ok": true,
+      "error": 0.00432058097794652
+    },
+    "int4_g128": {
+      "ok": true,
+      "error": 0.00414460152387619
+    },
+    "int8_weight": {
+      "ok": true,
+      "error": 0.0023958648089319468
+    },
+    "w8a8": {
+      "ok": true,
+      "error": 0.007418666034936905
+    },
+    "w8a8_gemm": {
+      "ok": true,
+      "error": 0.00514009315520525
+    },
+    "fp8": {
+      "ok": false,
+      "reason": "RuntimeError: torch._scaled_mm is only supported on CUDA devices with compute capability >= 9.0 or 8.9, or ROCm MI300+"
+    },
+    "fp8_gemm": {
+      "ok": false,
+      "reason": "RuntimeError: torch._scaled_mm is only supported on CUDA devices with compute capability >= 9.0 or 8.9, or ROCm MI300+"
+    },
+    "sparse24": {
+      "ok": true,
+      "error": 0.0019536889158189297
+    }
+  },
+  "cells": {
+    "bf16|1024x5120+bias|1": {
+      "us": 12.459811748274221,
+      "bytes": 10485760
+    },
+    "bf16|1024x5120+bias|4": {
+      "us": 13.181423180855361,
+      "bytes": 10485760
+    },
+    "bf16|1024x5120+bias|16": {
+      "us": 13.606575253891618,
+      "bytes": 10485760
+    },
+    "bf16|1024x5120+bias|64": {
+      "us": 14.262330617836053,
+      "bytes": 10485760
+    },
+    "bf16|1024x5120+bias|2048": {
+      "us": 134.8479986190796,
+      "bytes": 10485760
+    },
+    "bf16|5120x5120|1": {
+      "us": 35.89485798563276,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120|4": {
+      "us": 36.13256982394627,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120|16": {
+      "us": 36.64058338512074,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120|64": {
+      "us": 38.02324690908756,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120|2048": {
+      "us": 467.26399660110474,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120+bias|1": {
+      "us": 36.8640003380952,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120+bias|4": {
+      "us": 37.281186492354784,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120+bias|16": {
+      "us": 37.81071698890542,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120+bias|64": {
+      "us": 44.62364514668783,
+      "bytes": 52428800
+    },
+    "bf16|5120x5120+bias|2048": {
+      "us": 479.10401225090027,
+      "bytes": 52428800
+    },
+    "bf16|5120x27648|1": {
+      "us": 174.27200078964233,
+      "bytes": 283115520
+    },
+    "bf16|5120x27648|4": {
+      "us": 175.80799758434296,
+      "bytes": 283115520
+    },
+    "bf16|5120x27648|16": {
+      "us": 181.5039962530136,
+      "bytes": 283115520
+    },
+    "bf16|5120x27648|64": {
+      "us": 190.91199338436127,
+      "bytes": 283115520
+    },
+    "bf16|5120x27648|2048": {
+      "us": 2515.712022781372,
+      "bytes": 283115520
+    },
+    "bf16|27648x5120|1": {
+      "us": 178.8800060749054,
+      "bytes": 283115520
+    },
+    "bf16|27648x5120|4": {
+      "us": 172.54400253295898,
+      "bytes": 283115520
+    },
+    "bf16|27648x5120|16": {
+      "us": 174.84800517559052,
+      "bytes": 283115520
+    },
+    "bf16|27648x5120|64": {
+      "us": 191.8720006942749,
+      "bytes": 283115520
+    },
+    "bf16|27648x5120|2048": {
+      "us": 2574.7199058532715,
+      "bytes": 283115520
+    },
+    "bf16|152064x5120|1": {
+      "us": 870.1440095901489,
+      "bytes": 1557135360
+    },
+    "bf16|152064x5120|4": {
+      "us": 879.7439932823181,
+      "bytes": 1557135360
+    },
+    "bf16|152064x5120|16": {
+      "us": 981.5679788589478,
+      "bytes": 1557135360
+    },
+    "bf16|152064x5120|64": {
+      "us": 974.0800261497498,
+      "bytes": 1557135360
+    },
+    "bf16|152064x5120|2048": {
+      "us": 14328.960418701172,
+      "bytes": 1557135360
+    },
+    "int4_g32|1024x5120+bias|1": {
+      "us": 10.60722778583395,
+      "bytes": 3276800
+    },
+    "int4_g32|1024x5120+bias|4": {
+      "us": 13.7874288218362,
+      "bytes": 3276800
+    },
+    "int4_g32|1024x5120+bias|16": {
+      "us": 24.181205106068806,
+      "bytes": 3276800
+    },
+    "int4_g32|1024x5120+bias|64": {
+      "us": 48.22790331956817,
+      "bytes": 3276800
+    },
+    "int4_g32|1024x5120+bias|2048": {
+      "us": 1306.0799837112427,
+      "bytes": 3276800
+    },
+    "int4_g32|5120x5120|1": {
+      "us": 17.761745236136697,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120|4": {
+      "us": 24.27990465279085,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120|16": {
+      "us": 61.5679994225502,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120|64": {
+      "us": 233.40800404548645,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120|2048": {
+      "us": 6674.880027770996,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120+bias|1": {
+      "us": 19.662869097006443,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120+bias|4": {
+      "us": 27.605333262019688,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120+bias|16": {
+      "us": 68.18427710697569,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120+bias|64": {
+      "us": 238.71999979019165,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x5120+bias|2048": {
+      "us": 6726.463794708252,
+      "bytes": 16384000
+    },
+    "int4_g32|5120x27648|1": {
+      "us": 76.91815266242394,
+      "bytes": 88473600
+    },
+    "int4_g32|5120x27648|4": {
+      "us": 103.16799879074097,
+      "bytes": 88473600
+    },
+    "int4_g32|5120x27648|16": {
+      "us": 310.65601110458374,
+      "bytes": 88473600
+    },
+    "int4_g32|5120x27648|64": {
+      "us": 1121.791958808899,
+      "bytes": 88473600
+    },
+    "int4_g32|5120x27648|2048": {
+      "us": 35487.48779296875,
+      "bytes": 88473600
+    },
+    "int4_g32|27648x5120|1": {
+      "us": 76.60307792516855,
+      "bytes": 88473600
+    },
+    "int4_g32|27648x5120|4": {
+      "us": 107.06488953696356,
+      "bytes": 88473600
+    },
+    "int4_g32|27648x5120|16": {
+      "us": 328.7679851055145,
+      "bytes": 88473600
+    },
+    "int4_g32|27648x5120|64": {
+      "us": 1309.6959590911865,
+      "bytes": 88473600
+    },
+    "int4_g32|27648x5120|2048": {
+      "us": 36824.127197265625,
+      "bytes": 88473600
+    },
+    "int4_g32|152064x5120|1": {
+      "us": 432.51198530197144,
+      "bytes": 486604800
+    },
+    "int4_g32|152064x5120|4": {
+      "us": 563.3280277252197,
+      "bytes": 486604800
+    },
+    "int4_g32|152064x5120|16": {
+      "us": 1579.6480178833008,
+      "bytes": 486604800
+    },
+    "int4_g32|152064x5120|64": {
+      "us": 6373.760223388672,
+      "bytes": 486604800
+    },
+    "int4_g32|152064x5120|2048": {
+      "us": 196043.5791015625,
+      "bytes": 486604800
+    },
+    "int4_g64|1024x5120+bias|1": {
+      "us": 9.789015345005174,
+      "bytes": 2949120
+    },
+    "int4_g64|1024x5120+bias|4": {
+      "us": 13.409523736862909,
+      "bytes": 2949120
+    },
+    "int4_g64|1024x5120+bias|16": {
+      "us": 23.9177147547404,
+      "bytes": 2949120
+    },
+    "int4_g64|1024x5120+bias|64": {
+      "us": 48.030478613717214,
+      "bytes": 2949120
+    },
+    "int4_g64|1024x5120+bias|2048": {
+      "us": 1304.57603931427,
+      "bytes": 2949120
+    },
+    "int4_g64|5120x5120|1": {
+      "us": 16.99145769668838,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120|4": {
+      "us": 23.502650031124254,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120|16": {
+      "us": 59.423031228961364,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120|64": {
+      "us": 223.68000447750092,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120|2048": {
+      "us": 6399.680137634277,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120+bias|1": {
+      "us": 18.663849470750343,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120+bias|4": {
+      "us": 26.091519991556805,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120+bias|16": {
+      "us": 64.74322657431325,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120+bias|64": {
+      "us": 228.86399924755096,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x5120+bias|2048": {
+      "us": 6443.71223449707,
+      "bytes": 14745600
+    },
+    "int4_g64|5120x27648|1": {
+      "us": 70.51476116838127,
+      "bytes": 79626240
+    },
+    "int4_g64|5120x27648|4": {
+      "us": 108.82844527562459,
+      "bytes": 79626240
+    },
+    "int4_g64|5120x27648|16": {
+      "us": 293.37599873542786,
+      "bytes": 79626240
+    },
+    "int4_g64|5120x27648|64": {
+      "us": 1064.7039413452148,
+      "bytes": 79626240
+    },
+    "int4_g64|5120x27648|2048": {
+      "us": 33536.705017089844,
+      "bytes": 79626240
+    },
+    "int4_g64|27648x5120|1": {
+      "us": 68.57268974698823,
+      "bytes": 79626240
+    },
+    "int4_g64|27648x5120|4": {
+      "us": 98.6624002456665,
+      "bytes": 79626240
+    },
+    "int4_g64|27648x5120|16": {
+      "us": 300.2240061759949,
+      "bytes": 79626240
+    },
+    "int4_g64|27648x5120|64": {
+      "us": 1210.2400064468384,
+      "bytes": 79626240
+    },
+    "int4_g64|27648x5120|2048": {
+      "us": 34852.6725769043,
+      "bytes": 79626240
+    },
+    "int4_g64|152064x5120|1": {
+      "us": 405.2479863166809,
+      "bytes": 437944320
+    },
+    "int4_g64|152064x5120|4": {
+      "us": 518.4640288352966,
+      "bytes": 437944320
+    },
+    "int4_g64|152064x5120|16": {
+      "us": 1545.6000566482544,
+      "bytes": 437944320
+    },
+    "int4_g64|152064x5120|64": {
+      "us": 5992.191791534424,
+      "bytes": 437944320
+    },
+    "int4_g64|152064x5120|2048": {
+      "us": 191027.587890625,
+      "bytes": 437944320
+    },
+    "int4_g128|1024x5120+bias|1": {
+      "us": 9.484929267806237,
+      "bytes": 2785280
+    },
+    "int4_g128|1024x5120+bias|4": {
+      "us": 13.091137206632327,
+      "bytes": 2785280
+    },
+    "int4_g128|1024x5120+bias|16": {
+      "us": 23.749397461672864,
+      "bytes": 2785280
+    },
+    "int4_g128|1024x5120+bias|64": {
+      "us": 47.90857292356945,
+      "bytes": 2785280
+    },
+    "int4_g128|1024x5120+bias|2048": {
+      "us": 1283.29598903656,
+      "bytes": 2785280
+    },
+    "int4_g128|5120x5120|1": {
+      "us": 16.273983253920374,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120|4": {
+      "us": 22.737454284321178,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120|16": {
+      "us": 59.1811783173505,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120|64": {
+      "us": 218.6879962682724,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120|2048": {
+      "us": 6336.639881134033,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120+bias|1": {
+      "us": 18.50715689702865,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120+bias|4": {
+      "us": 25.693091479214754,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120+bias|16": {
+      "us": 61.90545631177498,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120+bias|64": {
+      "us": 222.6559966802597,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x5120+bias|2048": {
+      "us": 6310.783863067627,
+      "bytes": 13926400
+    },
+    "int4_g128|5120x27648|1": {
+      "us": 70.72661662923879,
+      "bytes": 75202560
+    },
+    "int4_g128|5120x27648|4": {
+      "us": 109.08294978894685,
+      "bytes": 75202560
+    },
+    "int4_g128|5120x27648|16": {
+      "us": 282.49600529670715,
+      "bytes": 75202560
+    },
+    "int4_g128|5120x27648|64": {
+      "us": 1058.8799715042114,
+      "bytes": 75202560
+    },
+    "int4_g128|5120x27648|2048": {
+      "us": 32648.76937866211,
+      "bytes": 75202560
+    },
+    "int4_g128|27648x5120|1": {
+      "us": 65.0405191606091,
+      "bytes": 75202560
+    },
+    "int4_g128|27648x5120|4": {
+      "us": 97.9968011379242,
+      "bytes": 75202560
+    },
+    "int4_g128|27648x5120|16": {
+      "us": 289.98398780822754,
+      "bytes": 75202560
+    },
+    "int4_g128|27648x5120|64": {
+      "us": 1168.2560443878174,
+      "bytes": 75202560
+    },
+    "int4_g128|27648x5120|2048": {
+      "us": 34097.91946411133,
+      "bytes": 75202560
+    },
+    "int4_g128|152064x5120|1": {
+      "us": 388.67199420928955,
+      "bytes": 413614080
+    },
+    "int4_g128|152064x5120|4": {
+      "us": 511.03997230529785,
+      "bytes": 413614080
+    },
+    "int4_g128|152064x5120|16": {
+      "us": 1473.2799530029297,
+      "bytes": 413614080
+    },
+    "int4_g128|152064x5120|64": {
+      "us": 5972.159862518311,
+      "bytes": 413614080
+    },
+    "int4_g128|152064x5120|2048": {
+      "us": 189490.234375,
+      "bytes": 413614080
+    },
+    "int8_weight|1024x5120+bias|1": {
+      "us": 225.50399601459503,
+      "bytes": 5244928
+    },
+    "int8_weight|1024x5120+bias|4": {
+      "us": 264.3199861049652,
+      "bytes": 5244928
+    },
+    "int8_weight|1024x5120+bias|16": {
+      "us": 574.944019317627,
+      "bytes": 5244928
+    },
+    "int8_weight|1024x5120+bias|64": {
+      "us": 1658.911943435669,
+      "bytes": 5244928
+    },
+    "int8_weight|1024x5120+bias|2048": {
+      "us": 41230.11016845703,
+      "bytes": 5244928
+    },
+    "int8_weight|5120x5120|1": {
+      "us": 335.10398864746094,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120|4": {
+      "us": 479.2320132255554,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120|16": {
+      "us": 1687.5519752502441,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120|64": {
+      "us": 6620.351791381836,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120|2048": {
+      "us": 206361.5322113037,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120+bias|1": {
+      "us": 336.32001280784607,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120+bias|4": {
+      "us": 482.9440116882324,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120+bias|16": {
+      "us": 1691.3280487060547,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120+bias|64": {
+      "us": 6624.192237854004,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x5120+bias|2048": {
+      "us": 206452.8465270996,
+      "bytes": 26224640
+    },
+    "int8_weight|5120x27648|1": {
+      "us": 1720.128059387207,
+      "bytes": 141568000
+    },
+    "int8_weight|5120x27648|4": {
+      "us": 2430.6559562683105,
+      "bytes": 141568000
+    },
+    "int8_weight|5120x27648|16": {
+      "us": 8791.232109069824,
+      "bytes": 141568000
+    },
+    "int8_weight|5120x27648|64": {
+      "us": 35020.54214477539,
+      "bytes": 141568000
+    },
+    "int8_weight|5120x27648|2048": {
+      "us": 1103183.5079193115,
+      "bytes": 141568000
+    },
+    "int8_weight|27648x5120|1": {
+      "us": 2008.0640316009521,
+      "bytes": 141613056
+    },
+    "int8_weight|27648x5120|4": {
+      "us": 2662.015914916992,
+      "bytes": 141613056
+    },
+    "int8_weight|27648x5120|16": {
+      "us": 8899.264335632324,
+      "bytes": 141613056
+    },
+    "int8_weight|27648x5120|64": {
+      "us": 35465.919494628906,
+      "bytes": 141613056
+    },
+    "int8_weight|27648x5120|2048": {
+      "us": 1116654.396057129,
+      "bytes": 141613056
+    },
+    "int8_weight|152064x5120|1": {
+      "us": 6233.407974243164,
+      "bytes": 778871808
+    },
+    "int8_weight|152064x5120|4": {
+      "us": 12970.815658569336,
+      "bytes": 778871808
+    },
+    "int8_weight|152064x5120|16": {
+      "us": 48754.81414794922,
+      "bytes": 778871808
+    },
+    "int8_weight|152064x5120|64": {
+      "us": 193715.97290039062,
+      "bytes": 778871808
+    },
+    "int8_weight|152064x5120|2048": {
+      "us": 6188792.705535889,
+      "bytes": 778871808
+    },
+    "w8a8|1024x5120+bias|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8|1024x5120+bias|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8|1024x5120+bias|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8|1024x5120+bias|64": {
+      "us": 282.5919985771179,
+      "bytes": 5244928
+    },
+    "w8a8|1024x5120+bias|2048": {
+      "us": 698.2079744338989,
+      "bytes": 5244928
+    },
+    "w8a8|5120x5120|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8|5120x5120|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8|5120x5120|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8|5120x5120|64": {
+      "us": 281.47199749946594,
+      "bytes": 26224640
+    },
+    "w8a8|5120x5120|2048": {
+      "us": 1757.5039863586426,
+      "bytes": 26224640
+    },
+    "w8a8|5120x5120+bias|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8|5120x5120+bias|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8|5120x5120+bias|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8|5120x5120+bias|64": {
+      "us": 285.63201427459717,
+      "bytes": 26224640
+    },
+    "w8a8|5120x5120+bias|2048": {
+      "us": 1821.6960430145264,
+      "bytes": 26224640
+    },
+    "w8a8|5120x27648|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8|5120x27648|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8|5120x27648|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8|5120x27648|64": {
+      "us": 1340.8639430999756,
+      "bytes": 141568000
+    },
+    "w8a8|5120x27648|2048": {
+      "us": 9073.792457580566,
+      "bytes": 141568000
+    },
+    "w8a8|27648x5120|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8|27648x5120|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8|27648x5120|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8|27648x5120|64": {
+      "us": 531.2640070915222,
+      "bytes": 141613056
+    },
+    "w8a8|27648x5120|2048": {
+      "us": 8875.07152557373,
+      "bytes": 141613056
+    },
+    "w8a8|152064x5120|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8|152064x5120|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8|152064x5120|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8|152064x5120|64": {
+      "us": 2803.391933441162,
+      "bytes": 778871808
+    },
+    "w8a8|152064x5120|2048": {
+      "us": 48833.473205566406,
+      "bytes": 778871808
+    },
+    "w8a8_gemm|1024x5120+bias|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8_gemm|1024x5120+bias|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8_gemm|1024x5120+bias|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8_gemm|1024x5120+bias|64": {
+      "us": 242.49599874019623,
+      "bytes": 5244928
+    },
+    "w8a8_gemm|1024x5120+bias|2048": {
+      "us": 482.4320077896118,
+      "bytes": 5244928
+    },
+    "w8a8_gemm|5120x5120|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8_gemm|5120x5120|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8_gemm|5120x5120|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8_gemm|5120x5120|64": {
+      "us": 243.6479926109314,
+      "bytes": 26224640
+    },
+    "w8a8_gemm|5120x5120|2048": {
+      "us": 1514.8160457611084,
+      "bytes": 26224640
+    },
+    "w8a8_gemm|5120x5120+bias|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8_gemm|5120x5120+bias|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8_gemm|5120x5120+bias|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8_gemm|5120x5120+bias|64": {
+      "us": 245.82399427890778,
+      "bytes": 26224640
+    },
+    "w8a8_gemm|5120x5120+bias|2048": {
+      "us": 1514.8799419403076,
+      "bytes": 26224640
+    },
+    "w8a8_gemm|5120x27648|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8_gemm|5120x27648|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8_gemm|5120x27648|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8_gemm|5120x27648|64": {
+      "us": 1290.4319763183594,
+      "bytes": 141568000
+    },
+    "w8a8_gemm|5120x27648|2048": {
+      "us": 8125.247955322266,
+      "bytes": 141568000
+    },
+    "w8a8_gemm|27648x5120|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8_gemm|27648x5120|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8_gemm|27648x5120|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8_gemm|27648x5120|64": {
+      "us": 493.6319887638092,
+      "bytes": 141613056
+    },
+    "w8a8_gemm|27648x5120|2048": {
+      "us": 8330.240249633789,
+      "bytes": 141613056
+    },
+    "w8a8_gemm|152064x5120|1": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 1"
+    },
+    "w8a8_gemm|152064x5120|4": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 4"
+    },
+    "w8a8_gemm|152064x5120|16": {
+      "error": "RuntimeError: self.size(0) needs to be greater than 16, but got 16"
+    },
+    "w8a8_gemm|152064x5120|64": {
+      "us": 2736.5760803222656,
+      "bytes": 778871808
+    },
+    "w8a8_gemm|152064x5120|2048": {
+      "us": 46871.9367980957,
+      "bytes": 778871808
+    },
+    "sparse24|1024x5120+bias|1": {
+      "error": "RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621438"
+    },
+    "sparse24|1024x5120+bias|4": {
+      "error": "RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621439"
+    },
+    "sparse24|1024x5120+bias|16": {
+      "error": "RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621439"
+    },
+    "sparse24|1024x5120+bias|64": {
+      "error": "RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621439"
+    },
+    "sparse24|1024x5120+bias|2048": {
+      "error": "RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621438"
+    },
+    "sparse24|5120x5120|1": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107196"
+    },
+    "sparse24|5120x5120|4": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107198"
+    },
+    "sparse24|5120x5120|16": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199"
+    },
+    "sparse24|5120x5120|64": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199"
+    },
+    "sparse24|5120x5120|2048": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199"
+    },
+    "sparse24|5120x5120+bias|1": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107198"
+    },
+    "sparse24|5120x5120+bias|4": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107197"
+    },
+    "sparse24|5120x5120+bias|16": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107198"
+    },
+    "sparse24|5120x5120+bias|64": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199"
+    },
+    "sparse24|5120x5120+bias|2048": {
+      "error": "RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107197"
+    },
+    "sparse24|5120x27648|1": {
+      "error": "RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778878"
+    },
+    "sparse24|5120x27648|4": {
+      "error": "RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778870"
+    },
+    "sparse24|5120x27648|16": {
+      "error": "RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778870"
+    },
+    "sparse24|5120x27648|64": {
+      "error": "RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778872"
+    },
+    "sparse24|5120x27648|2048": {
+      "error": "RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778877"
+    },
+    "sparse24|27648x5120|1": {
+      "error": "RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778870"
+    },
+    "sparse24|27648x5120|4": {
+      "error": "RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778876"
+    },
+    "sparse24|27648x5120|16": {
+      "error": "RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778875"
+    },
+    "sparse24|27648x5120|64": {
+      "error": "RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778867"
+    },
+    "sparse24|27648x5120|2048": {
+      "error": "RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778870"
+    },
+    "sparse24|152064x5120|1": {
+      "error": "RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283800"
+    },
+    "sparse24|152064x5120|4": {
+      "error": "RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283799"
+    },
+    "sparse24|152064x5120|16": {
+      "error": "RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283793"
+    },
+    "sparse24|152064x5120|64": {
+      "error": "RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283808"
+    },
+    "sparse24|152064x5120|2048": {
+      "error": "RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283797"
+    }
+  },
+  "attention": {
+    "1": {
+      "sdpa": 101.3759970664978,
+      "grouped": 310.2079927921295
+    },
+    "4": {
+      "sdpa": 334.9759876728058,
+      "grouped": 930.6240081787109
+    },
+    "16": {
+      "sdpa": 1226.8160581588745,
+      "grouped": 3677.6959896087646
+    },
+    "64": {
+      "sdpa": 7133.823871612549,
+      "grouped": 14554.304122924805
+    }
+  }
+}

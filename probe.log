@@ -1,0 +1,331 @@
+NVIDIA A100 80GB PCIe, 85 GB (0.4 GB in use), torch 2.13.0+cu126
+Qwen/Qwen2.5-32B-Instruct: 64 layers, {(5120, 5120, True): 64, (1024, 5120, True): 128, (5120, 5120, False): 64, (27648, 5120, False): 128, (5120, 27648, False): 64, (152064, 5120, False): 1}
+          bf16: works, error 4.74e-03
+      int4_g32: works, error 4.54e-03
+      int4_g64: works, error 4.32e-03
+     int4_g128: works, error 4.14e-03
+   int8_weight: works, error 2.40e-03
+          w8a8: works, error 7.42e-03
+     w8a8_gemm: works, error 5.14e-03
+           fp8: NOT AVAILABLE (RuntimeError: torch._scaled_mm is only supported on CUDA devices with compute capability >= 9.0 or 8.9, or ROCm MI300+)
+      fp8_gemm: NOT AVAILABLE (RuntimeError: torch._scaled_mm is only supported on CUDA devices with compute capability >= 9.0 or 8.9, or ROCm MI300+)
+/home/student/aq23mb/nanochat/scripts/compress_kernel_probe.py:177: UserWarning: _sparse_semi_structured_linear is deprecated and will be removed in a future PyTorch release.  Please use _sparse_semi_structured_mm/_sparse_semi_structured_addmm instead. (Triggered internally at /__w/pytorch/pytorch/aten/src/ATen/native/sparse/cuda/SparseSemiStructuredLinear.cu:612.)
+  return (lambda: torch._sparse_semi_structured_linear(x, compressed, meta, bias=b), lambda: dense(x, w),
+      sparse24: works, error 1.95e-03
+[1/240] bf16|1024x5120+bias|1: 12.5 us, 12.46 us per token
+[2/240] bf16|1024x5120+bias|4: 13.2 us, 3.30 us per token
+[3/240] bf16|1024x5120+bias|16: 13.6 us, 0.85 us per token
+[4/240] bf16|1024x5120+bias|64: 14.3 us, 0.22 us per token
+[5/240] bf16|1024x5120+bias|2048: 134.8 us, 0.07 us per token
+[6/240] bf16|5120x5120|1: 35.9 us, 35.89 us per token
+[7/240] bf16|5120x5120|4: 36.1 us, 9.03 us per token
+[8/240] bf16|5120x5120|16: 36.6 us, 2.29 us per token
+[9/240] bf16|5120x5120|64: 38.0 us, 0.59 us per token
+[10/240] bf16|5120x5120|2048: 467.3 us, 0.23 us per token
+[11/240] bf16|5120x5120+bias|1: 36.9 us, 36.86 us per token
+[12/240] bf16|5120x5120+bias|4: 37.3 us, 9.32 us per token
+[13/240] bf16|5120x5120+bias|16: 37.8 us, 2.36 us per token
+[14/240] bf16|5120x5120+bias|64: 44.6 us, 0.70 us per token
+[15/240] bf16|5120x5120+bias|2048: 479.1 us, 0.23 us per token
+[16/240] bf16|5120x27648|1: 174.3 us, 174.27 us per token
+[17/240] bf16|5120x27648|4: 175.8 us, 43.95 us per token
+[18/240] bf16|5120x27648|16: 181.5 us, 11.34 us per token
+[19/240] bf16|5120x27648|64: 190.9 us, 2.98 us per token
+[20/240] bf16|5120x27648|2048: 2515.7 us, 1.23 us per token
+[21/240] bf16|27648x5120|1: 178.9 us, 178.88 us per token
+[22/240] bf16|27648x5120|4: 172.5 us, 43.14 us per token
+[23/240] bf16|27648x5120|16: 174.8 us, 10.93 us per token
+[24/240] bf16|27648x5120|64: 191.9 us, 3.00 us per token
+[25/240] bf16|27648x5120|2048: 2574.7 us, 1.26 us per token
+[26/240] bf16|152064x5120|1: 870.1 us, 870.14 us per token
+[27/240] bf16|152064x5120|4: 879.7 us, 219.94 us per token
+[28/240] bf16|152064x5120|16: 981.6 us, 61.35 us per token
+[29/240] bf16|152064x5120|64: 974.1 us, 15.22 us per token
+[30/240] bf16|152064x5120|2048: 14329.0 us, 7.00 us per token
+[31/240] int4_g32|1024x5120+bias|1: 10.6 us, 10.61 us per token
+[32/240] int4_g32|1024x5120+bias|4: 13.8 us, 3.45 us per token
+[33/240] int4_g32|1024x5120+bias|16: 24.2 us, 1.51 us per token
+[34/240] int4_g32|1024x5120+bias|64: 48.2 us, 0.75 us per token
+[35/240] int4_g32|1024x5120+bias|2048: 1306.1 us, 0.64 us per token
+[36/240] int4_g32|5120x5120|1: 17.8 us, 17.76 us per token
+[37/240] int4_g32|5120x5120|4: 24.3 us, 6.07 us per token
+[38/240] int4_g32|5120x5120|16: 61.6 us, 3.85 us per token
+[39/240] int4_g32|5120x5120|64: 233.4 us, 3.65 us per token
+[40/240] int4_g32|5120x5120|2048: 6674.9 us, 3.26 us per token
+[41/240] int4_g32|5120x5120+bias|1: 19.7 us, 19.66 us per token
+[42/240] int4_g32|5120x5120+bias|4: 27.6 us, 6.90 us per token
+[43/240] int4_g32|5120x5120+bias|16: 68.2 us, 4.26 us per token
+[44/240] int4_g32|5120x5120+bias|64: 238.7 us, 3.73 us per token
+[45/240] int4_g32|5120x5120+bias|2048: 6726.5 us, 3.28 us per token
+[46/240] int4_g32|5120x27648|1: 76.9 us, 76.92 us per token
+[47/240] int4_g32|5120x27648|4: 103.2 us, 25.79 us per token
+[48/240] int4_g32|5120x27648|16: 310.7 us, 19.42 us per token
+[49/240] int4_g32|5120x27648|64: 1121.8 us, 17.53 us per token
+[50/240] int4_g32|5120x27648|2048: 35487.5 us, 17.33 us per token
+[51/240] int4_g32|27648x5120|1: 76.6 us, 76.60 us per token
+[52/240] int4_g32|27648x5120|4: 107.1 us, 26.77 us per token
+[53/240] int4_g32|27648x5120|16: 328.8 us, 20.55 us per token
+[54/240] int4_g32|27648x5120|64: 1309.7 us, 20.46 us per token
+[55/240] int4_g32|27648x5120|2048: 36824.1 us, 17.98 us per token
+[56/240] int4_g32|152064x5120|1: 432.5 us, 432.51 us per token
+[57/240] int4_g32|152064x5120|4: 563.3 us, 140.83 us per token
+[58/240] int4_g32|152064x5120|16: 1579.6 us, 98.73 us per token
+[59/240] int4_g32|152064x5120|64: 6373.8 us, 99.59 us per token
+[60/240] int4_g32|152064x5120|2048: 196043.6 us, 95.72 us per token
+[61/240] int4_g64|1024x5120+bias|1: 9.8 us, 9.79 us per token
+[62/240] int4_g64|1024x5120+bias|4: 13.4 us, 3.35 us per token
+[63/240] int4_g64|1024x5120+bias|16: 23.9 us, 1.49 us per token
+[64/240] int4_g64|1024x5120+bias|64: 48.0 us, 0.75 us per token
+[65/240] int4_g64|1024x5120+bias|2048: 1304.6 us, 0.64 us per token
+[66/240] int4_g64|5120x5120|1: 17.0 us, 16.99 us per token
+[67/240] int4_g64|5120x5120|4: 23.5 us, 5.88 us per token
+[68/240] int4_g64|5120x5120|16: 59.4 us, 3.71 us per token
+[69/240] int4_g64|5120x5120|64: 223.7 us, 3.50 us per token
+[70/240] int4_g64|5120x5120|2048: 6399.7 us, 3.12 us per token
+[71/240] int4_g64|5120x5120+bias|1: 18.7 us, 18.66 us per token
+[72/240] int4_g64|5120x5120+bias|4: 26.1 us, 6.52 us per token
+[73/240] int4_g64|5120x5120+bias|16: 64.7 us, 4.05 us per token
+[74/240] int4_g64|5120x5120+bias|64: 228.9 us, 3.58 us per token
+[75/240] int4_g64|5120x5120+bias|2048: 6443.7 us, 3.15 us per token
+[76/240] int4_g64|5120x27648|1: 70.5 us, 70.51 us per token
+[77/240] int4_g64|5120x27648|4: 108.8 us, 27.21 us per token
+[78/240] int4_g64|5120x27648|16: 293.4 us, 18.34 us per token
+[79/240] int4_g64|5120x27648|64: 1064.7 us, 16.64 us per token
+[80/240] int4_g64|5120x27648|2048: 33536.7 us, 16.38 us per token
+[81/240] int4_g64|27648x5120|1: 68.6 us, 68.57 us per token
+[82/240] int4_g64|27648x5120|4: 98.7 us, 24.67 us per token
+[83/240] int4_g64|27648x5120|16: 300.2 us, 18.76 us per token
+[84/240] int4_g64|27648x5120|64: 1210.2 us, 18.91 us per token
+[85/240] int4_g64|27648x5120|2048: 34852.7 us, 17.02 us per token
+[86/240] int4_g64|152064x5120|1: 405.2 us, 405.25 us per token
+[87/240] int4_g64|152064x5120|4: 518.5 us, 129.62 us per token
+[88/240] int4_g64|152064x5120|16: 1545.6 us, 96.60 us per token
+[89/240] int4_g64|152064x5120|64: 5992.2 us, 93.63 us per token
+[90/240] int4_g64|152064x5120|2048: 191027.6 us, 93.28 us per token
+[91/240] int4_g128|1024x5120+bias|1: 9.5 us, 9.48 us per token
+[92/240] int4_g128|1024x5120+bias|4: 13.1 us, 3.27 us per token
+[93/240] int4_g128|1024x5120+bias|16: 23.7 us, 1.48 us per token
+[94/240] int4_g128|1024x5120+bias|64: 47.9 us, 0.75 us per token
+[95/240] int4_g128|1024x5120+bias|2048: 1283.3 us, 0.63 us per token
+[96/240] int4_g128|5120x5120|1: 16.3 us, 16.27 us per token
+[97/240] int4_g128|5120x5120|4: 22.7 us, 5.68 us per token
+[98/240] int4_g128|5120x5120|16: 59.2 us, 3.70 us per token
+[99/240] int4_g128|5120x5120|64: 218.7 us, 3.42 us per token
+[100/240] int4_g128|5120x5120|2048: 6336.6 us, 3.09 us per token
+[101/240] int4_g128|5120x5120+bias|1: 18.5 us, 18.51 us per token
+[102/240] int4_g128|5120x5120+bias|4: 25.7 us, 6.42 us per token
+[103/240] int4_g128|5120x5120+bias|16: 61.9 us, 3.87 us per token
+[104/240] int4_g128|5120x5120+bias|64: 222.7 us, 3.48 us per token
+[105/240] int4_g128|5120x5120+bias|2048: 6310.8 us, 3.08 us per token
+[106/240] int4_g128|5120x27648|1: 70.7 us, 70.73 us per token
+[107/240] int4_g128|5120x27648|4: 109.1 us, 27.27 us per token
+[108/240] int4_g128|5120x27648|16: 282.5 us, 17.66 us per token
+[109/240] int4_g128|5120x27648|64: 1058.9 us, 16.54 us per token
+[110/240] int4_g128|5120x27648|2048: 32648.8 us, 15.94 us per token
+[111/240] int4_g128|27648x5120|1: 65.0 us, 65.04 us per token
+[112/240] int4_g128|27648x5120|4: 98.0 us, 24.50 us per token
+[113/240] int4_g128|27648x5120|16: 290.0 us, 18.12 us per token
+[114/240] int4_g128|27648x5120|64: 1168.3 us, 18.25 us per token
+[115/240] int4_g128|27648x5120|2048: 34097.9 us, 16.65 us per token
+[116/240] int4_g128|152064x5120|1: 388.7 us, 388.67 us per token
+[117/240] int4_g128|152064x5120|4: 511.0 us, 127.76 us per token
+[118/240] int4_g128|152064x5120|16: 1473.3 us, 92.08 us per token
+[119/240] int4_g128|152064x5120|64: 5972.2 us, 93.31 us per token
+[120/240] int4_g128|152064x5120|2048: 189490.2 us, 92.52 us per token
+[121/240] int8_weight|1024x5120+bias|1: 225.5 us, 225.50 us per token
+[122/240] int8_weight|1024x5120+bias|4: 264.3 us, 66.08 us per token
+[123/240] int8_weight|1024x5120+bias|16: 574.9 us, 35.93 us per token
+[124/240] int8_weight|1024x5120+bias|64: 1658.9 us, 25.92 us per token
+[125/240] int8_weight|1024x5120+bias|2048: 41230.1 us, 20.13 us per token
+[126/240] int8_weight|5120x5120|1: 335.1 us, 335.10 us per token
+[127/240] int8_weight|5120x5120|4: 479.2 us, 119.81 us per token
+[128/240] int8_weight|5120x5120|16: 1687.6 us, 105.47 us per token
+[129/240] int8_weight|5120x5120|64: 6620.4 us, 103.44 us per token
+[130/240] int8_weight|5120x5120|2048: 206361.5 us, 100.76 us per token
+[131/240] int8_weight|5120x5120+bias|1: 336.3 us, 336.32 us per token
+[132/240] int8_weight|5120x5120+bias|4: 482.9 us, 120.74 us per token
+[133/240] int8_weight|5120x5120+bias|16: 1691.3 us, 105.71 us per token
+[134/240] int8_weight|5120x5120+bias|64: 6624.2 us, 103.50 us per token
+[135/240] int8_weight|5120x5120+bias|2048: 206452.8 us, 100.81 us per token
+[136/240] int8_weight|5120x27648|1: 1720.1 us, 1720.13 us per token
+[137/240] int8_weight|5120x27648|4: 2430.7 us, 607.66 us per token
+[138/240] int8_weight|5120x27648|16: 8791.2 us, 549.45 us per token
+[139/240] int8_weight|5120x27648|64: 35020.5 us, 547.20 us per token
+[140/240] int8_weight|5120x27648|2048: 1103183.5 us, 538.66 us per token
+[141/240] int8_weight|27648x5120|1: 2008.1 us, 2008.06 us per token
+[142/240] int8_weight|27648x5120|4: 2662.0 us, 665.50 us per token
+[143/240] int8_weight|27648x5120|16: 8899.3 us, 556.20 us per token
+[144/240] int8_weight|27648x5120|64: 35465.9 us, 554.15 us per token
+[145/240] int8_weight|27648x5120|2048: 1116654.4 us, 545.24 us per token
+[146/240] int8_weight|152064x5120|1: 6233.4 us, 6233.41 us per token
+[147/240] int8_weight|152064x5120|4: 12970.8 us, 3242.70 us per token
+[148/240] int8_weight|152064x5120|16: 48754.8 us, 3047.18 us per token
+[149/240] int8_weight|152064x5120|64: 193716.0 us, 3026.81 us per token
+[150/240] int8_weight|152064x5120|2048: 6188792.7 us, 3021.87 us per token
+[151/240] w8a8|1024x5120+bias|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[152/240] w8a8|1024x5120+bias|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[153/240] w8a8|1024x5120+bias|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[154/240] w8a8|1024x5120+bias|64: 282.6 us, 4.42 us per token
+[155/240] w8a8|1024x5120+bias|2048: 698.2 us, 0.34 us per token
+[156/240] w8a8|5120x5120|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[157/240] w8a8|5120x5120|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[158/240] w8a8|5120x5120|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[159/240] w8a8|5120x5120|64: 281.5 us, 4.40 us per token
+[160/240] w8a8|5120x5120|2048: 1757.5 us, 0.86 us per token
+[161/240] w8a8|5120x5120+bias|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[162/240] w8a8|5120x5120+bias|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[163/240] w8a8|5120x5120+bias|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[164/240] w8a8|5120x5120+bias|64: 285.6 us, 4.46 us per token
+[165/240] w8a8|5120x5120+bias|2048: 1821.7 us, 0.89 us per token
+[166/240] w8a8|5120x27648|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[167/240] w8a8|5120x27648|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[168/240] w8a8|5120x27648|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[169/240] w8a8|5120x27648|64: 1340.9 us, 20.95 us per token
+[170/240] w8a8|5120x27648|2048: 9073.8 us, 4.43 us per token
+[171/240] w8a8|27648x5120|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[172/240] w8a8|27648x5120|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[173/240] w8a8|27648x5120|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[174/240] w8a8|27648x5120|64: 531.3 us, 8.30 us per token
+[175/240] w8a8|27648x5120|2048: 8875.1 us, 4.33 us per token
+[176/240] w8a8|152064x5120|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[177/240] w8a8|152064x5120|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[178/240] w8a8|152064x5120|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[179/240] w8a8|152064x5120|64: 2803.4 us, 43.80 us per token
+[180/240] w8a8|152064x5120|2048: 48833.5 us, 23.84 us per token
+[181/240] w8a8_gemm|1024x5120+bias|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[182/240] w8a8_gemm|1024x5120+bias|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[183/240] w8a8_gemm|1024x5120+bias|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[184/240] w8a8_gemm|1024x5120+bias|64: 242.5 us, 3.79 us per token
+[185/240] w8a8_gemm|1024x5120+bias|2048: 482.4 us, 0.24 us per token
+[186/240] w8a8_gemm|5120x5120|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[187/240] w8a8_gemm|5120x5120|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[188/240] w8a8_gemm|5120x5120|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[189/240] w8a8_gemm|5120x5120|64: 243.6 us, 3.81 us per token
+[190/240] w8a8_gemm|5120x5120|2048: 1514.8 us, 0.74 us per token
+[191/240] w8a8_gemm|5120x5120+bias|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[192/240] w8a8_gemm|5120x5120+bias|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[193/240] w8a8_gemm|5120x5120+bias|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[194/240] w8a8_gemm|5120x5120+bias|64: 245.8 us, 3.84 us per token
+[195/240] w8a8_gemm|5120x5120+bias|2048: 1514.9 us, 0.74 us per token
+[196/240] w8a8_gemm|5120x27648|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[197/240] w8a8_gemm|5120x27648|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[198/240] w8a8_gemm|5120x27648|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[199/240] w8a8_gemm|5120x27648|64: 1290.4 us, 20.16 us per token
+[200/240] w8a8_gemm|5120x27648|2048: 8125.2 us, 3.97 us per token
+[201/240] w8a8_gemm|27648x5120|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[202/240] w8a8_gemm|27648x5120|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[203/240] w8a8_gemm|27648x5120|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[204/240] w8a8_gemm|27648x5120|64: 493.6 us, 7.71 us per token
+[205/240] w8a8_gemm|27648x5120|2048: 8330.2 us, 4.07 us per token
+[206/240] w8a8_gemm|152064x5120|1: RuntimeError: self.size(0) needs to be greater than 16, but got 1
+[207/240] w8a8_gemm|152064x5120|4: RuntimeError: self.size(0) needs to be greater than 16, but got 4
+[208/240] w8a8_gemm|152064x5120|16: RuntimeError: self.size(0) needs to be greater than 16, but got 16
+[209/240] w8a8_gemm|152064x5120|64: 2736.6 us, 42.76 us per token
+[210/240] w8a8_gemm|152064x5120|2048: 46871.9 us, 22.89 us per token
+[211/240] sparse24|1024x5120+bias|1: RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621438
+[212/240] sparse24|1024x5120+bias|4: RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621439
+[213/240] sparse24|1024x5120+bias|16: RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621439
+[214/240] sparse24|1024x5120+bias|64: RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621439
+[215/240] sparse24|1024x5120+bias|2048: RuntimeError: shape '[1024, 2560]' is invalid for input of size 2621438
+[216/240] sparse24|5120x5120|1: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107196
+[217/240] sparse24|5120x5120|4: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107198
+[218/240] sparse24|5120x5120|16: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199
+[219/240] sparse24|5120x5120|64: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199
+[220/240] sparse24|5120x5120|2048: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199
+[221/240] sparse24|5120x5120+bias|1: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107198
+[222/240] sparse24|5120x5120+bias|4: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107197
+[223/240] sparse24|5120x5120+bias|16: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107198
+[224/240] sparse24|5120x5120+bias|64: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107199
+[225/240] sparse24|5120x5120+bias|2048: RuntimeError: shape '[5120, 2560]' is invalid for input of size 13107197
+[226/240] sparse24|5120x27648|1: RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778878
+[227/240] sparse24|5120x27648|4: RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778870
+[228/240] sparse24|5120x27648|16: RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778870
+[229/240] sparse24|5120x27648|64: RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778872
+[230/240] sparse24|5120x27648|2048: RuntimeError: shape '[5120, 13824]' is invalid for input of size 70778877
+[231/240] sparse24|27648x5120|1: RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778870
+[232/240] sparse24|27648x5120|4: RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778876
+[233/240] sparse24|27648x5120|16: RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778875
+[234/240] sparse24|27648x5120|64: RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778867
+[235/240] sparse24|27648x5120|2048: RuntimeError: shape '[27648, 2560]' is invalid for input of size 70778870
+[236/240] sparse24|152064x5120|1: RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283800
+[237/240] sparse24|152064x5120|4: RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283799
+[238/240] sparse24|152064x5120|16: RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283793
+[239/240] sparse24|152064x5120|64: RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283808
+[240/240] sparse24|152064x5120|2048: RuntimeError: shape '[152064, 2560]' is invalid for input of size 389283797
+  attention at batch 1, context 32000: {'sdpa': 101.3759970664978, 'grouped': 310.2079927921295}
+  attention at batch 4, context 32000: {'sdpa': 334.9759876728058, 'grouped': 930.6240081787109}
+  attention at batch 16, context 32000: {'sdpa': 1226.8160581588745, 'grouped': 3677.6959896087646}
+  attention at batch 64, context 32000: {'sdpa': 7133.823871612549, 'grouped': 14554.304122924805}
+
+# Formats on NVIDIA A100 80GB PCIe, shapes of Qwen/Qwen2.5-32B-Instruct
+
+torch 2.13.0+cu126. 64 layers. KV cache: 8.39 GB per agent at 32000 tokens. Times are GPU kernel times of the matrix products and of attention over the cache; norms, activations and launch overhead are not included. Attention during prompt processing is estimated from batch 64. A dash means the kernel cannot run at that batch or shape.
+
+## Availability
+
+| Format | Works | Check against the dense product |
+|---|---|---|
+| bf16 | yes | error 4.7e-03 |
+| int4_g32 | yes | error 4.5e-03 |
+| int4_g64 | yes | error 4.3e-03 |
+| int4_g128 | yes | error 4.1e-03 |
+| int8_weight | yes | error 2.4e-03 |
+| w8a8 | yes | error 7.4e-03 |
+| w8a8_gemm | yes | error 5.1e-03 |
+| fp8 | no | RuntimeError: torch._scaled_mm is only supported on CUDA devices with compute capability >= 9.0 or 8.9, or ROCm MI300+ |
+| fp8_gemm | no | RuntimeError: torch._scaled_mm is only supported on CUDA devices with compute capability >= 9.0 or 8.9, or ROCm MI300+ |
+| sparse24 | yes | error 2.0e-03 |
+
+## Decode, us per token (matrix products + attention)
+
+| Format | batch 1 | batch 4 | batch 16 | batch 64 | prefill (batch 2048) |
+|---|---|---|---|---|---|
+| bf16 | 47660 | 15510 | 7500 | 7835 | 7411 |
+| int4_g32 | 25401 | 11849 | 9591 | 11543 | 11045 |
+| int4_g64 | 23718 | 11610 | 9267 | 11261 | 10843 |
+| int4_g128 | 23168 | 11562 | 9124 | 11160 | 10761 |
+| int8_weight | 451678 | 156530 | 132429 | 132675 | 126877 |
+| w8a8 | - | - | - | 10713 | 8128 |
+| w8a8_gemm | - | - | - | 10429 | 8033 |
+| sparse24 | - | - | - | - | - |
+
+## Matrix products only, us per token: how much of the time a format can change
+
+| Format | batch 1 | batch 4 | batch 16 | batch 64 | prefill (batch 2048) |
+|---|---|---|---|---|---|
+| bf16 | 41172 | 10151 | 2593 | 701 | 278 |
+| int4_g32 | 18913 | 6489 | 4684 | 4409 | 3911 |
+| int4_g64 | 17230 | 6251 | 4360 | 4127 | 3709 |
+| int4_g128 | 16680 | 6203 | 4216 | 4026 | 3627 |
+| int8_weight | 445189 | 151171 | 127521 | 125542 | 119743 |
+| w8a8 | - | - | - | 3579 | 994 |
+| w8a8_gemm | - | - | - | 3295 | 899 |
+| sparse24 | - | - | - | - | - |
+
+## GPU time of one agent turn, ms (2000 new prompt tokens + 300 generated; times bf16's in brackets, below 1 is faster)
+
+| Format | batch 1 | batch 4 | batch 16 | batch 64 |
+|---|---|---|---|---|
+| bf16 | 29121 (1.00) | 19476 (1.00) | 17073 (1.00) | 17173 (1.00) |
+| int4_g32 | 29710 (1.02) | 25644 (1.32) | 24967 (1.46) | 25552 (1.49) |
+| int4_g64 | 28802 (0.99) | 25169 (1.29) | 24466 (1.43) | 25064 (1.46) |
+| int4_g128 | 28472 (0.98) | 24990 (1.28) | 24258 (1.42) | 24869 (1.45) |
+| int8_weight | 389256 (13.37) | 300712 (15.44) | 293482 (17.19) | 293556 (17.09) |
+| w8a8 | - | - | - | 19469 (1.13) |
+| w8a8_gemm | - | - | - | 19195 (1.12) |
+| sparse24 | - | - | - | - |
+
+## Agents that fit at 32000 tokens of context (10% of the memory kept free)
+
+| Format | Weights (GB) | 24 GB GPU | 40 GB GPU | 80 GB GPU |
+|---|---|---|---|---|
+| bf16 | 65.5 | 0 | 0 | 0 |
+| int4_g32 | 20.5 | 0 | 1 | 6 |
+| int4_g64 | 18.4 | 0 | 2 | 6 |
+| int4_g128 | 17.4 | 0 | 2 | 6 |
+| int8_weight | 32.8 | 0 | 0 | 4 |
+| w8a8 | 32.8 | 0 | 0 | 4 |
+| w8a8_gemm | 32.8 | 0 | 0 | 4 |
+| sparse24 | - | - | - | - |
+
+Results in compress_runs/kernel_probe/NVIDIA-A100-80GB-PCIe__Qwen-Qwen2.5-32B-Instruct
