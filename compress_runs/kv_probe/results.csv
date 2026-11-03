@@ -1,0 +1,31 @@
+group,setting,delta_loss,recall_ce,recall_acc,seconds
+base,uncompressed,0.0,0.0228,1.0,1.6
+keys,keys int8,0.03673,0.0334,1.0,1.6
+keys,keys int8c,0.00039,0.0228,1.0,1.6
+keys,keys int4,1.61374,2.0314,0.0625,1.6
+keys,keys int4c,0.07,0.0296,1.0,1.7
+keys,keys int2,6.01423,6.7216,0.0,1.6
+keys,keys int2c,4.93222,5.6497,0.0,1.7
+values,values int8,-0.00072,0.0227,1.0,1.7
+values,values int4,0.0082,0.0216,1.0,1.7
+values,values int2,1.18464,2.4996,0.0,1.7
+keys+values,"keys int8, values int8",0.03666,0.0321,1.0,1.8
+keys+values,"keys int4c, values int8",0.06839,0.0327,1.0,1.8
+keys+values,"keys int4c, values int4",0.07692,0.0391,0.9844,1.8
+keys+values,"keys int2c, values int4",4.78042,5.8412,0.0,1.8
+sink,"window 0.75, plain",0.86766,3.097,0.2188,2.5
+sink,"window 0.25, plain",1.57517,3.2576,0.0625,2.4
+window,window 0.75 + first token,0.00436,0.8377,0.6875,2.4
+window,window 0.5 + first token,0.01003,1.2952,0.5156,2.4
+window,window 0.25 + first token,0.03928,2.2472,0.1406,2.4
+window,window 0.125 + first token,0.08404,2.5657,0.0156,2.4
+window,window 0.0625 + first token,0.17468,2.5735,0.0,2.4
+window+precision,"window 0.25 + first token, keys int8, values int8",0.07583,2.2756,0.1406,2.5
+window+precision,"window 0.25 + first token, keys int4c, values int4",0.11843,2.2719,0.1406,2.5
+mixed,"0.25, band 0 full",0.03725,2.3324,0.1406,2.2
+mixed,"0.25, band 3 full",0.02614,2.2101,0.1406,2.2
+mixed,"0.125, band 2 full",0.06025,2.3309,0.0156,2.2
+mixed,"every 4th layer full, the rest 0.125",0.08022,2.4608,0.0156,2.2
+mixed,"every 6th layer full, the rest 0.125",0.06796,2.414,0.0156,2.3
+mixed,"every 4th layer full, the rest 0.0625",0.1668,2.4586,0.0,2.2
+mixed,"every 6th layer full, the rest 0.0625",0.14174,2.4324,0.0,2.2
