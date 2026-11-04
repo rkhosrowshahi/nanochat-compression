@@ -1,0 +1,36 @@
+=== 2026-11-04 09:11:14  python -m scripts.compress_kv2_recheck --run-dir compress_runs/qwen_kv2
+Loading weights:   0%|                                                                         | 0/290 [00:00<?, ?it/s]Loading weights: 100%|█████████████████████████████████████████████████████████████| 290/290 [00:00<00:00, 8070.14it/s]
+Qwen/Qwen2.5-0.5B-Instruct on NVIDIA A100 80GB PCIe; run compress_runs/qwen_kv2
+Measuring the KV2 table on NVIDIA A100 80GB PCIe: batch 4, 32000 tokens of context
+  kernel check, keys bf16, values bf16: largest error 0.0031 of the output
+  kernel check, keys bf16, values int8: largest error 0.0037 of the output
+  kernel check, keys bf16, values int4: largest error 0.0041 of the output
+  kernel check, keys int8c, values bf16: largest error 0.0037 of the output
+  kernel check, keys int8c, values int8: largest error 0.0037 of the output
+  kernel check, keys int8c, values int4: largest error 0.0040 of the output
+  kernel check, keys int4c, values bf16: largest error 0.0048 of the output
+  kernel check, keys int4c, values int8: largest error 0.0042 of the output
+  kernel check, keys int4c, values int4: largest error 0.0037 of the output
+  window 1 (32000 tokens), us per layer and decode step: bf16 48.5 (kernel 48.5, torch 57.9), bf16/int8 42.9, bf16/int4 38.6, int8c/bf16 61.6, int8c/int8 59.2, int8c/int4 55.6, int4c/bf16 55.9, int4c/int8 53.9, int4c/int4 50.7; prompt chunk 3015 us + reads int8c 74.9, int4c 107.1, int8 52.7, int4 88.5
+  window 0.75 (24064 tokens), us per layer and decode step: bf16 37.7 (kernel 37.7, torch 45.9), bf16/int8 35.0, bf16/int4 30.5, int8c/bf16 48.4, int8c/int8 47.6, int8c/int4 43.7, int4c/bf16 45.9, int4c/int8 44.0, int4c/int4 44.1; prompt chunk 2124 us + reads int8c 54.6, int4c 77.6, int8 41.4, int4 66.5
+  window 0.5 (16064 tokens), us per layer and decode step: bf16 28.2 (kernel 28.2, torch 36.2), bf16/int8 26.2, bf16/int4 23.3, int8c/bf16 36.8, int8c/int8 36.5, int8c/int4 34.2, int4c/bf16 33.0, int4c/int8 33.5, int4c/int4 32.4; prompt chunk 1403 us + reads int8c 40.6, int4c 59.0, int8 30.7, int4 50.0
+  window 0.25 (8064 tokens), us per layer and decode step: bf16 16.4 (kernel 16.4, torch 26.0), bf16/int8 16.3, bf16/int4 15.9, int8c/bf16 22.1, int8c/int8 23.0, int8c/int4 22.3, int4c/bf16 20.6, int4c/int8 21.5, int4c/int4 21.5; prompt chunk 723 us + reads int8c 24.7, int4c 39.0, int8 19.9, int4 34.0
+...done in 80s
+Decode attention per layer at the whole context (us), the run's table -> now: bf16/bf16 59.7 -> 48.5, bf16/int8 69.3 -> 42.9, bf16/int4 65.5 -> 38.6, int8c/bf16 62.2 -> 61.6, int8c/int8 66.5 -> 59.2, int8c/int4 64.2 -> 55.6, int4c/bf16 58.8 -> 55.9, int4c/int8 65.2 -> 53.9, int4c/int4 64.4 -> 50.7
+Uncompressed turn: 1019 ms in the run, 1000 ms now; 4939 evaluations re-timed
+4776 feasible evaluations, 466 on the front of delta_loss, time and memory
+Resolving data files:   0%|                                                                   | 0/1024 [00:00<?, ?it/s]Resolving data files: 100%|█████████████████████████████████████████████████████| 1024/1024 [00:00<00:00, 42516.01it/s]
+Resolving data files:   0%|                                                                   | 0/1024 [00:00<?, ?it/s]Resolving data files: 100%|█████████████████████████████████████████████████████| 1024/1024 [00:00<00:00, 43827.09it/s]
+Recall on 256 new facts in 2048-token windows of C4 validation text, for 10 solutions and the uncompressed model
+  uncompressed: 100.0% recalled (answer cross-entropy 0.013)
+  fastest <= 0.2: delta +0.1522, turn 826 -> 747 ms, 1381 MB | recall 100% on the search's facts, 100.0% on new ones (6s) | qkv:B33B o:6BBB up:BBBB down:BBBB head:6 keep:1/1/0.625/1 -attn 0 -mlp 0 key:BBBB val:B448 win:0.25/1/1/0.25
+  fastest <= 0.1: delta +0.0556, turn 807 -> 749 ms, 1746 MB | recall 100% on the search's facts, 100.0% on new ones (5s) | qkv:B6BB o:36B8 up:BBBB down:BBBB head:6 keep:1/1/1/1 -attn 0 -mlp 0 key:BBBB val:BBBB win:0.25/1/1/0.25
+  fastest <= 0.05: delta +0.0371, turn 831 -> 752 ms, 1471 MB | recall 100% on the search's facts, 100.0% on new ones (6s) | qkv:BBBB o:BBBB up:BBBB down:BBBB head:3 keep:1/1/1/1 -attn 0 -mlp 0 key:BBBB val:B448 win:0.25/1/1/0.25
+  fastest <= 0.02: delta +0.0174, turn 821 -> 757 ms, 1941 MB | recall 100% on the search's facts, 100.0% on new ones (5s) | qkv:BBBB o:BB3B up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:BBBB val:BBB8 win:0.25/1/1/0.25
+  fastest <= 0.01: delta +0.0064, turn 868 -> 793 ms, 2063 MB | recall 100% on the search's facts, 100.0% on new ones (5s) | qkv:BBBB o:3BBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:BBBB val:BBBB win:0.25/1/1/0.5
+  smallest <= 0.01: delta +0.0071, turn 901 -> 812 ms, 1566 MB | recall 100% on the search's facts, 100.0% on new ones (7s) | qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:BB88 val:8448 win:0.25/1/1/0.5
+  smallest <= 0.1: delta +0.0997, turn 881 -> 817 ms, 815 MB | recall 98% on the search's facts, 99.6% on new ones (8s) | qkv:B6BB o:3BB6 up:68B3 down:B83B head:3 keep:1/1/1/1 -attn 0 -mlp 0 key:8484 val:8444 win:0.25/1/1/0.25
+  smallest <= 0.2: delta +0.1728, turn 890 -> 822 ms, 705 MB | recall 97% on the search's facts, 98.4% on new ones (7s) | qkv:B683 o:3833 up:6833 down:B363 head:6 keep:1/1/1/1 -attn 0 -mlp 0 key:448B val:8448 win:0.25/1/1/0.25
+  smallest <= 0.05: delta +0.0484, turn 929 -> 847 ms, 1152 MB | recall 100% on the search's facts, 99.2% on new ones (8s) | qkv:B6BB o:BB3B up:3BBB down:B363 head:B keep:1/1/1/1 -attn 0 -mlp 0 key:8484 val:8444 win:0.25/1/1/0.5
+  smallest <= 0.02: delta +0.0198, turn 1026 -> 908 ms, 1443 MB | recall 100% on the search's facts, 99.6% on new ones (7s) | qkv:BBBB o:3B33 up:3BBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:B888 val:4444 win:0.5/1/1/0.75
+Done: compress_runs/qwen_kv2/recheck
