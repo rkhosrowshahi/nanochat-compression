@@ -174,7 +174,17 @@ class DecodedDuplicateElimination(ElementwiseDuplicateElimination):
 
 
 class Search:
-    """One run of a turn-time search in args.out_dir. Rerunning the same command continues it."""
+    """One run of a turn-time search in args.out_dir. Rerunning the same command continues it. A subclass can score more
+    than the calibration loss (extra_scores, run with the configuration applied), constrain those scores (extra_constraints:
+    functions of a solution's row, feasible at <= 0) and add to each solution's log line (note)."""
+
+    extra_constraints = ()
+
+    def extra_scores(self):
+        return {}
+
+    def note(self, r):
+        return ""
 
     def __init__(self, args, script):
         self.args = args
@@ -336,8 +346,12 @@ class Search:
         self.eval_fields = ["gen", "role", "key", "config", *self.gene_names, *stats, "seconds"]
         self.pop_fields = ["gen", "rank", "crowding", "key", "config", *self.gene_names, *stats]
         cfg = compressor.config(compressor.uniform_genes("bf16"))
-        self.baseline = {**compressor.cost(cfg), **compressor.apply(cfg)}
-        compressor.restore()
+        stored = compressor.apply(cfg)
+        try:
+            extra = self.extra_scores()
+        finally:
+            compressor.restore()
+        self.baseline = {**compressor.cost(cfg), **stored, **extra}
         b = self.baseline
         print(f"{len(compressor.genes)} genes ({', '.join(f'{n}:{k}' for n, k in compressor.genes)}), originals "
               f"{'offloaded to CPU' if compressor.offloaded else 'kept on GPU'}", flush=True)
@@ -354,7 +368,7 @@ class Search:
 
         self.cost_objectives = [COST_STAT[o] for o in a.objectives]
         self.problem = Problem(n_var=len(compressor.genes), n_obj=1 + len(self.cost_objectives),
-                               n_ieq_constr=(a.max_delta_loss is not None) + (a.memory_budget_mb is not None),
+                               n_ieq_constr=(a.max_delta_loss is not None) + (a.memory_budget_mb is not None) + len(self.extra_constraints),
                                xl=np.zeros(len(compressor.genes)), xu=np.array([n - 1 for _, n in compressor.genes], dtype=float))
         if os.path.exists(self.out("checkpoint.pkl")):
             with open(self.out("checkpoint.pkl"), "rb") as f:
@@ -397,11 +411,12 @@ class Search:
         try:
             stored = c.apply(cfg)
             loss = self.eval_loss(self.calib)
+            extra = self.extra_scores()
         finally:
             c.restore()
         if not math.isfinite(loss):
             loss = 1e6  # a broken model: dominated by everything, but the run goes on
-        return {"loss": loss, "delta_loss": loss - self.baseline_loss, "ppl": math.exp(min(loss, 700.0)), **c.cost(cfg), **stored,
+        return {"loss": loss, "delta_loss": loss - self.baseline_loss, "ppl": math.exp(min(loss, 700.0)), **c.cost(cfg), **stored, **extra,
                 "seconds": round(time.time() - t0, 2)}
 
     def _evaluate_all(self, individuals, gen, role):
@@ -418,11 +433,12 @@ class Search:
                 text = c.describe(c.config(genes))
                 self.evals_log.write([{"gen": gen, "role": role, "key": key, "config": text, **dict(zip(self.gene_names, genes)), **r}])
                 print(f"gen {gen} {role} [{i + 1}/{len(individuals)}] {text} | delta {r['delta_loss']:+.4f} turn {r['latency_ms']:.0f} ms "
-                      f"size {r['size_mb']:.0f} MB memory {r['memory_mb']:.0f} MB ({r['seconds']:.1f}s)", flush=True)
+                      f"size {r['size_mb']:.0f} MB memory {r['memory_mb']:.0f} MB{self.note(r)} ({r['seconds']:.1f}s)", flush=True)
             r = self.cache[key]
             F.append([r["delta_loss"]] + [r[s] for s in self.cost_objectives])
             G.append(([r["delta_loss"] - a.max_delta_loss] if a.max_delta_loss is not None else [])
-                     + ([r["memory_mb"] - a.memory_budget_mb] if a.memory_budget_mb is not None else []))
+                     + ([r["memory_mb"] - a.memory_budget_mb] if a.memory_budget_mb is not None else [])
+                     + [f(r) for f in self.extra_constraints])
         return np.array(F), np.array(G), n_reused
 
     def _rows(self, individuals, gen):

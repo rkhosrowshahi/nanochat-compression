@@ -47,6 +47,10 @@ Calibration and test keys as for hw, no validate. Search keys:
 search.method: kv adds the KV cache to the decisions (scripts/compress_search_kv.py): the mix keys without sharing, plus
 kv_precisions and kv_windows. Steps: search and plot.
 
+search.method: kv2 is its second version (scripts/compress_search_kv2.py: per-channel keys, windows that keep the first token,
+planted-fact recall as a constraint, decode timed with a kernel that reads the quantized cache; needs Triton): the mix keys
+without sharing, plus kv_keys, kv_values, kv_windows, kv_group, recall_seqs, min_recall, recall_batch. Steps: search and plot.
+
 search.method: mix_simple searches the deployed formats only (scripts/compress_search_mix_simple.py), with the mix keys. Steps:
 search, plot and storage, the optional storage step on its final front (scripts/compress_storage.py). --steps storage also
 works on a finished hw run. Key:
@@ -84,9 +88,11 @@ SEARCH_MIX = {"method", "pop_size", "n_gen", "seed", "objectives", "max_delta_lo
               "clip_ratios", "importance_seqs"}
 # search.method: kv (scripts/compress_search_kv.py) and mix_simple (scripts/compress_search_mix_simple.py)
 SEARCH_KV = SEARCH_MIX | {"kv_precisions", "kv_windows"}
-SEARCH_BY_METHOD = {"mix": SEARCH_MIX, "kv": SEARCH_KV, "mix_simple": SEARCH_MIX}
+# search.method: kv2 (scripts/compress_search_kv2.py)
+SEARCH_KV2 = SEARCH_MIX | {"kv_keys", "kv_values", "kv_windows", "kv_group", "recall_seqs", "min_recall", "recall_batch"}
+SEARCH_BY_METHOD = {"mix": SEARCH_MIX, "kv": SEARCH_KV, "mix_simple": SEARCH_MIX, "kv2": SEARCH_KV2}
 SCRIPT_BY_METHOD = {"hw": "scripts.compress_search_hw", "mix": "scripts.compress_search_mix", "kv": "scripts.compress_search_kv",
-                    "mix_simple": "scripts.compress_search_mix_simple"}
+                    "mix_simple": "scripts.compress_search_mix_simple", "kv2": "scripts.compress_search_kv2"}
 STORAGE = {"k", "max_points"}
 CALIBRATION_HW = {k: v for k, v in CALIBRATION.items() if k != "every"}
 TEST_HW = {"seq_len": "test_seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_test_seqs",
@@ -156,7 +162,7 @@ assert "model" in cfg, f"{args.config}: 'model' is required"
 out_dir = cfg.get("out_dir") or os.path.join("compress_runs", os.path.splitext(os.path.basename(args.config))[0])
 if args.smoke:
     out_dir += "_smoke"
-    search.update(pop_size=16 if method == "kv" else 8 if hw else 4, n_gen=2)  # hw: the first 4 individuals are the uniform formats, kv: 11 seeds
+    search.update(pop_size=20 if method == "kv2" else 16 if method == "kv" else 8 if hw else 4, n_gen=2)  # hw: the first 4 individuals are the uniform formats, kv: 11 seeds, kv2: 17
     calib["seqs"] = 8
     test.update(wikitext_seqs=4, c4_seqs=4)
     validate.update(points=2)

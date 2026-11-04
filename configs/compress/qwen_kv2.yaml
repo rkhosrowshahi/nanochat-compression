@@ -1,0 +1,47 @@
+# The KV search, second version (scripts/compress_search_kv2.py), from the KV probe (compress_runs/kv_probe). Objectives
+# delta_loss + GPU time of an agent's turn + deployed memory (weights + KV cache), with recall of planted facts as a
+# constraint. Genes: bf16 or an int4 group size per role (qkv, o, up, down) and depth band (4 bands), lm_head (tied to the
+# embedding), the MLP width kept per band, and per band the cached keys (bf16, int8 or int4 with one scale per channel and
+# group of 64 tokens), the cached values (bf16, int8, int4 per token) and the fraction of the context kept (with the first
+# token). Decode attention is timed with a Triton kernel that reads the quantized cache in place; kernel times are measured
+# on this GPU, which should be idle.
+#   python -m scripts.compress_run configs/compress/qwen_kv2.yaml
+# The same workload, calibration batch and test settings as qwen_kv.yaml, so the fronts compare directly.
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/qwen_kv2
+eval_batch_size: 1
+
+search:
+  method: kv2
+  objectives: [time, memory]
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  max_delta_loss: 1.0
+  # the workload: an agent's turn, with these agents decoding together
+  serve_batch: 4
+  prompt_batch: 256
+  context: 32000             # tokens each agent keeps in the KV cache at window 1
+  new_tokens: 2000           # prompt tokens processed per turn (the rest is cached)
+  gen_tokens: 300            # tokens generated per turn
+  vram_gb: 80                # for the agents_fit column only; memory_budget_mb would make memory a constraint
+  reserve: 0.1
+  bands: 4
+  kv_keys: bf16,int8c,int4c
+  kv_values: bf16,int8,int4
+  kv_windows: 1.0,0.75,0.5,0.25
+  kv_group: 64
+  # recall: a fact planted at a random depth of each window, asked for at its end
+  recall_seqs: 64
+  min_recall: 0.95           # the uncompressed model recalls 64/64; windows below 1 recalled 69% or less in the probe
+  recall_batch: 8
+
+calibration:
+  seqs: 8                    # the same batch as the other Qwen runs (shared through the cache)
+  seq_len: 2048
+
+test:
+  seq_len: 2048
+  wikitext_seqs: 32
+  c4_seqs: 32
+  max_points: 6
