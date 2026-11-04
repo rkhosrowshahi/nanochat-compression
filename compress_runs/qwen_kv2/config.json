@@ -1,0 +1,239 @@
+{
+  "args": {
+    "model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "dtype": "bfloat16",
+    "offload_originals": "auto",
+    "eval_batch_size": 1,
+    "calib_dataset": "allenai/c4",
+    "calib_config": "en",
+    "calib_split": "train",
+    "calib_seqs": 8,
+    "seq_len": 2048,
+    "data_seed": 0,
+    "calib_from": null,
+    "text_field": "text",
+    "importance_seqs": 4,
+    "objectives": [
+      "time",
+      "memory"
+    ],
+    "max_delta_loss": 1.0,
+    "memory_budget_mb": null,
+    "serve_batch": 4,
+    "prompt_batch": 256,
+    "context": 32000,
+    "new_tokens": 2000,
+    "gen_tokens": 300,
+    "vram_gb": 80.0,
+    "reserve": 0.1,
+    "formats": "bf16,int4_g32,int4_g64,int4_g128",
+    "bands": 4,
+    "mlp_keep": "1.0,0.875,0.75,0.625,0.5",
+    "max_skip": 0,
+    "no_embeddings": false,
+    "clip_ratios": "1.0,0.95,0.9,0.85,0.8,0.75",
+    "pop_size": 50,
+    "n_gen": 100,
+    "seed": 42,
+    "wikitext_seqs": 32,
+    "c4_test_seqs": 32,
+    "test_seq_len": 2048,
+    "test_max_delta_loss": 1.0,
+    "test_max_points": 6,
+    "out_dir": "compress_runs/qwen_kv2",
+    "kv_keys": "bf16,int8c,int4c",
+    "kv_values": "bf16,int8,int4",
+    "kv_windows": "1.0,0.75,0.5,0.25",
+    "kv_group": 64,
+    "recall_seqs": 64,
+    "min_recall": 0.95,
+    "recall_batch": 8,
+    "calib_every": 0
+  },
+  "git_commit": "6b596e768a4d00e1b49b11fa9d44a6a5b9b9632d",
+  "genes": [
+    [
+      "qkv_b0",
+      4
+    ],
+    [
+      "qkv_b1",
+      4
+    ],
+    [
+      "qkv_b2",
+      4
+    ],
+    [
+      "qkv_b3",
+      4
+    ],
+    [
+      "o_b0",
+      4
+    ],
+    [
+      "o_b1",
+      4
+    ],
+    [
+      "o_b2",
+      4
+    ],
+    [
+      "o_b3",
+      4
+    ],
+    [
+      "up_b0",
+      4
+    ],
+    [
+      "up_b1",
+      4
+    ],
+    [
+      "up_b2",
+      4
+    ],
+    [
+      "up_b3",
+      4
+    ],
+    [
+      "down_b0",
+      4
+    ],
+    [
+      "down_b1",
+      4
+    ],
+    [
+      "down_b2",
+      4
+    ],
+    [
+      "down_b3",
+      4
+    ],
+    [
+      "lm_head",
+      4
+    ],
+    [
+      "keep_b0",
+      5
+    ],
+    [
+      "keep_b1",
+      5
+    ],
+    [
+      "keep_b2",
+      5
+    ],
+    [
+      "keep_b3",
+      5
+    ],
+    [
+      "skip_attn",
+      1
+    ],
+    [
+      "skip_mlp",
+      1
+    ],
+    [
+      "key_b0",
+      3
+    ],
+    [
+      "key_b1",
+      3
+    ],
+    [
+      "key_b2",
+      3
+    ],
+    [
+      "key_b3",
+      3
+    ],
+    [
+      "val_b0",
+      3
+    ],
+    [
+      "val_b1",
+      3
+    ],
+    [
+      "val_b2",
+      3
+    ],
+    [
+      "val_b3",
+      3
+    ],
+    [
+      "window_b0",
+      4
+    ],
+    [
+      "window_b1",
+      4
+    ],
+    [
+      "window_b2",
+      4
+    ],
+    [
+      "window_b3",
+      4
+    ]
+  ],
+  "baseline_size_mb": 988.065536,
+  "baseline": {
+    "loss": 2.8856581038944187,
+    "delta_loss": 0.0,
+    "latency_ms": 1018.9494203124999,
+    "memory_mb": 2560.929536,
+    "weights_mb": 988.065536,
+    "kv_mb": 1572.864,
+    "bits_per_weight": 16.0,
+    "int4_pct": 0.0,
+    "mlp_kept_pct": 100.0,
+    "n_removed_attn": 0,
+    "n_removed_mlp": 0,
+    "decode_us": 1385.6244999999988,
+    "prompt_us": 301.6310351562501,
+    "agents_fit": 180,
+    "kv_pct": 100.0,
+    "window_pct": 100.0,
+    "size_mb": 988.065536,
+    "shared_pct": 0.0,
+    "k_merged": 0,
+    "recall_acc": 1.0,
+    "recall_ce": 0.022500069753732532
+  },
+  "latency_table": {
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "torch": "2.13.0+cu126",
+    "batch": 4,
+    "context": 32000,
+    "formats": [
+      "bf16",
+      "int4_g32",
+      "int4_g64",
+      "int4_g128"
+    ]
+  },
+  "layout": {
+    "n_layer": 24,
+    "intermediate": 4864,
+    "tied": true,
+    "n_target_params": 493961216,
+    "rest_params": 43904
+  }
+}

@@ -1,0 +1,36 @@
+model: Qwen/Qwen2.5-0.5B-Instruct
+out_dir: compress_runs/qwen_kv2
+eval_batch_size: 1
+search:
+  method: kv2
+  objectives:
+  - time
+  - memory
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  max_delta_loss: 1.0
+  serve_batch: 4
+  prompt_batch: 256
+  context: 32000
+  new_tokens: 2000
+  gen_tokens: 300
+  vram_gb: 80
+  reserve: 0.1
+  bands: 4
+  kv_keys: bf16,int8c,int4c
+  kv_values: bf16,int8,int4
+  kv_windows: 1.0,0.75,0.5,0.25
+  kv_group: 64
+  recall_seqs: 64
+  min_recall: 0.95
+  recall_batch: 8
+calibration:
+  seqs: 8
+  seq_len: 2048
+test:
+  seq_len: 2048
+  wikitext_seqs: 32
+  c4_seqs: 32
+  max_points: 6
+validate: {}
