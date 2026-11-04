@@ -21,6 +21,8 @@ Loss and recall. apply() switches the model's attention to kv2_attention, which 
             reads the quantized keys of the groups before its own and the bf16 keys of its own group (an attention over
             the two copies, 2T keys, with that mask). No scale is computed from tokens a query has not seen.
     values  quantized as written (their scales are per token).
+    A layer with a bf16 cache and the whole window takes the plain causal attention (flash), the others an attention
+    with a mask (the keys repeated for the query heads, so the memory-efficient kernel takes it, not the math fallback).
     window  the last round(fraction * T) tokens of a T-token window, and the first token. A PROXY of the same fraction of
             the context (calibration windows: 2048 tokens), so the search also scores recall (recall_set): a fact
             planted at a random depth of a window and asked for at its end, as exact-match accuracy. The script makes
@@ -30,6 +32,8 @@ Time and memory (build_kv2_table):
     decode  one step of attention with the cache read in place, by the Triton kernel of compress_kv2_kernel.py, per key
             precision, value precision and window. For bf16 the faster of that kernel and compress_hw's attention.
     prompt  a chunk reads the cache once: expanded to bf16 (measured), then the attention of compress_mix.
+A window is timed at its tokens rounded up to a multiple of 64 (timed_tokens): the first table timed 24001 tokens for 0.75,
+and a matrix product of that odd length took 1.6x the time of an aligned one.
 The bf16 keys of an unfinished group (at most group-1 tokens per layer) are left out of time and memory, and so are the
 writes of new entries.
 """
@@ -67,6 +71,11 @@ def value_bytes(kind, n_kv_head, head_dim):
 def kept_tokens(fraction, context):
     """Tokens of a cache at this window: the most recent ones and the first SINKS."""
     return context if fraction >= 1 else min(context, window_tokens(fraction, context) + SINKS)
+
+
+def timed_tokens(fraction, context, align=64):
+    """The tokens a window is timed at: kept_tokens rounded up to a multiple of align (a cache is allocated in pages)."""
+    return -(-kept_tokens(fraction, context) // align) * align
 
 
 # --- the cache formats (tensors [B, Hkv, T, D])
@@ -149,8 +158,12 @@ def kv2_attention(module, query, key, value, attention_mask, scaling=None, dropo
     """query [B, H, T, D], key and value [B, Hkv, T, D] (keys after the rotary embedding). module.kv2 holds
     (key kind, value kind, window fraction, group) for its layer."""
     key_kind, value_kind, fraction, group = module.kv2
-    B, _, T, D = query.shape
+    B, H, T, D = query.shape
     assert key.shape[2] == T, "kv2_attention scores whole windows (no cache of earlier tokens)"
+    scale = scaling if scaling is not None else D ** -0.5
+    if key_kind == value_kind == "bf16" and fraction >= 1 and attention_mask is None:
+        out = F.scaled_dot_product_attention(query, key, value, is_causal=True, scale=scale, enable_gqa=H != key.shape[1])
+        return out.transpose(1, 2).contiguous(), None
     quantized = key_kind != "bf16"
     mask = cache_mask(T, window_tokens(fraction, T) if fraction < 1 else T, quantized, group, query.device)[None, None]
     if attention_mask is not None:  # padding: the same keys in both copies
@@ -159,8 +172,9 @@ def kv2_attention(module, query, key, value, attention_mask, scaling=None, dropo
     v = cached_values(value, value_kind)
     if quantized:
         key, v = torch.cat((cached_keys(key, key_kind, group), key), dim=2), torch.cat((v, v), dim=2)
-    out = F.scaled_dot_product_attention(query, key, v, attn_mask=mask, scale=scaling if scaling is not None else D ** -0.5,
-                                         enable_gqa=query.shape[1] != key.shape[1])
+    repeat = H // key.shape[1]
+    out = F.scaled_dot_product_attention(query, key.repeat_interleave(repeat, dim=1), v.repeat_interleave(repeat, dim=1),
+                                         attn_mask=mask, scale=scale)
     return out.transpose(1, 2).contiguous(), None
 
 
@@ -228,21 +242,22 @@ def reference_decode(q, k, ks, v, vs, key, value, group=GROUP):
 
 
 @torch.no_grad()
-def check_kernel(layout, key, value, device, tokens=1000, group=GROUP):
+def check_kernel(layout, key, value, device, tokens=1000, group=GROUP, block_t=64):
     """Largest error of the kernel against reference_decode on a random cache (raises if it is wrong)."""
     from nanochat.compress_kv2_kernel import DecodeAttention
     B, (H, Hk, D) = 2, (layout.n_head, layout.n_kv_head, layout.head_dim)
     q = torch.randn(B, H, D, device=device, dtype=torch.bfloat16)
     k, ks = random_cache(key, B, Hk, tokens, D, device, True, group)
     v, vs = random_cache(value, B, Hk, tokens, D, device, False)
-    out = DecodeAttention(B, H, Hk, D, tokens, key, value, group, device=device)(q, k, ks, v, vs)
+    out = DecodeAttention(B, H, Hk, D, tokens, key, value, group, block_t=block_t, device=device)(q, k, ks, v, vs)
     ref = reference_decode(q, k, ks, v, vs, key, value, group)
     err = (out - ref).abs().max().item() / ref.abs().max().item()
     assert err < 0.02, f"the decode kernel for keys {key}, values {value} is off by {err:.3f} of the largest output"
     return err
 
 
-KERNEL_CONFIGS = [(f, w, s) for f in (1, 2, 4) for w in (2, 4) for s in (2, 3)]  # split factor, warps, stages
+KERNEL_CONFIGS = [(f, b, w, s) for f in (1, 2, 4) for b in (64, 128) for w in (2, 4) for s in (2, 3)]  # split factor, block, warps, stages
+KERNEL_VERSION = 2  # of the decode kernel: tables of another version are measured again
 
 
 @torch.no_grad()
@@ -256,10 +271,10 @@ def time_fused(batch, layout, tokens, key, value, device, group=GROUP):
     nbytes = batch * tokens * (key_bytes(key, Hk, D, group) + value_bytes(value, Hk, D))
     caches = [(*random_cache(key, batch, Hk, tokens, D, device, True, group), *random_cache(value, batch, Hk, tokens, D, device, False))
               for _ in range(n_copies(nbytes, device))]
-    best = math.inf
-    for f, w, s in KERNEL_CONFIGS:
-        attn = DecodeAttention(batch, H, Hk, D, tokens, key, value, group, split_factor=f, num_warps=w, num_stages=s, device=device)
-        best = min(best, graph_time_us([lambda c=c, a=attn: a(q, *c) for c in caches]))
+    best = (math.inf, None)
+    for f, b, w, s in KERNEL_CONFIGS:
+        attn = DecodeAttention(batch, H, Hk, D, tokens, key, value, group, split_factor=f, block_t=b, num_warps=w, num_stages=s, device=device)
+        best = min(best, (graph_time_us([lambda c=c, a=attn: a(q, *c) for c in caches]), (f, b, w, s)))
     return best
 
 
@@ -283,20 +298,23 @@ def build_kv2_table(layout, keys, values, windows, batch, chunk, context, device
     heads = (layout.n_head, layout.n_kv_head, layout.head_dim)
     for k in keys:
         for v in values:
-            log(f"  kernel check, keys {k}, values {v}: largest error {check_kernel(layout, k, v, device, group=group):.4f} of the output")
+            err = max(check_kernel(layout, k, v, device, group=group, block_t=b) for b in sorted({b for _, b, _, _ in KERNEL_CONFIGS}))
+            log(f"  kernel check, keys {k}, values {v}: largest error {err:.4f} of the output")
     table = {"keys": list(keys), "values": list(values), "windows": list(windows), "context": context, "group": group, "sinks": SINKS,
-             "decode": {"batch": batch, "attention_us": {}, "bf16_reference_us": {}, "bf16_kernel_us": {}},
+             "kernel_version": KERNEL_VERSION,
+             "decode": {"batch": batch, "attention_us": {}, "kernel_us": {}, "kernel_config": {}, "bf16_reference_us": {}},
              "prompt": {"batch": chunk, "attention_us": {}, "read_us": {}}}
     for w in windows:
-        tokens, wk = kept_tokens(w, context), f"{w:g}"
+        tokens, wk = timed_tokens(w, context), f"{w:g}"
         reference = min(time_attention(batch, *heads, tokens, device, impl) for impl in ATTENTION)
+        table["decode"]["bf16_reference_us"][wk] = round(reference, 3)
         for k in keys:
             for v in values:
-                fused = time_fused(batch, layout, tokens, k, v, device, group)
-                if k == v == "bf16":
-                    table["decode"]["bf16_reference_us"][wk], table["decode"]["bf16_kernel_us"][wk] = round(reference, 3), round(fused, 3)
-                    fused = min(fused, reference)
-                table["decode"]["attention_us"].setdefault(f"{k}/{v}", {})[wk] = round(fused, 3)
+                fused, launch = time_fused(batch, layout, tokens, k, v, device, group)
+                kv = f"{k}/{v}"
+                table["decode"]["kernel_us"].setdefault(kv, {})[wk] = round(fused, 3)
+                table["decode"]["kernel_config"].setdefault(kv, {})[wk] = launch
+                table["decode"]["attention_us"].setdefault(kv, {})[wk] = round(min(fused, reference) if kv == "bf16/bf16" else fused, 3)
         table["prompt"]["attention_us"][wk] = round(time_prompt_attention(chunk, *heads, tokens, device) * chunk, 3)
         for kinds, is_key in ((keys, True), (values, False)):
             for kind in kinds:
@@ -304,7 +322,7 @@ def build_kv2_table(layout, keys, values, windows, batch, chunk, context, device
                     table["prompt"]["read_us"].setdefault(kind, {})[wk] = round(time_expand(kind, layout.n_kv_head, tokens, layout.head_dim, device, is_key, group), 3)
         d = table["decode"]["attention_us"]
         log(f"  window {wk} ({tokens} tokens), us per layer and decode step: bf16 {d['bf16/bf16'][wk]:.1f} (kernel "
-            f"{table['decode']['bf16_kernel_us'][wk]:.1f}, torch {reference:.1f}), " + ", ".join(
+            f"{table['decode']['kernel_us']['bf16/bf16'][wk]:.1f}, torch {reference:.1f}), " + ", ".join(
                 f"{kv} {t[wk]:.1f}" for kv, t in d.items() if kv != "bf16/bf16")
             + f"; prompt chunk {table['prompt']['attention_us'][wk]:.0f} us + reads " + ", ".join(
                 f"{kind} {t[wk]:.1f}" for kind, t in table["prompt"]["read_us"].items()))

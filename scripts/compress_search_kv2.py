@@ -64,7 +64,7 @@ kv2_table = search.table("kv2_table.json", "KV2", lambda: compress_kv2.build_kv2
     search.layout, keys, values, windows, args.serve_batch, args.prompt_batch, args.context, search.device, args.kv_group,
     log=lambda m: print(m, flush=True)), batch=args.serve_batch,
     extra={"prompt_batch": args.prompt_batch, "keys": keys, "values": values, "windows": windows, "group": args.kv_group,
-           "sinks": compress_kv2.SINKS, "triton": triton.__version__})
+           "sinks": compress_kv2.SINKS, "triton": triton.__version__, "kernel_version": compress_kv2.KERNEL_VERSION})
 
 compressor = compress_kv2.KV2Compressor(search.model, search.layout, decode_table, prompt_table, kv2_table, search.act_sq, search.removal,
                                         context=args.context, **search.compressor_options())

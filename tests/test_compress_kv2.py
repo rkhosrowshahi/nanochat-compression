@@ -14,7 +14,7 @@ from nanochat import compress_hw
 from nanochat.compress_hw import MLP_KEEP, Layout
 from nanochat.compress_kv2 import (KEY_KINDS, KV2_WINDOWS, SINKS, VALUE_KINDS, KV2Compressor, cache_mask, cached_keys, cached_values,
                                    dequantize_keys, dequantize_values, key_bytes, kept_tokens, quantize_keys, quantize_values,
-                                   recall_score, recall_set, value_bytes)
+                                   recall_score, recall_set, timed_tokens, value_bytes)
 from tests.test_compress_mix import fake_table, logits, tiny_qwen
 
 GROUP = 8  # tokens per key scale in these tests: windows of 32 tokens hold 4 groups
@@ -55,6 +55,7 @@ def test_bytes():
     assert key_bytes("int4c", 2, 64) == 2 * (32 + 2)
     assert value_bytes("int4", 2, 64) == 2 * (32 + 2)
     assert kept_tokens(1.0, 1000) == 1000 and kept_tokens(0.25, 1000) == 250 + SINKS
+    assert timed_tokens(0.75, 32000) == 24064 and timed_tokens(1.0, 32000) == 32000  # aligned: 24001 timed 1.6x slow
 
 
 def test_keys_get_one_scale_per_channel_and_group():
@@ -226,7 +227,8 @@ def test_kernel_matches_the_reference(key, value):
     for D, heads in ((64, (14, 2)), (128, (40, 8))):  # Qwen2.5-0.5B and -32B heads
         layout = type("L", (), {"n_head": heads[0], "n_kv_head": heads[1], "head_dim": D})()
         for tokens in (64, 1000, 4100):
-            assert check_kernel(layout, key, value, torch.device("cuda"), tokens=tokens) < 0.02
+            for block_t in (64, 128):
+                assert check_kernel(layout, key, value, torch.device("cuda"), tokens=tokens, block_t=block_t) < 0.02
 
 
 @pytest.mark.skipif(not GPU, reason="timed on a CUDA GPU with Triton")
