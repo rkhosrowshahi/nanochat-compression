@@ -158,6 +158,38 @@ def test_window_keeps_the_first_token_only(setup):
     assert moved[1] < 1e-4  # token 1 has scrolled out (1 + 4 * 7 < 31)
 
 
+def test_generation_with_a_cache_reads_what_the_whole_window_reads(setup):
+    model, c, tokens = setup
+    c.apply(c.config(genes(c, key="int4c", value="int4")))
+    whole = logits(model, tokens)
+    with torch.no_grad():  # a prompt of 13 tokens (part of the second group), then one token at a time from the cache
+        out = model(input_ids=tokens[:, :13], use_cache=True)
+        steps, past = [out.logits], out.past_key_values
+        for i in range(13, tokens.size(1)):
+            out = model(input_ids=tokens[:, i:i + 1], past_key_values=past, use_cache=True)
+            steps.append(out.logits)
+            past = out.past_key_values
+    c.restore()
+    assert torch.allclose(torch.cat(steps, dim=1).float(), whole, atol=1e-4)
+
+
+def test_left_padding_is_masked_once_registered(setup):
+    from nanochat.compress_kv2 import register_padding_mask
+    model, c, tokens = setup
+    register_padding_mask()
+    c.apply(c.config(genes(c, value="int4")))  # values per token: padding does not move their scales
+    pad = 3
+    padded = torch.cat((torch.zeros(1, pad, dtype=torch.long), tokens[:1]), dim=1)
+    mask = torch.cat((torch.zeros(1, pad, dtype=torch.long), torch.ones_like(tokens[:1])), dim=1)
+    with torch.no_grad():
+        alone = model.generate(tokens[:1], attention_mask=torch.ones_like(tokens[:1]), max_new_tokens=4, do_sample=False,
+                               output_scores=True, return_dict_in_generate=True, pad_token_id=0)
+        batch = model.generate(padded, attention_mask=mask, max_new_tokens=4, do_sample=False, output_scores=True,
+                               return_dict_in_generate=True, pad_token_id=0)
+    c.restore()
+    assert torch.allclose(torch.stack(batch.scores), torch.stack(alone.scores), atol=1e-4)
+
+
 # --- recall
 
 class Echo(torch.nn.Module):

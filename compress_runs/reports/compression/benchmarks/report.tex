@@ -122,23 +122,23 @@ stands for the 0\% level. Every solution smaller than 309\,MB exceeds 10\% error
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{lrrrrrrrrrr}
+\begin{tabular}{lccccccccc}
 \toprule
-Model & $k$ & $c$ & Sparsity & Calib. err. & Size & Smaller & Bits/w & Huffman & WikiText-2 & C4 \\
-      &     &     & (\%)     & (\%)        & (MB) & by      &        & bits/w  & ppl        & ppl \\
+Model & $k$ & $c$ & Sparsity & Calib loss & Size & Bits/w & Huffman & WikiText-2 & C4 \\
+($\dloss$ (\%)) &     &     & (\%)     & (\%)        & (MB) &        & bits/w  & ppl        & ppl \\
 \midrule
-Uncompressed (bf16) & --  & --    & 0.0  & 0.00 & 988 & 1.00$\times$ & 16.00 & --   & 14.26 & 21.46 \\
+Uncompressed (bf16) & --  & --    & 0.0  & 0.00 & 988 (1.00$\times$) & 16.00 & --   & 14.26 & 21.46 \\
 \addlinespace
-Q0  (0\%)  & 164 & 0.995 & 2.2  & 0.12 & 495 & 2.00$\times$ & 8.02 & 6.47 & 14.26 & 21.55 \\
-Q1  (1\%)  & 65  & 0.934 & 5.3  & 1.00 & 414 & 2.39$\times$ & 6.70 & 5.23 & 14.61 & 22.08 \\
-Q2  (2\%)  & 52  & 0.949 & 6.8  & 1.61 & 372 & 2.66$\times$ & 6.01 & 4.84 & 15.08 & 22.49 \\
-Q5  (5\%)  & 29  & 0.928 & 11.8 & 4.75 & 310 & 3.19$\times$ & 5.01 & 4.05 & 17.00 & 25.05 \\
-Q10 (10\%) & 28  & 0.849 & 19.2 & 9.87 & 309 & 3.20$\times$ & 5.00 & 3.98 & 20.52 & 29.70 \\
+Q0  (0\%)  & 164 & 0.995 & 2.2  & 0.12 & 495 (2.00$\times$) & 8.02 & 6.47 & 14.26 & 21.55 \\
+Q1  (1\%)  & 65  & 0.934 & 5.3  & 1.00 & 414 (2.39$\times$) & 6.70 & 5.23 & 14.61 & 22.08 \\
+Q2  (2\%)  & 52  & 0.949 & 6.8  & 1.61 & 372 (2.66$\times$) & 6.01 & 4.84 & 15.08 & 22.49 \\
+Q5  (5\%)  & 29  & 0.928 & 11.8 & 4.75 & 310 (3.19$\times$) & 5.01 & 4.05 & 17.00 & 25.05 \\
+Q10 (10\%) & 28  & 0.849 & 19.2 & 9.87 & 309 (3.20$\times$) & 5.00 & 3.98 & 20.52 & 29.70 \\
 \bottomrule
 \end{tabular}
 \caption{Selected solutions. Sparsity counts pruned weights and weights rounded to zero. Huffman bits/w
 is the storage with Huffman-coded codes (reported only, not optimized). None of the five merges levels
-($\rho=1$).}
+($\rho=1$). In parentheses after the size: the compression ratio, the uncompressed size over the model's.}
 \label{tab:models}
 \end{table}
 
@@ -156,7 +156,7 @@ models with the same settings, without evaluating it again.
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{l>{\raggedright\arraybackslash}p{7.2cm}lrcl}
+\begin{tabular}{l>{\raggedright\arraybackslash}p{7.2cm}cccc}
 \toprule
 Benchmark & What it tests & Split & Questions & Shots & Metric \\
 \midrule
@@ -183,10 +183,10 @@ number with the reference.}
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrrrrrrr}
+\begin{tabular}{lcccccccccc}
 \toprule
 Model & Size & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
-      & (MB) &      &       &       &         &        &       & 5-shot & 5-shot &       \\
+($\dloss$ (\%)) & (MB) &      &       &       &         &        &       & 5-shot & 5-shot &       \\
 \midrule
 Uncompressed & 988 & 70.4 & 59.2 & 33.1 & 52.4 & 56.0 & 67.8 & 47.0 & 31.2 & 52.1 \\
 \addlinespace
@@ -208,10 +208,10 @@ row: standard error of the uncompressed model's accuracy.}
 \centering
 \small
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrrrrrrr}
+\begin{tabular}{lcccccccccc}
 \toprule
-Model & Size & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg.\ kept \\
-      & (MB) &      &       &       &         &        &       &      &       & (\%)       \\
+Model & Size & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Accuracy \\
+($\dloss$ (\%)) & (MB) &      &       &       &         &        &       &      &       & retained (\%)       \\
 \midrule
 Q0  (0\%)  & 495 & $-0.2$ & $+0.7$ & $+0.4$ & $-0.1$ & $+0.6$ & $+0.6$  & $\phantom{+}0.0$ & $+0.5$ & 100.6 \\
 Q1  (1\%)  & 414 & $-0.2$ & $+0.5$ & $+0.6$ & $\phantom{+}0.0$ & $-0.2$ & $-3.5$ & $-0.4$ & $-3.6$ & 98.4 \\
@@ -220,8 +220,7 @@ Q5  (5\%)  & 310 & $-1.2$ & $-4.0$ & $-1.1$ & $-2.4$ & $+0.3$ & $-18.1$ & $-2.0$
 Q10 (10\%) & 309 & $-2.9$ & $-2.9$ & $-2.1$ & $-4.7$ & $+1.2$ & $-11.8$ & $-8.6$ & $-18.6$ & 87.9 \\
 \bottomrule
 \end{tabular}
-\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss).
-Avg.\ kept is the compressed model's average accuracy as a percentage of the uncompressed model's.}
+\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss). Accuracy retained: the compressed model's average accuracy as a percentage of the uncompressed model's.}
 \label{tab:delta}
 \end{table}
 
@@ -319,24 +318,23 @@ solution has zero error, so the most accurate one (0.16\%) stands for the 0\% le
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3.5pt}
-\begin{tabular}{lrrrrrrrlc}
+\begin{tabular}{lcccccc}
 \toprule
-Model & Calib. & Decode & Faster & Memory & Smaller & Bits/w & int4 & Formats & Removed \\
-      & err.\ (\%) & (ms) & by & (MB) & by & & (\%) & q/k/v\,\,out\,\,\,up\,\,\,down\,\,head & attn./MLP \\
+Model & Calib & Latency & Memory & Bits/w & int4 & Removed \\
+($\dloss$ (\%)) & loss (\%) & (ms) & (MB) & & (\%) & attn./MLP \\
 \midrule
-Uncompressed & 0.00 & 6.78 & 1.00$\times$ & 1001 & 1.00$\times$ & 16.00 & 0  & \texttt{BBBB BBBB BBBB BBBB B} & 0/0 \\
+Uncompressed & 0.00 & 6.78 (1.00$\times$) & 1001 (1.00$\times$) & 16.00 & 0  & 0/0 \\
 \addlinespace
-H0  (0\%)  & 0.16 & 6.74 & 1.01$\times$ & 992 & 1.01$\times$ & 15.86 & 1  & \texttt{B3BB BBBB BBBB BBBB B} & 0/0 \\
-H1  (1\%)  & 0.75 & 5.61 & 1.21$\times$ & 761 & 1.31$\times$ & 12.13 & 35 & \texttt{BBBB 633B B36B B33B B} & 0/0 \\
-H2  (2\%)  & 1.99 & 4.35 & 1.56$\times$ & 479 & 2.09$\times$ & 7.55  & 77 & \texttt{33B3 B333 33B3 B36B 3} & 0/0 \\
-H5  (5\%)  & 4.84 & 3.43 & 1.98$\times$ & 291 & 3.43$\times$ & 4.51  & 99 & \texttt{3B38 3386 8888 8833 8} & 0/0 \\
-H10 (10\%) & 8.90 & 3.28 & 2.07$\times$ & 271 & 3.70$\times$ & 4.19  & 97 & \texttt{8836 6888 8888 8368 8} & 1/1 \\
+H0  (0\%)  & 0.16 & 6.74 (1.01$\times$) & 992 (1.01$\times$) & 15.86 & 1  & 0/0 \\
+H1  (1\%)  & 0.75 & 5.61 (1.21$\times$) & 761 (1.31$\times$) & 12.13 & 35 & 0/0 \\
+H2  (2\%)  & 1.99 & 4.35 (1.56$\times$) & 479 (2.09$\times$) & 7.55  & 77 & 0/0 \\
+H5  (5\%)  & 4.84 & 3.43 (1.98$\times$) & 291 (3.43$\times$) & 4.51  & 99 & 0/0 \\
+H10 (10\%) & 8.90 & 3.28 (2.07$\times$) & 271 (3.70$\times$) & 4.19  & 97 & 1/1 \\
 \bottomrule
 \end{tabular}
-\caption{Selected hardware-aware solutions. Formats: one character per depth band (bands 1--4) for
-attention q/k/v, attention output, MLP up/gate and MLP down, then the output head; B = bf16, 3/6/8 =
-int4 with groups of 32/64/128. Bits/w counts weights only; memory includes the 13\,MB KV cache. None
-prunes MLP neurons.}
+\caption{Selected hardware-aware solutions. Bits/w counts weights only; memory includes the 13\,MB KV
+cache. None prunes MLP neurons. In parentheses: after the latency, the speedup over the uncompressed model
+(6.78\,ms); after the memory, the compression ratio (the uncompressed model's memory over this model's).}
 \label{tab:hwmodels}
 \end{table}
 
@@ -346,44 +344,44 @@ prunes MLP neurons.}
 \begin{table}[!ht]
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrrrrrrr}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccccccc}
 \toprule
-Model & Decode & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
-      & (ms)   &      &       &       &         &        &       & 5-shot & 5-shot &       \\
+Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
+($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       & 5-shot & 5-shot & \\
 \midrule
-Uncompressed & 6.78 & 70.6 & 59.2 & 33.0 & 52.4 & 55.2 & 67.7 & 47.0 & 30.3 & 51.9 \\
+Uncompressed & 6.78 (1.00$\times$) & 70.6 & 59.2 & 33.0 & 52.4 & 55.2 & 67.7 & 47.0 & 30.3 & 51.9 \\
 \addlinespace
-H0  (0\%)    & 6.74 & 70.7 & 59.6 & 33.4 & 52.0 & 55.6 & 66.9 & 46.5 & 31.1 & 52.0 \\
-H1  (1\%)    & 5.61 & 70.1 & 60.0 & 32.7 & 51.4 & 56.0 & 67.6 & 46.7 & 27.9 & 51.5 \\
-H2  (2\%)    & 4.35 & 69.7 & 59.7 & 32.8 & 51.0 & 56.7 & 66.1 & 45.9 & 28.5 & 51.3 \\
-H5  (5\%)    & 3.43 & 69.0 & 58.0 & 31.5 & 49.4 & 55.0 & 66.5 & 44.8 & 20.5 & 49.4 \\
-H10 (10\%)   & 3.28 & 67.3 & 49.7 & 29.0 & 46.4 & 52.4 & 63.8 & 37.6 &  4.9 & 43.9 \\
+H0  (0\%)    & 6.74 (1.01$\times$) & 70.7 & 59.6 & 33.4 & 52.0 & 55.6 & 66.9 & 46.5 & 31.1 & 52.0 \\
+H1  (1\%)    & 5.61 (1.21$\times$) & 70.1 & 60.0 & 32.7 & 51.4 & 56.0 & 67.6 & 46.7 & 27.9 & 51.5 \\
+H2  (2\%)    & 4.35 (1.56$\times$) & 69.7 & 59.7 & 32.8 & 51.0 & 56.7 & 66.1 & 45.9 & 28.5 & 51.3 \\
+H5  (5\%)    & 3.43 (1.98$\times$) & 69.0 & 58.0 & 31.5 & 49.4 & 55.0 & 66.5 & 44.8 & 20.5 & 49.4 \\
+H10 (10\%)   & 3.28 (2.07$\times$) & 67.3 & 49.7 & 29.0 & 46.4 & 52.4 & 63.8 & 37.6 &  4.9 & 43.9 \\
 \midrule
-Std. error   &      & 1.1  & 1.0  & 1.4  & 0.5  & 1.4  & 0.8  & 0.4  & 1.3  &      \\
+Std. error   &      & 1.1  & 1.0  & 1.4  & 0.5  & 1.4  & 0.8  & 0.4  & 1.3  & \\
 \bottomrule
 \end{tabular}
-\caption{Accuracy (\%, higher is better) of the hardware-aware models, with the unweighted average.}
+\caption{Accuracy (\%, higher is better) of the hardware-aware models, with the unweighted average. In parentheses: the speedup over the uncompressed model (6.78\,ms).}
 \label{tab:hwresults}
 \end{table}
 
 \begin{table}[!ht]
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrrrrrrr}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccccccc}
 \toprule
-Model & Decode & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg.\ kept \\
-      & (ms)   &      &       &       &         &        &       &      &       & (\%)       \\
+Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Accuracy \\
+($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       &      &       & retained (\%) \\
 \midrule
-H0  (0\%)  & 6.74 & $+0.2$ & $+0.4$ & $+0.3$ & $-0.4$ & $+0.4$ & $-0.9$ & $-0.5$ & $+0.8$  & 100.1 \\
-H1  (1\%)  & 5.61 & $-0.5$ & $+0.8$ & $-0.3$ & $-0.9$ & $+0.9$ & $-0.1$ & $-0.3$ & $-2.4$  & 99.3 \\
-H2  (2\%)  & 4.35 & $-0.8$ & $+0.5$ & $-0.3$ & $-1.4$ & $+1.5$ & $-1.6$ & $-1.1$ & $-1.8$  & 98.8 \\
-H5  (5\%)  & 3.43 & $-1.5$ & $-1.1$ & $-1.5$ & $-2.9$ & $-0.2$ & $-1.2$ & $-2.2$ & $-9.8$  & 95.1 \\
-H10 (10\%) & 3.28 & $-3.3$ & $-9.5$ & $-4.0$ & $-5.9$ & $-2.8$ & $-3.9$ & $-9.4$ & $-25.4$ & 84.6 \\
+H0  (0\%)  & 6.74 (1.01$\times$) & $+0.2$ & $+0.4$ & $+0.3$ & $-0.4$ & $+0.4$ & $-0.9$ & $-0.5$ & $+0.8$  & 100.1 \\
+H1  (1\%)  & 5.61 (1.21$\times$) & $-0.5$ & $+0.8$ & $-0.3$ & $-0.9$ & $+0.9$ & $-0.1$ & $-0.3$ & $-2.4$  & 99.3 \\
+H2  (2\%)  & 4.35 (1.56$\times$) & $-0.8$ & $+0.5$ & $-0.3$ & $-1.4$ & $+1.5$ & $-1.6$ & $-1.1$ & $-1.8$  & 98.8 \\
+H5  (5\%)  & 3.43 (1.98$\times$) & $-1.5$ & $-1.1$ & $-1.5$ & $-2.9$ & $-0.2$ & $-1.2$ & $-2.2$ & $-9.8$  & 95.1 \\
+H10 (10\%) & 3.28 (2.07$\times$) & $-3.3$ & $-9.5$ & $-4.0$ & $-5.9$ & $-2.8$ & $-3.9$ & $-9.4$ & $-25.4$ & 84.6 \\
 \bottomrule
 \end{tabular}
-\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss).}
+\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss). In parentheses: the speedup over the uncompressed model (6.78\,ms). Accuracy retained: the compressed model's average accuracy as a percentage of the uncompressed model's.}
 \label{tab:hwdelta}
 \end{table}
 
@@ -460,32 +458,32 @@ one stands for the 0\% level.
 \centering
 \scriptsize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{lrrrrrrrrlc}
+\begin{tabular}{lccccccc}
 \toprule
-Model & Calib. & Decode & Faster & Memory & Smaller & Bits/w & int4 & MLP & Formats & Removed \\
-      & err.\ (\%) & (ms) & by & (MB) & by & & (\%) & kept (\%) & q/k/v\,\,out\,\,\,up\,\,\,down\,\,head & attn./MLP \\
+Model & Calib & Latency & Memory & Bits/w & int4 & MLP & Removed \\
+($\dloss$ (\%)) & loss (\%) & (ms) & (MB) & & (\%) & kept (\%) & attn./MLP \\
 \midrule
-Uncompressed & 0.00 & 3.95 & 1.00$\times$ & 1001 & 1.00$\times$ & 16.00 & 0 & 100 & \texttt{BBBB BBBB BBBB BBBB B} & 0/0 \\
+Uncompressed & 0.00 & 3.95 (1.00$\times$) & 1001 (1.00$\times$) & 16.00 & 0 & 100 & 0/0 \\
 \addlinespace
-\multicolumn{11}{l}{\emph{2 objectives}} \\
-A0  (0\%)  & 0.17 & 3.89 & 1.02$\times$ & 922 & 1.09$\times$ & 14.73 & 12  & 100 & \texttt{BBBB BBB3 B3BB BBBB B} & 0/0 \\
-A1  (1\%)  & 0.89 & 3.70 & 1.07$\times$ & 714 & 1.40$\times$ & 11.36 & 42  & 100 & \texttt{3BBB 3333 333B B3BB B} & 0/0 \\
-A2  (2\%)  & 1.47 & 3.63 & 1.09$\times$ & 628 & 1.59$\times$ & 9.97  & 54  & 100 & \texttt{3BB3 6333 333B 666B B} & 0/0 \\
-A5  (5\%)  & 4.44 & 3.38 & 1.17$\times$ & 305 & 3.28$\times$ & 4.74  & 100 & 100 & \texttt{3336 3333 6663 6366 3} & 1/0 \\
-A10 (10\%) & 9.72 & 3.19 & 1.24$\times$ & 303 & 3.30$\times$ & 4.74  & 99  & 100 & \texttt{8638 3338 6363 3366 3} & 4/0 \\
+\multicolumn{8}{l}{\emph{2 objectives}} \\
+A0  (0\%)  & 0.17 & 3.89 (1.02$\times$) & 922 (1.09$\times$) & 14.73 & 12  & 100 & 0/0 \\
+A1  (1\%)  & 0.89 & 3.70 (1.07$\times$) & 714 (1.40$\times$) & 11.36 & 42  & 100 & 0/0 \\
+A2  (2\%)  & 1.47 & 3.63 (1.09$\times$) & 628 (1.59$\times$) & 9.97  & 54  & 100 & 0/0 \\
+A5  (5\%)  & 4.44 & 3.38 (1.17$\times$) & 305 (3.28$\times$) & 4.74  & 100 & 100 & 1/0 \\
+A10 (10\%) & 9.72 & 3.19 (1.24$\times$) & 303 (3.30$\times$) & 4.74  & 99  & 100 & 4/0 \\
 \addlinespace
-\multicolumn{11}{l}{\emph{3 objectives}} \\
-B0  (0\%)  & 0.06 & 3.92 & 1.01$\times$ & 965 & 1.04$\times$ & 15.42 & 5   & 100 & \texttt{BBBB BBBB BBBB B3BB B} & 0/0 \\
-B1  (1\%)  & 0.93 & 3.75 & 1.05$\times$ & 672 & 1.49$\times$ & 10.68 & 48  & 100 & \texttt{BBBB BBBB 3363 BB6B B} & 0/0 \\
-B2  (2\%)  & 1.83 & 3.60 & 1.10$\times$ & 485 & 2.06$\times$ & 7.65  & 75  & 100 & \texttt{3BBB 6366 336B 3B6B 3} & 0/0 \\
-B5  (5\%)  & 4.73 & 3.39 & 1.16$\times$ & 306 & 3.27$\times$ & 4.75  & 98  & 100 & \texttt{66B8 3366 3663 3686 6} & 1/0 \\
-B10 (10\%) & 9.10 & 3.28 & 1.20$\times$ & 273 & 3.66$\times$ & 4.24  & 95  & 93  & \texttt{3663 6883 3668 8838 8} & 2/0 \\
+\multicolumn{8}{l}{\emph{3 objectives}} \\
+B0  (0\%)  & 0.06 & 3.92 (1.01$\times$) & 965 (1.04$\times$) & 15.42 & 5   & 100 & 0/0 \\
+B1  (1\%)  & 0.93 & 3.75 (1.05$\times$) & 672 (1.49$\times$) & 10.68 & 48  & 100 & 0/0 \\
+B2  (2\%)  & 1.83 & 3.60 (1.10$\times$) & 485 (2.06$\times$) & 7.65  & 75  & 100 & 0/0 \\
+B5  (5\%)  & 4.73 & 3.39 (1.17$\times$) & 306 (3.27$\times$) & 4.75  & 98  & 100 & 1/0 \\
+B10 (10\%) & 9.10 & 3.28 (1.20$\times$) & 273 (3.66$\times$) & 4.24  & 95  & 93  & 2/0 \\
 \bottomrule
 \end{tabular}
-\caption{Selected A100 solutions. Formats as in Table~\ref{tab:hwmodels}: one character per depth band
-for each role, then the output head; B = bf16, 3/6/8 = int4 with groups of 32/64/128. MLP kept: the
-fraction of MLP neurons kept over the whole model (B10 keeps 75\% in the second band). Memory includes
-the 13\,MB KV cache.}
+\caption{Selected A100 solutions. MLP kept: the fraction of MLP neurons kept over the whole model (B10
+keeps 75\% in the second band). Memory includes the 13\,MB KV cache. In parentheses: after the latency, the
+speedup over the uncompressed model (3.95\,ms); after the memory, the compression ratio (the uncompressed
+model's memory over this model's).}
 \label{tab:a100models}
 \end{table}
 
@@ -495,61 +493,61 @@ the 13\,MB KV cache.}
 \begin{table}[!ht]
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrrrrrrr}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccccccc}
 \toprule
-Model & Decode & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
-      & (ms)   &      &       &       &         &        &       & 5-shot & 5-shot &       \\
+Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
+($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       & 5-shot & 5-shot & \\
 \midrule
-Uncompressed & 3.95 & 70.6 & 59.2 & 33.0 & 52.4 & 55.2 & 67.7 & 47.0 & 30.3 & 51.9 \\
+Uncompressed & 3.95 (1.00$\times$) & 70.6 & 59.2 & 33.0 & 52.4 & 55.2 & 67.7 & 47.0 & 30.3 & 51.9 \\
 \addlinespace
 \multicolumn{11}{l}{\emph{2 objectives}} \\
-A0  (0\%)  & 3.89 & 70.5 & 60.9 & 33.2 & 52.3 & 55.4 & 68.5 & 46.6 & 30.5 & 52.2 \\
-A1  (1\%)  & 3.70 & 70.9 & 58.8 & 32.4 & 51.4 & 55.6 & 67.1 & 46.6 & 28.1 & 51.4 \\
-A2  (2\%)  & 3.63 & 70.0 & 59.8 & 32.7 & 50.7 & 56.7 & 66.2 & 46.0 & 27.1 & 51.1 \\
-A5  (5\%)  & 3.38 & 68.2 & 55.4 & 30.5 & 49.2 & 54.6 & 67.2 & 45.6 & 19.6 & 48.8 \\
-A10 (10\%) & 3.19 & 67.2 & 58.1 & 30.5 & 46.9 & 55.7 & 60.2 & 41.6 &  5.8 & 45.8 \\
+A0  (0\%)  & 3.89 (1.02$\times$) & 70.5 & 60.9 & 33.2 & 52.3 & 55.4 & 68.5 & 46.6 & 30.5 & 52.2 \\
+A1  (1\%)  & 3.70 (1.07$\times$) & 70.9 & 58.8 & 32.4 & 51.4 & 55.6 & 67.1 & 46.6 & 28.1 & 51.4 \\
+A2  (2\%)  & 3.63 (1.09$\times$) & 70.0 & 59.8 & 32.7 & 50.7 & 56.7 & 66.2 & 46.0 & 27.1 & 51.1 \\
+A5  (5\%)  & 3.38 (1.17$\times$) & 68.2 & 55.4 & 30.5 & 49.2 & 54.6 & 67.2 & 45.6 & 19.6 & 48.8 \\
+A10 (10\%) & 3.19 (1.24$\times$) & 67.2 & 58.1 & 30.5 & 46.9 & 55.7 & 60.2 & 41.6 &  5.8 & 45.8 \\
 \addlinespace
 \multicolumn{11}{l}{\emph{3 objectives}} \\
-B0  (0\%)  & 3.92 & 70.3 & 58.8 & 33.4 & 52.2 & 56.1 & 67.1 & 47.1 & 30.6 & 52.0 \\
-B1  (1\%)  & 3.75 & 69.9 & 59.3 & 32.5 & 51.5 & 57.3 & 67.4 & 46.2 & 29.9 & 51.8 \\
-B2  (2\%)  & 3.60 & 69.6 & 58.0 & 31.7 & 51.0 & 55.8 & 65.7 & 46.1 & 27.9 & 50.7 \\
-B5  (5\%)  & 3.39 & 67.9 & 55.0 & 31.1 & 49.1 & 55.4 & 66.5 & 45.1 & 18.3 & 48.5 \\
-B10 (10\%) & 3.28 & 67.4 & 56.1 & 29.4 & 45.4 & 54.0 & 62.0 & 33.3 &  2.6 & 43.8 \\
+B0  (0\%)  & 3.92 (1.01$\times$) & 70.3 & 58.8 & 33.4 & 52.2 & 56.1 & 67.1 & 47.1 & 30.6 & 52.0 \\
+B1  (1\%)  & 3.75 (1.05$\times$) & 69.9 & 59.3 & 32.5 & 51.5 & 57.3 & 67.4 & 46.2 & 29.9 & 51.8 \\
+B2  (2\%)  & 3.60 (1.10$\times$) & 69.6 & 58.0 & 31.7 & 51.0 & 55.8 & 65.7 & 46.1 & 27.9 & 50.7 \\
+B5  (5\%)  & 3.39 (1.17$\times$) & 67.9 & 55.0 & 31.1 & 49.1 & 55.4 & 66.5 & 45.1 & 18.3 & 48.5 \\
+B10 (10\%) & 3.28 (1.20$\times$) & 67.4 & 56.1 & 29.4 & 45.4 & 54.0 & 62.0 & 33.3 &  2.6 & 43.8 \\
 \midrule
-Std. error &      & 1.1  & 1.0  & 1.4  & 0.5  & 1.4  & 0.8  & 0.4  & 1.3  &      \\
+Std. error &      & 1.1  & 1.0  & 1.4  & 0.5  & 1.4  & 0.8  & 0.4  & 1.3  & \\
 \bottomrule
 \end{tabular}
-\caption{Accuracy (\%, higher is better) of the A100 models, with the unweighted average.}
+\caption{Accuracy (\%, higher is better) of the A100 models, with the unweighted average. In parentheses: the speedup over the uncompressed model (3.95\,ms).}
 \label{tab:a100results}
 \end{table}
 
 \begin{table}[!ht]
 \centering
 \small
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{lrrrrrrrrrr}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccccccc}
 \toprule
-Model & Decode & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg.\ kept \\
-      & (ms)   &      &       &       &         &        &       &      &       & (\%)       \\
+Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Accuracy \\
+($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       &      &       & retained (\%) \\
 \midrule
 \multicolumn{11}{l}{\emph{2 objectives}} \\
-A0  (0\%)  & 3.89 & $-0.1$ & $+1.8$ & $+0.2$ & $-0.1$ & $+0.2$ & $+0.8$ & $-0.3$ & $+0.2$  & 100.6 \\
-A1  (1\%)  & 3.70 & $+0.4$ & $-0.4$ & $-0.6$ & $-1.0$ & $+0.5$ & $-0.6$ & $-0.4$ & $-2.2$  & 99.0 \\
-A2  (2\%)  & 3.63 & $-0.6$ & $+0.6$ & $-0.3$ & $-1.7$ & $+1.5$ & $-1.5$ & $-1.0$ & $-3.3$  & 98.5 \\
-A5  (5\%)  & 3.38 & $-2.3$ & $-3.7$ & $-2.5$ & $-3.2$ & $-0.6$ & $-0.5$ & $-1.4$ & $-10.7$ & 94.0 \\
-A10 (10\%) & 3.19 & $-3.3$ & $-1.1$ & $-2.5$ & $-5.5$ & $+0.6$ & $-7.5$ & $-5.4$ & $-24.6$ & 88.1 \\
+A0  (0\%)  & 3.89 (1.02$\times$) & $-0.1$ & $+1.8$ & $+0.2$ & $-0.1$ & $+0.2$ & $+0.8$ & $-0.3$ & $+0.2$  & 100.6 \\
+A1  (1\%)  & 3.70 (1.07$\times$) & $+0.4$ & $-0.4$ & $-0.6$ & $-1.0$ & $+0.5$ & $-0.6$ & $-0.4$ & $-2.2$  & 99.0 \\
+A2  (2\%)  & 3.63 (1.09$\times$) & $-0.6$ & $+0.6$ & $-0.3$ & $-1.7$ & $+1.5$ & $-1.5$ & $-1.0$ & $-3.3$  & 98.5 \\
+A5  (5\%)  & 3.38 (1.17$\times$) & $-2.3$ & $-3.7$ & $-2.5$ & $-3.2$ & $-0.6$ & $-0.5$ & $-1.4$ & $-10.7$ & 94.0 \\
+A10 (10\%) & 3.19 (1.24$\times$) & $-3.3$ & $-1.1$ & $-2.5$ & $-5.5$ & $+0.6$ & $-7.5$ & $-5.4$ & $-24.6$ & 88.1 \\
 \addlinespace
 \multicolumn{11}{l}{\emph{3 objectives}} \\
-B0  (0\%)  & 3.92 & $-0.3$ & $-0.3$ & $+0.3$ & $-0.1$ & $+0.9$ & $-0.6$ & $+0.1$ & $+0.2$  & 100.1 \\
-B1  (1\%)  & 3.75 & $-0.7$ & $+0.2$ & $-0.5$ & $-0.9$ & $+2.1$ & $-0.3$ & $-0.8$ & $-0.4$  & 99.7 \\
-B2  (2\%)  & 3.60 & $-1.0$ & $-1.2$ & $-1.4$ & $-1.4$ & $+0.6$ & $-2.0$ & $-0.9$ & $-2.4$  & 97.7 \\
-B5  (5\%)  & 3.39 & $-2.7$ & $-4.2$ & $-2.0$ & $-3.2$ & $+0.2$ & $-1.2$ & $-1.9$ & $-12.1$ & 93.5 \\
-B10 (10\%) & 3.28 & $-3.2$ & $-3.1$ & $-3.7$ & $-6.9$ & $-1.2$ & $-5.7$ & $-13.7$ & $-27.7$ & 84.3 \\
+B0  (0\%)  & 3.92 (1.01$\times$) & $-0.3$ & $-0.3$ & $+0.3$ & $-0.1$ & $+0.9$ & $-0.6$ & $+0.1$ & $+0.2$  & 100.1 \\
+B1  (1\%)  & 3.75 (1.05$\times$) & $-0.7$ & $+0.2$ & $-0.5$ & $-0.9$ & $+2.1$ & $-0.3$ & $-0.8$ & $-0.4$  & 99.7 \\
+B2  (2\%)  & 3.60 (1.10$\times$) & $-1.0$ & $-1.2$ & $-1.4$ & $-1.4$ & $+0.6$ & $-2.0$ & $-0.9$ & $-2.4$  & 97.7 \\
+B5  (5\%)  & 3.39 (1.17$\times$) & $-2.7$ & $-4.2$ & $-2.0$ & $-3.2$ & $+0.2$ & $-1.2$ & $-1.9$ & $-12.1$ & 93.5 \\
+B10 (10\%) & 3.28 (1.20$\times$) & $-3.2$ & $-3.1$ & $-3.7$ & $-6.9$ & $-1.2$ & $-5.7$ & $-13.7$ & $-27.7$ & 84.3 \\
 \bottomrule
 \end{tabular}
 \caption{Change in accuracy of the A100 models against the uncompressed model (percentage points;
-negative is a loss).}
+negative is a loss). In parentheses: the speedup over the uncompressed model (3.95\,ms). Accuracy retained: the compressed model's average accuracy as a percentage of the uncompressed model's.}
 \label{tab:a100delta}
 \end{table}
 

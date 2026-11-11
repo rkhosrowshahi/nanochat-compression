@@ -64,7 +64,11 @@ faster in GPU time but only $1.05\times$ in eager wall-clock time. A third searc
 and pruning with these formats and MLP width pruning, for the GPU time of an agent's turn at 32{,}000
 tokens of context. Attention over the KV cache takes 66\% of that turn, so its time moves by at most
 2.2\% below the uncompressed model. Sharing nearly halves the stored size at the lowest loss but barely
-changes GPU memory.
+changes GPU memory. Making the KV cache a decision changes both. With keys quantized per channel, windows
+that keep the first token, and recall of planted facts as a constraint, the search finds that windows are
+safe only in the first and last quarter of the layers, for a $1.26\times$ faster turn at 0.01 nats and
+$1.33\times$ at 0.1 nats, and that a quantized cache fits 491--854 agents on 80\,GB instead of 180. On 256 new
+facts the fastest of these solutions recall every one. The times are predicted GPU times.
 \end{abstract}
 
 \tableofcontents
@@ -117,7 +121,10 @@ This report describes a hardware-aware redesign built on four principles:
         (Section~\ref{sec:experiments}), repeated with longer searches on an A100
         (Sections~\ref{sec:a100-3obj} and~\ref{sec:a100-2obj});
   \item a search that mixes weight sharing, pruning and hardware-aware formats, with the GPU time of an
-        agent's turn as its objective (Section~\ref{sec:mix}).
+        agent's turn as its objective (Section~\ref{sec:mix});
+  \item the KV cache as a decision: a probe of cache precisions and windows on loss and on recall of
+        planted facts, and a search with per-channel keys, windows that keep the first token, recall as a
+        constraint and a Triton kernel that reads the quantized cache (Section~\ref{sec:kv}).
 \end{itemize}
 
 % =====================================================================================================
@@ -138,7 +145,7 @@ exactly as fast as the original.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrr}
+\begin{tabular}{lccc}
 \toprule
 Weights of an $8704\times2176$ matrix (d34 MLP) & Zeros & Batch 1 (\us) & Batch 2048 (\us) \\
 \midrule
@@ -404,7 +411,7 @@ bound what weight compression alone can achieve: $6783/1859\approx3.6\times$.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrrr}
+\begin{tabular}{lcccc}
 \toprule
 & \multicolumn{2}{c}{bf16} & \multicolumn{2}{c}{int4, group 128} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
@@ -443,25 +450,27 @@ that overhead (CUDA graphs, compiled execution, or a serving engine).
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{lP{5.0cm}rrrrrr}
+\begin{tabular}{lcccccc}
 \toprule
-& & \multicolumn{2}{c}{GPU time (ms)} & & Eager & \multicolumn{2}{c}{Loss (nats)} \\
-\cmidrule(lr){3-4}\cmidrule(lr){7-8}
-Search & Configuration & predicted & measured & error & (ms) & simulated & deployed \\
+& \multicolumn{2}{c}{GPU time (ms)} & & Eager & \multicolumn{2}{c}{Loss (nats)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){6-7}
+Configuration & predicted & measured & error & (ms) & simulated & deployed \\
 \midrule
-2 obj. & uncompressed                                         & 6.77 & 6.79 & $-0.2\%$ & 28.0 & 2.8926 & 2.8926 \\
-       & mixed int4, MLP $\tfrac78$ in 2 bands, $-6$ attn, $-4$ MLP & 2.85 & 2.82 & $+1.0\%$ & 23.1 & 3.7105 & 3.7110 \\
-       & mixed bf16/int4, MLP $\tfrac78$ in 1 band, $-6$ attn  & 3.15 & 3.13 & $+0.6\%$ & 23.2 & 3.3420 & 3.3428 \\
-       & int4 group 32 everywhere                              & 3.56 & 3.52 & $+1.1\%$ & 29.7 & 2.9784 & 2.9781 \\
-       & mixed bf16/int4 (8.3 bits per weight)                 & 4.60 & 4.60 & $0.0\%$  & 28.2 & 2.9467 & 2.9456 \\
-       & mostly bf16 (12.3 bits per weight)                    & 5.72 & 5.72 & $-0.1\%$ & 26.7 & 2.9147 & 2.9137 \\
+\multicolumn{7}{l}{\textit{Two-objective search}} \\
+  uncompressed                                         & 6.77 & 6.79 & $-0.2\%$ & 28.0 & 2.8926 & 2.8926 \\
+  mixed int4, MLP $\tfrac78$ in 2 bands, $-6$ attn, $-4$ MLP & 2.85 & 2.82 & $+1.0\%$ & 23.1 & 3.7105 & 3.7110 \\
+  mixed bf16/int4, MLP $\tfrac78$ in 1 band, $-6$ attn  & 3.15 & 3.13 & $+0.6\%$ & 23.2 & 3.3420 & 3.3428 \\
+  int4 group 32 everywhere                              & 3.56 & 3.52 & $+1.1\%$ & 29.7 & 2.9784 & 2.9781 \\
+  mixed bf16/int4 (8.3 bits per weight)                 & 4.60 & 4.60 & $0.0\%$  & 28.2 & 2.9467 & 2.9456 \\
+  mostly bf16 (12.3 bits per weight)                    & 5.72 & 5.72 & $-0.1\%$ & 26.7 & 2.9147 & 2.9137 \\
 \midrule
-3 obj. & uncompressed                                         & 6.77 & 6.80 & $-0.4\%$ & 34.6 & 2.8926 & 2.8926 \\
-       & int4 group 128, MLP $\tfrac12$ in 1 band, $-5$ attn   & 2.97 & 2.96 & $+0.3\%$ & 27.2 & 3.4952 & 3.4958 \\
-       & mixed int4, MLP $\tfrac12$ in 2 bands, $-3$ MLP       & 3.14 & 3.10 & $+1.1\%$ & 31.7 & 3.6098 & 3.6122 \\
-       & int4, mostly group 128                               & 3.39 & 3.36 & $+0.9\%$ & 33.2 & 3.0372 & 3.0386 \\
-       & mixed bf16/int4 (8.3 bits per weight)                 & 4.52 & 4.51 & $+0.1\%$ & 31.6 & 2.9489 & 2.9494 \\
-       & mostly bf16 (12.8 bits per weight)                    & 5.84 & 5.86 & $-0.4\%$ & 32.9 & 2.9091 & 2.9095 \\
+\multicolumn{7}{l}{\textit{Three-objective search}} \\
+  uncompressed                                         & 6.77 & 6.80 & $-0.4\%$ & 34.6 & 2.8926 & 2.8926 \\
+  int4 group 128, MLP $\tfrac12$ in 1 band, $-5$ attn   & 2.97 & 2.96 & $+0.3\%$ & 27.2 & 3.4952 & 3.4958 \\
+  mixed int4, MLP $\tfrac12$ in 2 bands, $-3$ MLP       & 3.14 & 3.10 & $+1.1\%$ & 31.7 & 3.6098 & 3.6122 \\
+  int4, mostly group 128                               & 3.39 & 3.36 & $+0.9\%$ & 33.2 & 3.0372 & 3.0386 \\
+  mixed bf16/int4 (8.3 bits per weight)                 & 4.52 & 4.51 & $+0.1\%$ & 31.6 & 2.9489 & 2.9494 \\
+  mostly bf16 (12.8 bits per weight)                    & 5.84 & 5.86 & $-0.4\%$ & 32.9 & 2.9091 & 2.9095 \\
 \bottomrule
 \end{tabular}
 \caption{Predicted against measured GPU time of the deployed models (one token, batch 1), eager
@@ -618,27 +627,27 @@ $1.9\times$ faster decode step and $3.1\times$ less memory.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{lcccccc}
 \toprule
 Search & Latency (ms) & Memory (MB) & Bits/weight & $\dloss$ (nats) & WikiText-2 & C4 \\
 \midrule
-Uncompressed & 6.78 & 1001 & 16.00 & 0 & 14.33 & 22.33 \\
+Uncompressed & 6.78 (1.00$\times$) & 1001 & 16.00 & 0 & 14.33 & 22.33 \\
 \midrule
-2 obj.  & 5.73 & 771  & 12.28 & 0.020 & 14.67 & 22.80 \\
-        & 4.61 & 527  & 8.34  & 0.054 & 15.00 & 23.55 \\
-        & 3.57 & 321  & 5.00  & 0.084 & 15.73 & 24.29 \\
-        & 3.16 & 294  & 4.60  & 0.443 & 25.57 & 35.59 \\
-        & 2.85 & 239  & 3.72  & 0.811 & 39.12 & 51.80 \\
+2 obj.  & 5.73 (1.18$\times$) & 771  & 12.28 & 0.020 & 14.67 & 22.80 \\
+        & 4.61 (1.47$\times$) & 527  & 8.34  & 0.054 & 15.00 & 23.55 \\
+        & 3.57 (1.90$\times$) & 321  & 5.00  & 0.084 & 15.73 & 24.29 \\
+        & 3.16 (2.15$\times$) & 294  & 4.60  & 0.443 & 25.57 & 35.59 \\
+        & 2.85 (2.38$\times$) & 239  & 3.72  & 0.811 & 39.12 & 51.80 \\
 \midrule
-3 obj.  & 5.85 & 802  & 12.79 & 0.019 & 14.56 & 22.83 \\
-        & 4.53 & 525  & 8.29  & 0.053 & 15.40 & 23.42 \\
-        & 3.40 & 286  & 4.42  & 0.157 & 17.18 & 26.78 \\
-        & 3.15 & 234  & 3.59  & 0.757 & 44.46 & 54.86 \\
-        & 2.98 & 247  & 3.84  & 0.670 & 32.87 & 49.46 \\
+3 obj.  & 5.85 (1.16$\times$) & 802  & 12.79 & 0.019 & 14.56 & 22.83 \\
+        & 4.53 (1.50$\times$) & 525  & 8.29  & 0.053 & 15.40 & 23.42 \\
+        & 3.40 (1.99$\times$) & 286  & 4.42  & 0.157 & 17.18 & 26.78 \\
+        & 3.15 (2.15$\times$) & 234  & 3.59  & 0.757 & 44.46 & 54.86 \\
+        & 2.98 (2.28$\times$) & 247  & 3.84  & 0.670 & 32.87 & 49.46 \\
 \bottomrule
 \end{tabular}
 \caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of points of the
-final fronts of the two searches.}
+final fronts of the two searches. In parentheses: the speedup over the uncompressed model (6.78\,ms).}
 \label{tab:test}
 \end{table}
 
@@ -762,7 +771,7 @@ would reach only $3947/2546=1.55\times$.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrrr}
+\begin{tabular}{lcccc}
 \toprule
 & \multicolumn{2}{c}{bf16} & \multicolumn{2}{c}{int4, group 128} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
@@ -814,21 +823,21 @@ $3.1\times$ less memory and a $1.13\times$ faster decode step.
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{rrrrrl}
+\begin{tabular}{lccccc}
 \toprule
-Latency (ms) & Memory (MB) & $\dloss$ (nats) & WikiText-2 & C4 & Configuration \\
+Configuration & Latency (ms) & Memory (MB) & $\dloss$ (nats) & WikiText-2 & C4 \\
 \midrule
-3.95 & 1001 & 0     & 14.34 & 22.33 & uncompressed \\
+uncompressed & 3.95 (1.00$\times$) & 1001 & 0 & 14.34 & 22.33 \\
 \midrule
-3.73 & 638 & 0.030 & 14.64 & 23.08 & int4 in up and part of down \\
-3.48 & 325  & 0.091 & 15.92 & 24.65 & mostly int4 \\
-3.23 & 277  & 0.312 & 21.37 & 32.11 & int4, MLP pruned in 2 bands, $-3$ attn \\
-3.07 & 321  & 0.492 & 27.93 & 38.47 & mostly int4, MLP 5/8 in 1 band, $-6$ attn \\
-2.92 & 222  & 0.998 & 60.31 & 69.15 & int4, MLP pruned in 2 bands, $-6$ attn, $-4$ MLP \\
+int4 in up and part of down & 3.73 (1.06$\times$) & 638 & 0.030 & 14.64 & 23.08 \\
+mostly int4 & 3.48 (1.14$\times$) & 325 & 0.091 & 15.92 & 24.65 \\
+int4, MLP pruned in 2 bands, $-3$ attn & 3.23 (1.22$\times$) & 277 & 0.312 & 21.37 & 32.11 \\
+mostly int4, MLP 5/8 in 1 band, $-6$ attn & 3.07 (1.29$\times$) & 321 & 0.492 & 27.93 & 38.47 \\
+int4, MLP pruned in 2 bands, $-6$ attn, $-4$ MLP & 2.92 (1.35$\times$) & 222 & 0.998 & 60.31 & 69.15 \\
 \bottomrule
 \end{tabular}
 \caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of points of the
-final three-objective front.}
+final three-objective front. In parentheses: the speedup over the uncompressed model (3.95\,ms).}
 \label{tab:a100-3obj-test}
 \end{table}
 
@@ -863,7 +872,7 @@ uncompressed model ($0.92$--$0.95\times$).
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{P{3.9cm}rrrrrrrr}
+\begin{tabular}{P{3.9cm}cccccccc}
 \toprule
 & \multicolumn{3}{c}{GPU time (ms)} & Eager & \multicolumn{2}{c}{Loss (nats)} & \multicolumn{2}{c}{Speedup} \\
 \cmidrule(lr){2-4}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
@@ -918,21 +927,21 @@ model.}
 \centering
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{rrrrrl}
+\begin{tabular}{lccccc}
 \toprule
-Latency (ms) & Memory (MB) & $\dloss$ (nats) & WikiText-2 & C4 & Configuration \\
+Configuration & Latency (ms) & Memory (MB) & $\dloss$ (nats) & WikiText-2 & C4 \\
 \midrule
-3.95 & 1001 & 0     & 14.34 & 22.33 & uncompressed \\
+uncompressed & 3.95 (1.00$\times$) & 1001 & 0 & 14.34 & 22.33 \\
 \midrule
-3.50& 387  & 0.088 & 15.65 & 24.21 & mostly int4 \\
-3.24 & 284  & 0.230 & 18.74 & 28.10 & int4, $-3$ attn \\
-3.06 & 291  & 0.402 & 24.65 & 33.99 & int4, MLP 7/8 in 1 band, $-6$ attn \\
-2.96 & 237  & 0.636 & 33.82 & 46.29 & int4, MLP 5/8 in 2 bands, $-6$ attn, $-1$ MLP \\
-2.90 & 220  & 0.990 & 50.95 & 62.69 & int4, MLP 5/8 in 2 bands, $-6$ attn, $-5$ MLP \\
+mostly int4 & 3.50 (1.13$\times$) & 387 & 0.088 & 15.65 & 24.21 \\
+int4, $-3$ attn & 3.24 (1.22$\times$) & 284 & 0.230 & 18.74 & 28.10 \\
+int4, MLP 7/8 in 1 band, $-6$ attn & 3.06 (1.29$\times$) & 291 & 0.402 & 24.65 & 33.99 \\
+int4, MLP 5/8 in 2 bands, $-6$ attn, $-1$ MLP & 2.96 (1.33$\times$) & 237 & 0.636 & 33.82 & 46.29 \\
+int4, MLP 5/8 in 2 bands, $-6$ attn, $-5$ MLP & 2.90 (1.36$\times$) & 220 & 0.990 & 50.95 & 62.69 \\
 \bottomrule
 \end{tabular}
 \caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of points of the
-final two-objective front.}
+final two-objective front. In parentheses: the speedup over the uncompressed model (3.95\,ms).}
 \label{tab:a100-2obj-test}
 \end{table}
 
@@ -960,7 +969,7 @@ GPU-time gain of up to $1.33\times$ is at most $1.05\times$ on the eager clock.
 \centering
 \footnotesize
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{P{3.9cm}rrrrrrrr}
+\begin{tabular}{P{3.9cm}cccccccc}
 \toprule
 & \multicolumn{3}{c}{GPU time (ms)} & Eager & \multicolumn{2}{c}{Loss (nats)} & \multicolumn{2}{c}{Speedup} \\
 \cmidrule(lr){2-4}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
@@ -1027,23 +1036,23 @@ objectives and in the two projections.}
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{rrrrr}
+\begin{tabular}{rcccc}
 \toprule
 & \multicolumn{2}{c}{Fastest (ms)} & \multicolumn{2}{c}{Smallest weights (MB)} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-$\dloss$ up to (nats) & 2 obj. & 3 obj. & 2 obj. & 3 obj. \\
+$\dloss$ (nats) & 2 obj. & 3 obj. & 2 obj. & 3 obj. \\
 \midrule
-0.02 & 3.76 & 3.77 & 756 & 725 \\
-0.05 & 3.59 & 3.60 & 476 & 430 \\
-0.1  & 3.44 & 3.44 & 295 & 299 \\
-0.2  & 3.26 & 3.30 & 263 & 263 \\
-0.3  & 3.18 & 3.19 & 250 & 249 \\
-0.5  & 3.02 & 3.03 & 229 & 228 \\
-1.0  & 2.90 & 2.92 & 207 & 202 \\
+0.02 & 3.76 (1.05$\times$) & 3.77 (1.05$\times$) & 756 & 725 \\
+0.05 & 3.59 (1.10$\times$) & 3.60 (1.10$\times$) & 476 & 430 \\
+0.1  & 3.44 (1.15$\times$) & 3.44 (1.15$\times$) & 295 & 299 \\
+0.2  & 3.26 (1.21$\times$) & 3.30 (1.20$\times$) & 263 & 263 \\
+0.3  & 3.18 (1.24$\times$) & 3.19 (1.24$\times$) & 250 & 249 \\
+0.5  & 3.02 (1.31$\times$) & 3.03 (1.30$\times$) & 229 & 228 \\
+1.0  & 2.90 (1.36$\times$) & 2.92 (1.35$\times$) & 207 & 202 \\
 \bottomrule
 \end{tabular}
 \caption{Best latency and best deployed weights within each loss budget, over all evaluated solutions of
-each search. Each column is its own solution: the fastest and the smallest are usually different models.}
+each search. Each column is its own solution: the fastest and the smallest are usually different models. In parentheses: the speedup over the uncompressed model (3.95\,ms).}
 \label{tab:a100-budget}
 \end{table}
 
@@ -1127,11 +1136,11 @@ costs 0.74 nats, which raises WikiText-2 perplexity from 14.3 to 49.5.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{lrrrr}
+\begin{tabular}{lcccc}
 \toprule
 & \multicolumn{2}{c}{bf16} & \multicolumn{2}{c}{int4, group 128} \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-Part of the turn & ms & share & ms & share \\
+GPU operation & ms & share & ms & share \\
 \midrule
 Attention over the KV cache, prompt tokens        & 567  & 56\% & 567  & 54\% \\
 Attention over the KV cache, generated tokens     & 102  & 10\% & 102  & 10\% \\
@@ -1143,8 +1152,9 @@ Output head, generated tokens                     & 13   & 1\%  & 8    & 1\%  \\
 Total                                             & 1018 &      & 1054 &      \\
 \bottomrule
 \end{tabular}
-\caption{Predicted GPU time of one agent's turn (Eq.~\ref{eq:turn}) of Qwen2.5-0.5B-Instruct on the A100,
-with 32{,}000 tokens of context.}
+\caption{Where the GPU time of one agent turn goes: Qwen2.5-0.5B-Instruct on the A100 reads 2000 new prompt
+tokens and generates 300 tokens, over 32{,}000 tokens of context, with 4 agents decoding together
+(Eq.~\ref{eq:turn}; predicted).}
 \label{tab:turn}
 \end{table}
 
@@ -1161,9 +1171,9 @@ does so at a cost in GPU memory: the smallest stored solutions keep large matric
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{rrrr}
+\begin{tabular}{rccc}
 \toprule
-$\dloss$ up to & Mix: smallest & Same solution, & 3 obj.: smallest \\
+$\dloss$ & Mix: smallest & Same solution, & 3 obj.: smallest \\
 (nats) & stored (MB) & deployed (MB) & deployed (MB) \\
 \midrule
 0.02 & 374 & 966 & 725 \\
@@ -1224,22 +1234,22 @@ overstates what MLP pruning keeps.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{rrrrrr}
+\begin{tabular}{rccccc}
 \toprule
 Turn (ms) & Stored (MB) & Deployed, 4 agents (MB) & $\dloss$ (nats) & WikiText-2 & C4 \\
 \midrule
-1018 & 988 & 2561 & 0     & 14.34 & 22.33 \\
+ 1018 (1.00$\times$) & 988 & 2561 & 0     & 14.34 & 22.33 \\
 \midrule
-1013 & 914 & 2521 & 0.020 & 14.82 & 22.81 \\
-1070 & 346 & 2101 & 0.055 & 15.56 & 23.84 \\
-1040 & 232 & 2212 & 0.283 & 20.04 & 31.21 \\
-1021 & 192 & 2270 & 0.459 & 27.55 & 39.67 \\
-1007 & 214 & 2117 & 0.592 & 35.71 & 48.86 \\
- 995 & 207 & 2024 & 0.740 & 49.49 & 65.61 \\
+ 1013 (1.00$\times$) & 914 & 2521 & 0.020 & 14.82 & 22.81 \\
+ 1070 (0.95$\times$) & 346 & 2101 & 0.055 & 15.56 & 23.84 \\
+ 1040 (0.98$\times$) & 232 & 2212 & 0.283 & 20.04 & 31.21 \\
+ 1021 (1.00$\times$) & 192 & 2270 & 0.459 & 27.55 & 39.67 \\
+ 1007 (1.01$\times$) & 214 & 2117 & 0.592 & 35.71 & 48.86 \\
+ 995 (1.02$\times$) & 207 & 2024 & 0.740 & 49.49 & 65.61 \\
 \bottomrule
 \end{tabular}
 \caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of points of the
-final front of the mixed search.}
+final front of the mixed search. In parentheses: the speedup over the uncompressed model (1018\,ms).}
 \label{tab:mix-test}
 \end{table}
 
@@ -1277,9 +1287,349 @@ solutions of Table~\ref{tab:mix-size} have a calibration loss and no test score.
         matrix products with int4 save 3.9\,ms per generated token and cost 3.3\,ms more per prompt
         token, about 5.5\,s more per turn of this workload.
   \item \textbf{The KV cache is not a decision.} The largest part of both the time and the memory is outside
-        the search space.
+        the search space; Section~\ref{sec:kv} adds it.
   \item \textbf{Other limits.} One seed, one workload, sublayer removal off, and perplexity only: none of
         the A100 solutions has been run on the downstream benchmarks or on agent tasks.
+\end{itemize}
+
+% =====================================================================================================
+\section{The KV cache as a decision}
+\label{sec:kv}
+
+In the mixed search, attention over the KV cache is 66\% of an agent's turn and the cache is 61\% of the
+deployed memory (Section~\ref{sec:mix-time}), and no gene can change either. This section adds the cache to
+the decisions in three steps: a first search with per-token quantization and plain windows, a probe of the
+cache formats on calibration loss and on recall of planted facts, and a second search built on what the
+probe found, with recall as a constraint. All runs use Qwen2.5-0.5B-Instruct on the A100, the workload of
+Eq.~\eqref{eq:turn} (32{,}000 tokens of context, 4 agents), the calibration batch of Section~\ref{sec:mix},
+population 50 and 100 generations; sharing and sublayer removal are off.
+
+\subsection{First search: per-token quantization and plain windows}
+\label{sec:kv1}
+\paragraph{Genes.} The genes of Section~\ref{sec:mix} without sharing, and per depth band the precision of
+the cached keys and of the cached values (bf16, or int8 or int4 with one bf16 scale per token and KV head)
+and the fraction of the context its layers keep (1, 0.75, 0.5 or 0.25: the most recent tokens, a sliding
+window). That is 33 genes with more than one option and about $1.8\times10^{19}$ configurations. In the loss,
+the outputs of the key and value projections are fake-quantized and a window is an attention mask; a window
+is a fraction of each 2048-token calibration window, a proxy of the same fraction of the context.
+
+\paragraph{Cost.} No attention kernel reads a quantized cache on this machine, so a read was timed as an
+expansion of the whole cache to bf16 followed by bf16 attention.
+
+\paragraph{Result.} It was the first search to move both time and memory (0.44\,h, 4995 evaluations). At
+$\dloss\le0.2$ its fastest turn is 808\,ms and its smallest deployed memory 914\,MB (two different solutions),
+against 1003\,ms and 1835\,MB without cache genes. Two of its seeds show the problems that the next steps
+address. An int8 cache everywhere costs +0.037 nats and shrinks memory to 1799\,MB, but the turn takes
+1567\,ms (+53\%), because every decode step expands the whole cache. A window of 0.75 in every layer costs
++0.87 nats, far more than the 25\% of the text it hides: the window drops the first token of the sequence,
+which every layer attends to as an \emph{attention sink} \cite{xiao2024streamingllm}.
+
+\subsection{Probing the cache formats}
+\label{sec:kv-probe}
+A probe scored each cache setting, applied to all layers, on two measures: the calibration loss, and the
+recall of a fact planted in the text. For recall, a sentence such as ``The access code for project 7 is
+48213. Remember it.'' is placed at a random depth in the first 90\% of a 2048-token window of calibration
+text, and the window ends with the question; a fact counts as recalled when every token of the answer is
+predicted. The uncompressed model recalls all 64 facts. Besides per-token scales, the probe tried keys with
+one scale per channel and group of 64 tokens, as in KIVI \cite{liu2024kivi} (``c'' below; quantized before
+the rotary embedding, as in KVQuant \cite{hooper2024kvquant}), and windows that keep the first token
+visible. Table~\ref{tab:kv-probe} gives the main rows.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcc}
+\toprule
+Cache setting (all layers) & $\dloss$ (nats) & Facts recalled \\
+\midrule
+Uncompressed                                         & 0       & 100\% \\
+\midrule
+Keys int8, one scale per token                       & +0.037  & 100\% \\
+Keys int8, one scale per channel (int8c)             & +0.0004 & 100\% \\
+Keys int4, one scale per token                       & +1.614  & 6\%   \\
+Keys int4, one scale per channel (int4c)             & +0.070  & 100\% \\
+Values int8 / int4 (per token)                       & $-$0.001 / +0.008 & 100\% \\
+Keys or values int2 (any scaling)                    & +1.18 to +6.01 & 0\% \\
+Keys int4c, values int4                              & +0.077  & 98\%  \\
+\midrule
+Window 0.75, plain                                   & +0.868  & 22\%  \\
+Window 0.75, first token kept                        & +0.004  & 69\%  \\
+Window 0.5, first token kept                         & +0.010  & 52\%  \\
+Window 0.25, first token kept                        & +0.039  & 14\%  \\
+Window 0.125, first token kept                       & +0.084  & 2\%   \\
+Window 0.25, band 0 or band 3 at full context        & +0.037 / +0.026 & 14\% \\
+Window 0.125, every 4th layer at full context        & +0.080  & 2\%   \\
+\bottomrule
+\end{tabular}
+\caption{KV probe on the A100: calibration loss increase and planted facts recalled (64 facts, so about
+$\pm6$ points), with one setting for all layers unless stated.}
+\label{tab:kv-probe}
+\end{table}
+
+\noindent Three findings set the design of the next search:
+\begin{itemize}
+  \item \textbf{Keys need one scale per channel.} All of the int8 cost of the first search comes from
+        per-token key scales: per channel, int8 keys are nearly free and int4 keys usable. Values take
+        int4 for +0.008 nats. Keys and values both in int4 make the cache about $3.8\times$ smaller
+        (1573$\rightarrow$418\,MB for 4 agents, 180$\rightarrow$679 agents on 80\,GB; computed).
+  \item \textbf{Keeping the first token fixes the loss of a window but not its memory.} With it, a 0.25
+        window costs only +0.039 nats, but recall falls roughly with the share of facts that scroll out
+        of the window. Calibration loss cannot see this.
+  \item \textbf{Full-context layers mixed in do not help when the window is everywhere else.} One band or
+        every 4th or 6th layer at full context leaves recall where the window alone puts it, so this
+        model, trained with full attention everywhere, cannot route a fact through a few layers.
+\end{itemize}
+
+\subsection{Second search: per-channel keys, recall as a constraint}
+\label{sec:kv2}
+\paragraph{Genes.} As in Section~\ref{sec:kv1}, with keys in bf16, int8c or int4c (groups of 64 tokens),
+values in bf16, int8 or int4 (per token), and windows that always keep the first token. Keys are quantized
+after the rotary embedding, which is what a cache stores, and as deployed: a group is quantized only once
+it is complete, and until then a query reads its own group's keys in bf16, so no scale depends on tokens
+the query has not seen. The number of genes and configurations is that of the first search.
+
+\paragraph{Constraint.} Each evaluation also runs the recall test on 64 facts, and a solution must recall
+at least 95\% of them, besides $\dloss\le1$. The search, not a rule, decides where a window is allowed.
+
+\paragraph{Cost.} Decode attention is timed with a Triton \cite{tillet2019triton} kernel that reads the int8
+or int4 codes in place, splitting the cache over the GPU as flash decoding does \cite{dao2023flashdecoding};
+it was checked against a float32 reference for every key and value precision (largest error 0.12--0.32\%
+of the output). For bf16, the faster of this kernel and the attention of Section~\ref{sec:mix} is used.
+A prompt chunk reads the cache once, so prompts still expand the cache and use bf16 attention.
+
+\paragraph{Search.} 4939 evaluations in 12.6\,h, 9.2\,s each against 0.32\,s in the first search: the recall
+test and the masked attention used for every layer of a compressed configuration are the cost.
+
+\paragraph{Results.} Table~\ref{tab:kv-limits} compares the two searches by the fastest and the smallest
+solution within each loss budget, over all evaluations, and Figure~\ref{fig:kv2-front} shows the final
+front. The second search is faster and smaller at every budget while keeping at least 95\% recall; the first
+search's solutions were never checked for recall, and its windows drop the first token. At
+$\dloss\le0.01$ the turn takes 868\,ms ($1.17\times$ faster) and memory falls to 1566\,MB (491 agents); at
+$\dloss\le0.1$, 807\,ms ($1.26\times$) and 815\,MB (854 agents, against 180 uncompressed).
+Section~\ref{sec:kv-recheck} corrects these times and checks their recall on new facts.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{rccccc}
+\toprule
+& \multicolumn{2}{c}{First search (no recall check)} & \multicolumn{3}{c}{Second search (recall $\ge95\%$)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-6}
+$\dloss$ (nats) & Fastest (ms) & Smallest (MB) & Fastest (ms) & Smallest (MB) & Agents \\
+\midrule
+0 (uncompressed) & 1021 (1.00$\times$) & 2561 & 1019 (1.00$\times$) & 2561 & 180 \\
+\midrule
+0.01 & 1019 (1.00$\times$) & 2049 & 868 (1.17$\times$) & 1566 & 491 \\
+0.02 & 971 (1.05$\times$) & 2035 & 821 (1.24$\times$) & 1443 & 520 \\
+0.05 & 933 (1.09$\times$) & 1591 & 819 (1.24$\times$) & 1152 & 789 \\
+0.1  & 883 (1.16$\times$) & 1147 & 807 (1.26$\times$) &  815 & 854 \\
+0.2  & 808 (1.26$\times$) &  914 & 807 (1.26$\times$) &  705 & 772 \\
+\bottomrule
+\end{tabular}
+\caption{The KV searches: predicted GPU time of a turn of the fastest solution and deployed memory (weights
+and the cache of 4 agents) of the smallest one within each calibration-loss budget, over all evaluations.
+Agents: how many fit on 80\,GB with the smallest solution of the second search. In parentheses: the speedup over the uncompressed model as each search timed it (1021 and 1019\,ms).}
+\label{tab:kv-limits}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/kv2_front_time.pdf}
+  \caption{GPU time of a turn (objective).}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/kv2_front_memory.pdf}
+  \caption{Deployed memory, 4 agents (objective).}
+\end{subfigure}\\[6pt]
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/kv2_hv.pdf}
+  \caption{Hypervolume per generation.}
+\end{subfigure}\hfill
+\begin{subfigure}{0.49\linewidth}
+  \includegraphics[width=\linewidth]{figures/kv2_test_wikitext2.pdf}
+  \caption{WikiText-2 test perplexity of scored points.}
+\end{subfigure}
+\caption{Second KV search: final front (50 solutions), initial front and the uncompressed model.}
+\label{fig:kv2-front}
+\end{figure}
+
+\paragraph{Windows belong in the first and last layers.} The search found the layout the probe did not try:
+windows only in the first and last bands (layers 0--5 and 18--23), with the middle bands at full context.
+Windows of 0.25 in band 0 alone keep 92--100\% recall (396 evaluations), in band 3 alone 89--100\%
+(188), and in both 80--100\% (2011, of which 73\% recall all 64 facts). No evaluation with a window in
+band 1 or 2 recalls more than 81\% (98 evaluations). Recalling a distant fact therefore needs the middle
+layers to see the whole context, while the outer layers can attend locally. All of the speedup in
+Table~\ref{tab:kv-limits} comes from these windows: the fast solutions keep 0.25 windows in bands 0 and 3
+and change little else.
+
+\paragraph{Cache precision buys memory, not time.} The small solutions use int8c or int4c keys and int8 or
+int4 values in most bands, together with int4 weights. The kernel does not make a quantized cache faster
+to read: at the whole context, int4c keys with int4 values take 64.4\us{} per layer and decode step against
+59.7\us{} for bf16, although they read 3.7 times fewer bytes, and at a 0.25 window every quantized setting
+takes 37--40\us{} against 25.7\us. A fixed cost of about 37\us{} per layer points to the step that combines
+the partial results of the split, which ran as about eight separate PyTorch operations; the second kernel of
+Section~\ref{sec:kv-recheck} removes it.
+
+\paragraph{Test perplexity.} Table~\ref{tab:kv2-test} gives the scored points of the final front. The
+lowest-loss point that uses windows, 958\,ms and 1611\,MB at +0.009 nats, raises WikiText-2 perplexity from
+14.34 to 14.55 and C4 from 22.33 to 22.54. As in Section~\ref{sec:mix}, the high-loss points, which also
+prune half the MLP neurons in the last two bands, lose much more on the test sets.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{rccccc}
+\toprule
+Turn (ms) & Deployed, 4 agents (MB) & $\dloss$ (nats) & Recall & WikiText-2 & C4 \\
+\midrule
+ 1019 (1.00$\times$) & 2561 & 0       & 100\% & 14.34 & 22.33 \\
+\midrule
+ 1053 (0.97$\times$) & 2106 & $-$0.001 & 100\% & 14.34 & 22.33 \\
+ 958 (1.06$\times$) & 1611 & 0.009   & 100\% & 14.55 & 22.54 \\
+ 893 (1.14$\times$) & 1431 & 0.103   & 100\% & 16.97 & 25.19 \\
+ 864 (1.18$\times$) &  599 & 0.664   & 98\%  & 44.72 & 51.45 \\
+ 837 (1.22$\times$) &  822 & 0.622   & 98\%  & 40.55 & 49.55 \\
+ 796 (1.28$\times$) & 1519 & 0.588   & 100\% & 40.35 & 48.08 \\
+\bottomrule
+\end{tabular}
+\caption{Test perplexity (32 windows of 2048 tokens each) of the uncompressed model and of the scored points
+of the second KV search's final front; recall on the search's 64 facts. In parentheses: the speedup over the uncompressed model (1019\,ms).}
+\label{tab:kv2-test}
+\end{table}
+
+\subsection{Re-check: a second kernel, aligned windows and new facts}
+\label{sec:kv-recheck}
+The search's own times and recall left three open questions: whether a better kernel makes a quantized
+cache faster, how much the odd window lengths inflated the prompt times, and whether the solutions still
+recall facts they were not selected on. The re-check answers them without searching again: it measures a
+new time table, recomputes the turn time of all 4939 evaluations from it (loss, recall and memory do not
+depend on the table), and tests recall on new facts.
+
+\paragraph{A second kernel.} The first kernel combined the partial results of the split with about eight
+PyTorch operations; the second does this in one Triton kernel and also tries blocks of 128 tokens. It was
+checked against the float32 reference for every precision with blocks of 64 and 128 (largest error
+0.31--0.48\% of the output). Table~\ref{tab:kv-kernel} compares the two. In bf16 the second kernel is now
+faster than the PyTorch attention (48.5 against 57.9\us{} at the whole context), reading the cache at about
+1.35\,TB/s, about 70\% of the A100's 1.94\,TB/s, so bf16 now uses it and the uncompressed turn takes 1000\,ms
+instead of 1019\,ms. Values read in place pay off: int4 values take 38.6\us, 20\% less than bf16. Keys
+quantized per channel are still slower than bf16 keys (int4c with int4 values: 50.7\us), most likely
+because every token loads the scales of its group separately.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{32{,}000 tokens} & \multicolumn{2}{c}{Window 0.25 (8001 / 8064 tokens)} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Cache: keys / values & First kernel & Second kernel & First kernel & Second kernel \\
+\midrule
+bf16 / bf16, PyTorch attention & 59.7 & 57.9 & 25.7 & 26.0 \\
+bf16 / bf16                    & 69.4 & 48.5 & 38.0 & 16.4 \\
+bf16 / int8                    & 69.3 & 42.9 & 39.5 & 16.3 \\
+bf16 / int4                    & 65.5 & 38.6 & 37.9 & 15.9 \\
+int8c / bf16                   & 62.2 & 61.6 & 37.3 & 22.1 \\
+int8c / int8                   & 66.5 & 59.2 & 38.8 & 23.0 \\
+int8c / int4                   & 64.2 & 55.6 & 38.3 & 22.3 \\
+int4c / bf16                   & 58.8 & 55.9 & 36.6 & 20.6 \\
+int4c / int8                   & 65.2 & 53.9 & 38.2 & 21.5 \\
+int4c / int4                   & 64.4 & 50.7 & 37.8 & 21.5 \\
+\bottomrule
+\end{tabular}
+\caption{Decode attention per layer and step (\us) on the A100, 4 sequences, with the cache read in place by
+the two Triton kernels. The windows were timed at 8001 tokens by the search and at an aligned 8064 by the
+re-check.}
+\label{tab:kv-kernel}
+\end{table}
+
+\noindent Over a whole turn the decode savings of quantized values are used up by the prompts, which
+still expand the cache before reading it (88.5\us{} per chunk and layer for int4 values): int4 values
+everywhere give a 999\,ms turn against 1000\,ms, and int4c keys with int4 values 1041\,ms. A quantized
+cache therefore still buys memory, not time.
+
+\paragraph{Aligned windows.} Timed at lengths rounded up to 64 tokens, the prompt attention of a chunk
+takes 723\us{} per layer at a 0.25 window instead of 1152\us, and 1403 and 2124\us{} at 0.5 and 0.75
+instead of 2207 and 3345\us. Table~\ref{tab:kv-retimed} gives the fastest solution under each budget with
+both corrections: $1.26\times$ faster than the uncompressed model at $\dloss\le0.01$ and $1.33\times$ at
+0.05--0.1 nats. Memory does not change. These are the search's evaluations re-timed; a new search on the
+new table could find faster ones, since it would now prefer int4 values to int4 keys.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{rcccc}
+\toprule
+& \multicolumn{2}{c}{Fastest} & \multicolumn{2}{c}{Smallest} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+$\dloss$ (nats) & As searched (ms) & Re-timed (ms) & Memory (MB) & Agents \\
+\midrule
+0 (uncompressed) & 1019 (1.00$\times$) & 1000 (1.00$\times$) & 2561 & 180 \\
+\midrule
+0.01 & 868 (1.17$\times$) & 793 (1.26$\times$) & 1566 & 491 \\
+0.02 & 821 (1.24$\times$) & 757 (1.32$\times$) & 1443 & 520 \\
+0.05 & 819 (1.24$\times$) & 752 (1.33$\times$) & 1152 & 789 \\
+0.1  & 807 (1.26$\times$) & 749 (1.33$\times$) &  815 & 854 \\
+0.2  & 807 (1.26$\times$) & 747 (1.34$\times$) &  705 & 772 \\
+\bottomrule
+\end{tabular}
+\caption{Second KV search re-timed with the second kernel and aligned windows: the predicted GPU time of a
+turn of the fastest feasible solution within each budget (the fastest may be another solution after
+re-timing), and the deployed memory of the smallest one (4 agents) with the agents that fit on 80\,GB.
+In parentheses: the speedup over the uncompressed model as the search and the re-check timed it (1019 and
+1000\,ms).}
+\label{tab:kv-retimed}
+\end{table}
+
+\paragraph{Recall on new facts.} The fastest and the smallest solution under each budget were tested on
+256 new facts planted in 2048-token windows of C4 validation text, which the search never saw
+(Table~\ref{tab:kv-recall}). The uncompressed model and every fastest solution recall all 256, and the
+smallest solutions 98.4--99.6\%. Recalling all 256 bounds the miss rate below about 1.2\% (95\% confidence).
+The selection on 64 facts did not inflate recall, so the windows in the first and last bands hold, at
+least at this length.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccc}
+\toprule
+& & & & \multicolumn{2}{c}{Recall} & \\
+\cmidrule(lr){5-6}
+Configuration & $\dloss$ (nats) & Turn (ms) & Memory (MB) & Search's 64 & New 256 & Windows \\
+\midrule
+uncompressed                 & 0      & 1000 (1.00$\times$) & 2561 & 100\% & 100.0\% & 1/1/1/1 \\
+\midrule
+fastest within 0.01 nats     & 0.0064 & 793 (1.26$\times$) & 2063 & 100\% & 100.0\% & 0.25/1/1/0.5 \\
+fastest within 0.02 nats     & 0.0174 & 757 (1.32$\times$) & 1941 & 100\% & 100.0\% & 0.25/1/1/0.25 \\
+fastest within 0.05 nats     & 0.0371 & 752 (1.33$\times$) & 1471 & 100\% & 100.0\% & 0.25/1/1/0.25 \\
+fastest within 0.1 nats      & 0.0556 & 749 (1.33$\times$) & 1746 & 100\% & 100.0\% & 0.25/1/1/0.25 \\
+fastest within 0.2 nats      & 0.1522 & 747 (1.34$\times$) & 1381 & 100\% & 100.0\% & 0.25/1/1/0.25 \\
+\midrule
+smallest within 0.01 nats    & 0.0071 & 812 (1.23$\times$) & 1566 & 100\% & 100.0\% & 0.25/1/1/0.5 \\
+smallest within 0.02 nats    & 0.0198 & 908 (1.10$\times$) & 1443 & 100\% & 99.6\%  & 0.5/1/1/0.75 \\
+smallest within 0.05 nats    & 0.0484 & 847 (1.18$\times$) & 1152 & 100\% & 99.2\%  & 0.25/1/1/0.5 \\
+smallest within 0.1 nats     & 0.0997 & 817 (1.22$\times$) &  815 & 98\%  & 99.6\%  & 0.25/1/1/0.25 \\
+smallest within 0.2 nats     & 0.1728 & 822 (1.22$\times$) &  705 & 97\%  & 98.4\%  & 0.25/1/1/0.25 \\
+\bottomrule
+\end{tabular}
+\caption{Recall of planted facts by the solutions of Table~\ref{tab:kv-retimed}: on the 64 facts in
+calibration text the search selected on, and on 256 new facts in C4 validation text. Turn times re-timed;
+windows per depth band (layers 0--5, 6--11, 12--17, 18--23). In parentheses: the speedup over the uncompressed model (1000\,ms).}
+\label{tab:kv-recall}
+\end{table}
+
+\subsection{Limitations and open checks}
+\label{sec:kv-limits}
+\begin{itemize}
+  \item \textbf{Re-timed, not re-searched.} The solutions above were selected under the first kernel and the
+        odd window lengths; a search on the new table may find better ones.
+  \item \textbf{Keys and prompts.} Keys quantized per channel are still slower to read than bf16 keys, and
+        prompts still expand the cache; a kernel that loads each group's scales once and a prompt
+        attention that reads the codes in place are needed before a quantized cache saves time.
+  \item \textbf{Proxy windows.} A window is a fraction of a 2048-token window, and a fact is one sentence
+        recalled once; an agent at 32{,}000 tokens, with many facts and reasoning over them, may need more.
+  \item \textbf{Predicted times only,} one seed, one workload, and the 0.5B model rather than the target.
 \end{itemize}
 
 % =====================================================================================================
@@ -1333,8 +1683,11 @@ and the same uncompressed model measured 28.0 and 34.6\,ms in two processes.
   \item \textbf{Per-layer genes.} Decisions per layer instead of per band, seeded by a separable
         sensitivity model solved as a knapsack problem under a latency budget, as in HAWQ-V3
         \cite{yao2021hawqv3}, with the same model screening offspring.
-  \item \textbf{KV-cache size and precision as decisions,} since the cache dominates the turn time and
-        the memory of Section~\ref{sec:mix}.
+  \item \textbf{The next KV search} (Section~\ref{sec:kv-limits}): on the second kernel's table, with keys
+        that load each group's scales once and prompts that read the quantized cache in place, and tested on
+        longer contexts, several facts per window and agent tasks as the measure of what a window may forget.
+  \item \textbf{A larger model.} The same searches on the target model sizes, where weights and the cache
+        compete for memory (Section~\ref{sec:mix}, limitations).
   \item \textbf{Statistics.} Several seeds per scenario, compared by the mean final hypervolume and a
         Mann--Whitney U test.
   \item \textbf{Recovery fine-tuning} of the structurally pruned points of the final front.
@@ -1349,7 +1702,7 @@ and the same uncompressed model measured 28.0 and 34.6\,ms in two processes.
 \begin{table}[htbp]
 \centering
 \small
-\begin{tabular}{llrrrr}
+\begin{tabular}{lccccc}
 \toprule
 Matrix ($N\times K$) & Role & bf16 & int4 g32 & int4 g64 & int4 g128 \\
 \midrule

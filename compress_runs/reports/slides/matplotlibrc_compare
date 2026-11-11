@@ -1,0 +1,13 @@
+# As matplotlibrc, for scripts/compress_compare.py plots: their legend sits a fixed 13% of the axes height below
+# the axes (about 36 pt), so the x tick labels and the x label must fit in that space above it.
+font.size: 20
+axes.titlesize: 20
+axes.labelsize: 15
+axes.labelpad: 1
+xtick.labelsize: 13
+ytick.labelsize: 16
+xtick.major.pad: 1.5
+xtick.major.size: 3
+legend.fontsize: 14
+lines.linewidth: 2.5
+lines.markersize: 9

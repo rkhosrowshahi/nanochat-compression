@@ -1,0 +1,11 @@
+# Larger text for figures shown four to a slide (make_figures.py). The plots are 8 x 4.5 in and a slide shows
+# each at about a quarter of that width, so these sizes read like 5-6 pt on the slide.
+font.size: 22
+axes.titlesize: 22
+axes.labelsize: 22
+xtick.labelsize: 19
+ytick.labelsize: 19
+legend.fontsize: 14
+legend.framealpha: 0.85
+lines.linewidth: 2.5
+lines.markersize: 9

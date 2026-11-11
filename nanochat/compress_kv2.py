@@ -155,17 +155,19 @@ def cache_mask(length, window, quantized, group, device):
 
 
 def kv2_attention(module, query, key, value, attention_mask, scaling=None, dropout=0.0, **kwargs):
-    """query [B, H, T, D], key and value [B, Hkv, T, D] (keys after the rotary embedding). module.kv2 holds
+    """query [B, H, t, D], key and value [B, Hkv, T, D] (keys after the rotary embedding): a whole window (t = T), or the
+    last t tokens of one with the earlier ones from a cache (generation; the cache holds them in bf16 and they are
+    quantized here as the whole window would quantize them, so each query reads what it read there). module.kv2 holds
     (key kind, value kind, window fraction, group) for its layer."""
     key_kind, value_kind, fraction, group = module.kv2
-    B, H, T, D = query.shape
-    assert key.shape[2] == T, "kv2_attention scores whole windows (no cache of earlier tokens)"
+    B, H, t, D = query.shape
+    T = key.shape[2]
     scale = scaling if scaling is not None else D ** -0.5
-    if key_kind == value_kind == "bf16" and fraction >= 1 and attention_mask is None:
+    if key_kind == value_kind == "bf16" and fraction >= 1 and attention_mask is None and t == T:
         out = F.scaled_dot_product_attention(query, key, value, is_causal=True, scale=scale, enable_gqa=H != key.shape[1])
         return out.transpose(1, 2).contiguous(), None
     quantized = key_kind != "bf16"
-    mask = cache_mask(T, window_tokens(fraction, T) if fraction < 1 else T, quantized, group, query.device)[None, None]
+    mask = cache_mask(T, window_tokens(fraction, T) if fraction < 1 else T, quantized, group, query.device)[T - t:][None, None]
     if attention_mask is not None:  # padding: the same keys in both copies
         given = attention_mask[..., :T] if attention_mask.dtype == torch.bool else attention_mask[..., :T] > torch.finfo(attention_mask.dtype).min / 2
         mask = mask & (torch.cat((given, given), dim=-1) if quantized else given)
@@ -179,6 +181,16 @@ def kv2_attention(module, query, key, value, attention_mask, scaling=None, dropo
 
 
 AttentionInterface.register(IMPL, kv2_attention)
+
+
+def register_padding_mask():
+    """Give kv2_attention the padding of a batch. transformers passes no mask at all to an attention function that has no
+    mask function, which is right for the search (whole windows, no padding) but not for padded batches such as the
+    left-padded prompts of generation (scripts/compress_benchmark_mix.py): this gives it sdpa's boolean mask, None when
+    nothing is padded. Padding moves the key groups: they are counted from the first cache entry, padded or not."""
+    from transformers import AttentionMaskInterface
+    from transformers.masking_utils import sdpa_mask
+    AttentionMaskInterface.register(IMPL, sdpa_mask)
 
 
 # --- planted-fact recall
