@@ -1,0 +1,12 @@
+Configuration,Calib loss (%),Turn (ms),Memory (MB),Stored (MB),Bits/weight,Recall (%),PIQA (0-shot),ARC-e (0-shot),ARC-c (0-shot),HellaSwag (0-shot),WinoGrande (0-shot),BoolQ (0-shot),MMLU (5-shot),GSM8K (5-shot),Average,Accuracy retained (%)
+uncompressed (bfloat16),0.00,1000 (1.00x),2561 (1.00x),988,16.00,100,70.6,59.2,33.0,52.4,55.2,67.7,47.0,30.3,51.9,100.0
+qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:BB88 val:8888 win:0.5/1/1/1,-0.02,938 (1.07x),1841 (1.39x),988,16.00,100,70.1,59.5,33.0,52.3,55.9,67.3,46.9,30.7,52.0,100.1
+qkv:BBBB o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:BBBB val:BBB8 win:0.5/1/1/1,-0.02,915 (1.09x),2269 (1.13x),988,16.00,100,70.3,58.9,33.6,52.3,56.4,67.6,46.9,30.6,52.1,100.3
+qkv:BB38 o:BB33 up:6688 down:B38B head:3 keep:1/1/1/1 -attn 0 -mlp 0 key:B844 val:8444 win:0.25/1/1/0.5,3.88,858 (1.17x),776 (3.30x),381,6.34,98,69.6,56.4,31.3,50.0,57.7,67.2,45.9,20.3,49.8,96.0
+qkv:B633 o:6833 up:8633 down:B863 head:3 keep:1/1/0.625/0.875 -attn 0 -mlp 0 key:4484 val:8448 win:0.25/1/1/0.5,9.74,853 (1.17x),689 (3.72x),307,5.12,100,67.4,48.6,28.8,44.2,55.6,55.3,33.7,1.5,41.9,80.7
+qkv:BBBB o:8BBB up:33BB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:B844 val:8844 win:0.25/1/1/0.5,0.96,841 (1.19x),1271 (2.01x),835,13.56,98,69.5,59.8,32.1,52.0,57.1,67.1,45.8,26.0,51.2,98.6
+qkv:B63B o:3B36 up:6BBB down:B83B head:3 keep:1/1/1/1 -attn 0 -mlp 0 key:8888 val:8448 win:0.25/1/1/0.5,1.98,837 (1.20x),1073 (2.39x),608,9.94,98,70.2,60.3,32.6,51.1,55.3,64.4,46.0,23.0,50.4,97.0
+qkv:B63B o:BBBB up:BBBB down:BBBB head:B keep:1/1/1/1 -attn 0 -mlp 0 key:BBBB val:BBB8 win:0.25/1/1/0.25,0.96,755 (1.32x),1930 (1.33x),970,15.72,100,70.2,61.3,33.9,51.7,56.2,65.8,46.5,27.6,51.6,99.5
+qkv:B6BB o:36B8 up:BBBB down:BBBB head:6 keep:1/1/1/1 -attn 0 -mlp 0 key:BBBB val:BBBB win:0.25/1/1/0.25,1.93,749 (1.33x),1746 (1.47x),759,12.35,100,70.2,59.3,33.1,51.7,56.8,66.8,46.3,28.7,51.6,99.4
+qkv:B6B3 o:BB3B up:BBBB down:BBBB head:3 keep:1/1/0.625/1 -attn 0 -mlp 0 key:BBBB val:BBB8 win:0.25/1/1/0.25,4.73,748 (1.34x),1678 (1.53x),717,11.64,100,68.2,52.3,30.7,46.5,57.3,61.4,41.4,3.0,45.1,86.9
+qkv:B636 o:B6BB up:BBBB down:BBBB head:6 keep:1/0.875/0.625/0.875 -attn 0 -mlp 0 key:BBBB val:BBBB win:0.25/1/1/0.25,7.74,744 (1.34x),1643 (1.56x),656,10.69,100,67.5,50.6,28.1,43.8,56.2,53.9,33.7,1.8,42.0,80.8
