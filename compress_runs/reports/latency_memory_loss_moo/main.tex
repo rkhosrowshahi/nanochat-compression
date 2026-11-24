@@ -1288,8 +1288,11 @@ solutions of Table~\ref{tab:mix-size} have a calibration loss and no test score.
         token, about 5.5\,s more per turn of this workload.
   \item \textbf{The KV cache is not a decision.} The largest part of both the time and the memory is outside
         the search space; Section~\ref{sec:kv} adds it.
-  \item \textbf{Other limits.} One seed, one workload, sublayer removal off, and perplexity only: none of
-        the A100 solutions has been run on the downstream benchmarks or on agent tasks.
+  \item \textbf{Other limits.} One seed, one workload, sublayer removal off, and no agent tasks. The
+        benchmark report evaluates selected solutions of this search and of Section~\ref{sec:kv} on eight
+        downstream benchmarks. Sharing keeps 97.9\% of the average accuracy at 272\,MB stored. Every
+        selected solution that prunes MLP neurons keeps at most 94\% and loses 15--29 points on GSM8K,
+        far more than its calibration error suggests.
 \end{itemize}
 
 % =====================================================================================================

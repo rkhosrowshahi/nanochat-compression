@@ -1,0 +1,30 @@
+# The decode-speed search (scripts/compress_search_tpot.py) on Qwen2.5-Coder-1.5B-Instruct, per layer: one format gene per
+# matrix role (qkv, o, up, down) and layer (bands = 28 layers) plus the output head, 113 genes, from bf16 and int4 g32/g64/g128.
+# Objectives, all minimized: KL divergence from the uncompressed model on code conversations, TPOT at batch 1 (latency table,
+# checked against CUDA-graph generation within 2-5%), deployed weight memory. No pruning, no KV cache.
+#   python -m scripts.compress_run configs/compress/coder15_tpot.yaml
+model: Qwen/Qwen2.5-Coder-1.5B-Instruct
+out_dir: compress_runs/coder15_tpot
+eval_batch_size: 1
+offload_originals: "yes"     # an 8 GB GPU holds the model and the KL reference head, not a second copy of the weights
+
+search:
+  method: tpot
+  objectives: [time, memory]
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  context: 640               # mean context of a 512-token prompt and 256 generated tokens (as compress_tpot_measure)
+  bands: 28                  # = the number of layers: per-layer genes
+
+calibration:
+  seqs: 8                    # 8 x 2048 tokens of code conversations; their KLD tracks the 64 held-out windows (baselines)
+  seq_len: 2048
+  data_seed: 0
+
+test:
+  seq_len: 2048
+  code_seqs: 64              # held-out code conversations
+  wikitext_seqs: 32
+  c4_seqs: 0
+  max_points: 8

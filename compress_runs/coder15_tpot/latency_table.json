@@ -1,0 +1,83 @@
+{
+  "settings": {
+    "version": 2,
+    "kind": "decode",
+    "gpu": "NVIDIA GeForce RTX 3060",
+    "torch": "2.13.0+cu126",
+    "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "batch": 1,
+    "context": 640,
+    "formats": [
+      "bf16",
+      "int4_g32",
+      "int4_g64",
+      "int4_g128"
+    ],
+    "mlp_keep": [
+      1.0
+    ]
+  },
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "torch": "2.13.0+cu126",
+  "batch": 1,
+  "context": 640,
+  "formats": [
+    "bf16",
+    "int4_g32",
+    "int4_g64",
+    "int4_g128"
+  ],
+  "gemm_us": {
+    "256x1536+bias": {
+      "bf16": 5.782,
+      "int4_g32": 4.072,
+      "int4_g64": 3.951,
+      "int4_g128": 3.89
+    },
+    "1536x1536": {
+      "bf16": 23.011,
+      "int4_g32": 8.129,
+      "int4_g64": 7.722,
+      "int4_g128": 7.42
+    },
+    "1536x1536+bias": {
+      "bf16": 23.183,
+      "int4_g32": 9.228,
+      "int4_g64": 8.801,
+      "int4_g128": 8.503
+    },
+    "1536x8960": {
+      "bf16": 137.716,
+      "int4_g32": 40.284,
+      "int4_g64": 36.696,
+      "int4_g128": 34.816
+    },
+    "8960x1536": {
+      "bf16": 124.03,
+      "int4_g32": 39.786,
+      "int4_g64": 36.008,
+      "int4_g128": 34.042
+    },
+    "151936x1536": {
+      "bf16": 2055.68,
+      "int4_g32": 644.8,
+      "int4_g64": 580.544,
+      "int4_g128": 549.492
+    }
+  },
+  "attn_us": 17.948,
+  "attn_impl": "grouped",
+  "attn_impl_us": {
+    "sdpa": 140.595,
+    "grouped": 17.948
+  },
+  "attn_profiled_us": 20.404,
+  "misc_attn_us": 23.213,
+  "misc_mlp_us": 4.807,
+  "fixed_us": 807.727,
+  "profile_us": {
+    "full": 16638.2,
+    "no_attention": 13799.7,
+    "no_mlp": 5701.9
+  }
+}

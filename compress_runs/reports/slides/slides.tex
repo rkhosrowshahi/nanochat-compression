@@ -1085,18 +1085,18 @@ row: standard error of the uncompressed model's accuracy.}\label{tab:results}
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{lcccccccccc}
 \toprule
-Model & Size & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Accuracy \\
-($\dloss$ (\%)) & (MB) &      &       &       &         &        &       &      &       & retained (\%)       \\
+Model & Size & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg. \\
+($\dloss$ (\%)) & (MB) &      &       &       &         &        &       &      &       & Gap (\%)       \\
 \midrule
-Q0  (0\%)  & 495 & $-0.2$ & $+0.7$ & $+0.4$ & $-0.1$ & $+0.6$ & $+0.6$  & $\phantom{+}0.0$ & $+0.5$ & 100.6 \\
-Q1  (1\%)  & 414 & $-0.2$ & $+0.5$ & $+0.6$ & $\phantom{+}0.0$ & $-0.2$ & $-3.5$ & $-0.4$ & $-3.6$ & 98.4 \\
-Q2  (2\%)  & 372 & $-0.9$ & $+1.9$ & $-0.3$ & $-0.5$ & $-1.8$ & $-1.2$  & $-0.8$ & $-4.5$  & 98.0 \\
-Q5  (5\%)  & 310 & $-1.2$ & $-4.0$ & $-1.1$ & $-2.4$ & $+0.3$ & $-18.1$ & $-2.0$ & $-21.5$ & 88.0 \\
-Q10 (10\%) & 309 & $-2.9$ & $-2.9$ & $-2.1$ & $-4.7$ & $+1.2$ & $-11.8$ & $-8.6$ & $-18.6$ & 87.9 \\
+Q0  (0\%)  & 495 & $-0.2$ & $+0.7$ & $+0.4$ & $-0.1$ & $+0.6$ & $+0.6$  & $\phantom{+}0.0$ & $+0.5$ & $-0.6$ \\
+Q1  (1\%)  & 414 & $-0.2$ & $+0.5$ & $+0.6$ & $\phantom{+}0.0$ & $-0.2$ & $-3.5$ & $-0.4$ & $-3.6$ & 1.6 \\
+Q2  (2\%)  & 372 & $-0.9$ & $+1.9$ & $-0.3$ & $-0.5$ & $-1.8$ & $-1.2$  & $-0.8$ & $-4.5$  & 2.0 \\
+Q5  (5\%)  & 310 & $-1.2$ & $-4.0$ & $-1.1$ & $-2.4$ & $+0.3$ & $-18.1$ & $-2.0$ & $-21.5$ & 12.0 \\
+Q10 (10\%) & 309 & $-2.9$ & $-2.9$ & $-2.1$ & $-4.7$ & $+1.2$ & $-11.8$ & $-8.6$ & $-18.6$ & 12.1 \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
-\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss). Accuracy retained: the compressed model's average accuracy as a percentage of the uncompressed model's.}\label{tab:delta}
+\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss). Avg.\ Gap: how far the compressed model's average accuracy falls below the uncompressed model's, as a percentage of it (negative: above it).}\label{tab:delta}
 \end{table}
 \end{frame}
 
@@ -1165,18 +1165,18 @@ Std. error   &      & 1.1  & 1.0  & 1.4  & 0.5  & 1.4  & 0.8  & 0.4  & 1.3  & \\
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{lcccccccccc}
 \toprule
-Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Accuracy \\
-($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       &      &       & retained (\%) \\
+Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg. \\
+($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       &      &       & Gap (\%) \\
 \midrule
-H0  (0\%)  & 6.74 (1.01$\times$) & $+0.2$ & $+0.4$ & $+0.3$ & $-0.4$ & $+0.4$ & $-0.9$ & $-0.5$ & $+0.8$  & 100.1 \\
-H1  (1\%)  & 5.61 (1.21$\times$) & $-0.5$ & $+0.8$ & $-0.3$ & $-0.9$ & $+0.9$ & $-0.1$ & $-0.3$ & $-2.4$  & 99.3 \\
-H2  (2\%)  & 4.35 (1.56$\times$) & $-0.8$ & $+0.5$ & $-0.3$ & $-1.4$ & $+1.5$ & $-1.6$ & $-1.1$ & $-1.8$  & 98.8 \\
-H5  (5\%)  & 3.43 (1.98$\times$) & $-1.5$ & $-1.1$ & $-1.5$ & $-2.9$ & $-0.2$ & $-1.2$ & $-2.2$ & $-9.8$  & 95.1 \\
-H10 (10\%) & 3.28 (2.07$\times$) & $-3.3$ & $-9.5$ & $-4.0$ & $-5.9$ & $-2.8$ & $-3.9$ & $-9.4$ & $-25.4$ & 84.6 \\
+H0  (0\%)  & 6.74 (1.01$\times$) & $+0.2$ & $+0.4$ & $+0.3$ & $-0.4$ & $+0.4$ & $-0.9$ & $-0.5$ & $+0.8$  & $-0.1$ \\
+H1  (1\%)  & 5.61 (1.21$\times$) & $-0.5$ & $+0.8$ & $-0.3$ & $-0.9$ & $+0.9$ & $-0.1$ & $-0.3$ & $-2.4$  & 0.7 \\
+H2  (2\%)  & 4.35 (1.56$\times$) & $-0.8$ & $+0.5$ & $-0.3$ & $-1.4$ & $+1.5$ & $-1.6$ & $-1.1$ & $-1.8$  & 1.2 \\
+H5  (5\%)  & 3.43 (1.98$\times$) & $-1.5$ & $-1.1$ & $-1.5$ & $-2.9$ & $-0.2$ & $-1.2$ & $-2.2$ & $-9.8$  & 4.9 \\
+H10 (10\%) & 3.28 (2.07$\times$) & $-3.3$ & $-9.5$ & $-4.0$ & $-5.9$ & $-2.8$ & $-3.9$ & $-9.4$ & $-25.4$ & 15.4 \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
-\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss). In parentheses: the speedup over the uncompressed model (6.78\,ms). Accuracy retained: the compressed model's average accuracy as a percentage of the uncompressed model's.}\label{tab:hwdelta}
+\caption{Change in accuracy against the uncompressed model (percentage points; negative is a loss). In parentheses: the speedup over the uncompressed model (6.78\,ms). Avg.\ Gap: how far the compressed model's average accuracy falls below the uncompressed model's, as a percentage of it (negative: above it).}\label{tab:hwdelta}
 \end{table}
 \end{frame}
 
@@ -1262,27 +1262,298 @@ Std. error &      & 1.1  & 1.0  & 1.4  & 0.5  & 1.4  & 0.8  & 0.4  & 1.3  & \\
 \setlength{\tabcolsep}{3pt}
 \begin{tabular}{lcccccccccc}
 \toprule
-Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Accuracy \\
-($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       &      &       & retained (\%) \\
+Model & Latency & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg. \\
+($\dloss$ (\%)) & (ms)   &      &       &       &         &        &       &      &       & Gap (\%) \\
 \midrule
 \multicolumn{11}{l}{\emph{2 objectives}} \\
-A0  (0\%)  & 3.89 (1.02$\times$) & $-0.1$ & $+1.8$ & $+0.2$ & $-0.1$ & $+0.2$ & $+0.8$ & $-0.3$ & $+0.2$  & 100.6 \\
-A1  (1\%)  & 3.70 (1.07$\times$) & $+0.4$ & $-0.4$ & $-0.6$ & $-1.0$ & $+0.5$ & $-0.6$ & $-0.4$ & $-2.2$  & 99.0 \\
-A2  (2\%)  & 3.63 (1.09$\times$) & $-0.6$ & $+0.6$ & $-0.3$ & $-1.7$ & $+1.5$ & $-1.5$ & $-1.0$ & $-3.3$  & 98.5 \\
-A5  (5\%)  & 3.38 (1.17$\times$) & $-2.3$ & $-3.7$ & $-2.5$ & $-3.2$ & $-0.6$ & $-0.5$ & $-1.4$ & $-10.7$ & 94.0 \\
-A10 (10\%) & 3.19 (1.24$\times$) & $-3.3$ & $-1.1$ & $-2.5$ & $-5.5$ & $+0.6$ & $-7.5$ & $-5.4$ & $-24.6$ & 88.1 \\
+A0  (0\%)  & 3.89 (1.02$\times$) & $-0.1$ & $+1.8$ & $+0.2$ & $-0.1$ & $+0.2$ & $+0.8$ & $-0.3$ & $+0.2$  & $-0.6$ \\
+A1  (1\%)  & 3.70 (1.07$\times$) & $+0.4$ & $-0.4$ & $-0.6$ & $-1.0$ & $+0.5$ & $-0.6$ & $-0.4$ & $-2.2$  & 1.0 \\
+A2  (2\%)  & 3.63 (1.09$\times$) & $-0.6$ & $+0.6$ & $-0.3$ & $-1.7$ & $+1.5$ & $-1.5$ & $-1.0$ & $-3.3$  & 1.5 \\
+A5  (5\%)  & 3.38 (1.17$\times$) & $-2.3$ & $-3.7$ & $-2.5$ & $-3.2$ & $-0.6$ & $-0.5$ & $-1.4$ & $-10.7$ & 6.0 \\
+A10 (10\%) & 3.19 (1.24$\times$) & $-3.3$ & $-1.1$ & $-2.5$ & $-5.5$ & $+0.6$ & $-7.5$ & $-5.4$ & $-24.6$ & 11.9 \\
 \addlinespace
 \multicolumn{11}{l}{\emph{3 objectives}} \\
-B0  (0\%)  & 3.92 (1.01$\times$) & $-0.3$ & $-0.3$ & $+0.3$ & $-0.1$ & $+0.9$ & $-0.6$ & $+0.1$ & $+0.2$  & 100.1 \\
-B1  (1\%)  & 3.75 (1.05$\times$) & $-0.7$ & $+0.2$ & $-0.5$ & $-0.9$ & $+2.1$ & $-0.3$ & $-0.8$ & $-0.4$  & 99.7 \\
-B2  (2\%)  & 3.60 (1.10$\times$) & $-1.0$ & $-1.2$ & $-1.4$ & $-1.4$ & $+0.6$ & $-2.0$ & $-0.9$ & $-2.4$  & 97.7 \\
-B5  (5\%)  & 3.39 (1.17$\times$) & $-2.7$ & $-4.2$ & $-2.0$ & $-3.2$ & $+0.2$ & $-1.2$ & $-1.9$ & $-12.1$ & 93.5 \\
-B10 (10\%) & 3.28 (1.20$\times$) & $-3.2$ & $-3.1$ & $-3.7$ & $-6.9$ & $-1.2$ & $-5.7$ & $-13.7$ & $-27.7$ & 84.3 \\
+B0  (0\%)  & 3.92 (1.01$\times$) & $-0.3$ & $-0.3$ & $+0.3$ & $-0.1$ & $+0.9$ & $-0.6$ & $+0.1$ & $+0.2$  & $-0.1$ \\
+B1  (1\%)  & 3.75 (1.05$\times$) & $-0.7$ & $+0.2$ & $-0.5$ & $-0.9$ & $+2.1$ & $-0.3$ & $-0.8$ & $-0.4$  & 0.3 \\
+B2  (2\%)  & 3.60 (1.10$\times$) & $-1.0$ & $-1.2$ & $-1.4$ & $-1.4$ & $+0.6$ & $-2.0$ & $-0.9$ & $-2.4$  & 2.3 \\
+B5  (5\%)  & 3.39 (1.17$\times$) & $-2.7$ & $-4.2$ & $-2.0$ & $-3.2$ & $+0.2$ & $-1.2$ & $-1.9$ & $-12.1$ & 6.5 \\
+B10 (10\%) & 3.28 (1.20$\times$) & $-3.2$ & $-3.1$ & $-3.7$ & $-6.9$ & $-1.2$ & $-5.7$ & $-13.7$ & $-27.7$ & 15.7 \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \caption{Change in accuracy of the A100 models against the uncompressed model (percentage points;
-negative is a loss). In parentheses: the speedup over the uncompressed model (3.95\,ms). Accuracy retained: the compressed model's average accuracy as a percentage of the uncompressed model's.}\label{tab:a100delta}
+negative is a loss). In parentheses: the speedup over the uncompressed model (3.95\,ms). Avg.\ Gap: how far the compressed model's average accuracy falls below the uncompressed model's, as a percentage of it (negative: above it).}\label{tab:a100delta}
+\end{table}
+\end{frame}
+
+\begin{frame}{Benchmarks: long context, A100}{Weight formats and sharing}
+\begin{table}
+\centering
+\begin{adjustbox}{width=\linewidth, totalheight=0.64\textheight, keepaspectratio, center}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccccc}
+\toprule
+Model & Calib & Latency & Params & Storage & Bits/w & int4 & Shared & MLP \\
+($\dloss$ (\%)) & loss (\%) & (ms) & (MB) & (MB) & & (\%) & (\%) & kept (\%) \\
+\midrule
+Uncompressed & 0.00 & 2186 (1.00$\times$) & 988 (1.00$\times$) & 988 (1.00$\times$) & 16.00 & 0 & 0 & 100 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Mix with sharing, least stored size within the level}} \\
+W0 (0\%) & 0.00 & 2186 (1.00$\times$) & 988 (1.00$\times$) & 947 (1.04$\times$) & 16.00 & 0 & 7 & 100 \\
+W1 (1\%) & 0.91 & 2146 (1.02$\times$) & 948 (1.04$\times$) & 673 (1.47$\times$) & 15.35 & 6 & 50 & 100 \\
+W2 (2\%) & 1.90 & 2184 (1.00$\times$) & 528 (1.87$\times$) & 346 (2.86$\times$) & 8.55 & 67 & 32 & 100 \\
+W5 (5\%) & 3.43 & 2147 (1.02$\times$) & 423 (2.34$\times$) & 272 (3.63$\times$) & 6.85 & 80 & 20 & 100 \\
+W10 (10\%) & 9.80 & 2138 (1.02$\times$) & 639 (1.55$\times$) & 232 (4.25$\times$) & 10.35 & 44 & 51 & 93 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Mix without sharing, fastest within the level}} \\
+S0 (0\%) & 0.17 & 2190 (1.00$\times$) & 916 (1.08$\times$) & 915 (1.08$\times$) & 14.84 & 11 & 0 & 100 \\
+ST1/2 (1, 2\%) & 0.73 & 2179 (1.00$\times$) & 961 (1.03$\times$) & 961 (1.03$\times$) & 15.56 & 1 & 0 & 97 \\
+ST5 (5\%) & 2.85 & 2149 (1.02$\times$) & 742 (1.33$\times$) & 739 (1.34$\times$) & 12.01 & 29 & 0 & 93 \\
+ST10 (10\%) & 7.29 & 2148 (1.02$\times$) & 687 (1.44$\times$) & 683 (1.45$\times$) & 11.12 & 29 & 0 & 84 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Mix without sharing, least memory within the level}} \\
+SM1 (1\%) & 0.99 & 2197 (1.00$\times$) & 696 (1.42$\times$) & 691 (1.43$\times$) & 11.26 & 42 & 0 & 100 \\
+SM2 (2\%) & 1.49 & 2203 (0.99$\times$) & 552 (1.79$\times$) & 546 (1.81$\times$) & 8.93 & 64 & 0 & 100 \\
+SM5/10 (5, 10\%) & 4.84 & 2123 (1.03$\times$) & 284 (3.47$\times$) & 271 (3.64$\times$) & 4.60 & 97 & 0 & 97 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Selected solutions of the two mix searches. Latency: predicted end-to-end latency of one agent's reply. Params: the weights as deployed on the GPU, where shared matrices run as bf16; the KV cache of these models is always the uncompressed 1573\,MB. Storage: size of the weights under an ideal entropy coder. Bits/w: bits per weight on the GPU. int4 and Shared: the fraction of the weights in each format. MLP kept: the fraction of MLP neurons kept. Fastest: least GPU time per request, the search's time objective. S0 is the most accurate solution of the mix without sharing and stands for the 0\% level of both its groups. In parentheses: after the latency, the speedup over the uncompressed model (2186\,ms); after a size, the compression ratio.}\label{tab:turnmodels}
+\end{table}
+\end{frame}
+
+\begin{frame}{Benchmarks: long context, A100}{Weight formats and sharing}
+\begin{table}
+\centering
+\begin{adjustbox}{width=\linewidth, totalheight=0.64\textheight, keepaspectratio, center}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccccccccccc}
+\toprule
+Model & Latency & Params & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
+($\dloss$ (\%)) & (ms) & (MB) & &  &  &  &  &  & 5-shot & 5-shot &  \\
+\midrule
+Uncompressed & 2186 (1.00$\times$) & 988 (1.00$\times$) & 70.6 & 59.2 & 33.0 & 52.4 & 55.2 & 67.7 & 47.0 & 30.3 & 51.9 \\
+\addlinespace
+\multicolumn{12}{l}{\emph{Mix with sharing, least stored size within the level}} \\
+W0 (0\%) & 2186 (1.00$\times$) & 988 (1.00$\times$) & 70.2 & 59.3 & 33.8 & 52.5 & 56.6 & 67.7 & 46.9 & 29.9 & 52.1 \\
+W1 (1\%) & 2146 (1.02$\times$) & 948 (1.04$\times$) & 69.6 & 59.9 & 33.2 & 51.3 & 56.0 & 65.4 & 45.7 & 24.0 & 50.6 \\
+W2 (2\%) & 2184 (1.00$\times$) & 528 (1.87$\times$) & 69.7 & 59.3 & 32.5 & 50.8 & 57.5 & 66.5 & 45.5 & 27.3 & 51.1 \\
+W5 (5\%) & 2147 (1.02$\times$) & 423 (2.34$\times$) & 70.0 & 61.2 & 32.5 & 50.3 & 55.5 & 65.6 & 45.5 & 25.9 & 50.8 \\
+W10 (10\%) & 2138 (1.02$\times$) & 639 (1.55$\times$) & 67.2 & 52.7 & 30.5 & 45.7 & 56.5 & 50.6 & 36.3 & 2.7 & 42.8 \\
+\addlinespace
+\multicolumn{12}{l}{\emph{Mix without sharing, fastest within the level}} \\
+S0 (0\%) & 2190 (1.00$\times$) & 916 (1.08$\times$) & 70.1 & 58.8 & 32.8 & 52.2 & 56.5 & 67.9 & 47.1 & 30.9 & 52.1 \\
+ST1/2 (1, 2\%) & 2179 (1.00$\times$) & 961 (1.03$\times$) & 69.0 & 57.7 & 31.7 & 50.7 & 55.6 & 64.5 & 46.0 & 15.4 & 48.8 \\
+ST5 (5\%) & 2149 (1.02$\times$) & 742 (1.33$\times$) & 69.2 & 56.4 & 30.3 & 48.2 & 54.8 & 57.1 & 43.3 & 10.0 & 46.2 \\
+ST10 (10\%) & 2148 (1.02$\times$) & 687 (1.44$\times$) & 66.7 & 51.2 & 27.1 & 43.4 & 54.4 & 58.2 & 39.1 & 1.4 & 42.7 \\
+\addlinespace
+\multicolumn{12}{l}{\emph{Mix without sharing, least memory within the level}} \\
+SM1 (1\%) & 2197 (1.00$\times$) & 696 (1.42$\times$) & 70.0 & 58.6 & 32.1 & 51.5 & 55.6 & 66.8 & 46.4 & 30.9 & 51.5 \\
+SM2 (2\%) & 2203 (0.99$\times$) & 552 (1.79$\times$) & 70.2 & 59.4 & 32.3 & 51.0 & 56.0 & 66.6 & 46.1 & 29.1 & 51.3 \\
+SM5/10 (5, 10\%) & 2123 (1.03$\times$) & 284 (3.47$\times$) & 68.0 & 56.9 & 31.1 & 48.3 & 56.4 & 66.5 & 42.3 & 11.0 & 47.6 \\
+\midrule
+Std. error & & & 1.1 & 1.0 & 1.4 & 0.5 & 1.4 & 0.8 & 0.4 & 1.3 &  \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Accuracy (\%, higher is better) of the mix models, with the unweighted average. Params: the weights on the GPU. In parentheses: after the latency, the speedup over the uncompressed model (2186\,ms); after a size, the compression ratio.}\label{tab:turnresults}
+\end{table}
+\end{frame}
+
+\begin{frame}{Benchmarks: long context, A100}{Weight formats and sharing}
+\begin{table}
+\centering
+\begin{adjustbox}{width=\linewidth, totalheight=0.64\textheight, keepaspectratio, center}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{lccccccccccc}
+\toprule
+Model & Latency & Params & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg. \\
+($\dloss$ (\%)) & (ms) & (MB) &  &  &  &  &  &  &  &  & Gap (\%) \\
+\midrule
+\multicolumn{12}{l}{\emph{Mix with sharing, least stored size within the level}} \\
+W0 (0\%) & 2186 (1.00$\times$) & 988 (1.00$\times$) & $-0.4$ & $+0.1$ & $+0.8$ & $+0.1$ & $+1.4$ & $0.0$ & $-0.1$ & $-0.4$ & $-0.4$ \\
+W1 (1\%) & 2146 (1.02$\times$) & 948 (1.04$\times$) & $-1.0$ & $+0.7$ & $+0.2$ & $-1.1$ & $+0.8$ & $-2.3$ & $-1.3$ & $-6.3$ & 2.5 \\
+W2 (2\%) & 2184 (1.00$\times$) & 528 (1.87$\times$) & $-0.9$ & $+0.1$ & $-0.5$ & $-1.6$ & $+2.3$ & $-1.2$ & $-1.5$ & $-3.0$ & 1.5 \\
+W5 (5\%) & 2147 (1.02$\times$) & 423 (2.34$\times$) & $-0.6$ & $+2.0$ & $-0.5$ & $-2.1$ & $+0.3$ & $-2.1$ & $-1.5$ & $-4.4$ & 2.1 \\
+W10 (10\%) & 2138 (1.02$\times$) & 639 (1.55$\times$) & $-3.4$ & $-6.5$ & $-2.5$ & $-6.7$ & $+1.3$ & $-17.1$ & $-10.7$ & $-27.6$ & 17.6 \\
+\addlinespace
+\multicolumn{12}{l}{\emph{Mix without sharing, fastest within the level}} \\
+S0 (0\%) & 2190 (1.00$\times$) & 916 (1.08$\times$) & $-0.5$ & $-0.4$ & $-0.2$ & $-0.2$ & $+1.3$ & $+0.2$ & $+0.1$ & $+0.6$ & $-0.3$ \\
+ST1/2 (1, 2\%) & 2179 (1.00$\times$) & 961 (1.03$\times$) & $-1.6$ & $-1.5$ & $-1.3$ & $-1.7$ & $+0.4$ & $-3.2$ & $-1.0$ & $-14.9$ & 6.0 \\
+ST5 (5\%) & 2149 (1.02$\times$) & 742 (1.33$\times$) & $-1.4$ & $-2.8$ & $-2.7$ & $-4.2$ & $-0.4$ & $-10.6$ & $-3.7$ & $-20.3$ & 11.1 \\
+ST10 (10\%) & 2148 (1.02$\times$) & 687 (1.44$\times$) & $-3.9$ & $-8.0$ & $-5.9$ & $-9.0$ & $-0.8$ & $-9.5$ & $-7.9$ & $-28.9$ & 17.8 \\
+\addlinespace
+\multicolumn{12}{l}{\emph{Mix without sharing, least memory within the level}} \\
+SM1 (1\%) & 2197 (1.00$\times$) & 696 (1.42$\times$) & $-0.6$ & $-0.6$ & $-0.9$ & $-0.9$ & $+0.4$ & $-0.9$ & $-0.6$ & $+0.6$ & 0.8 \\
+SM2 (2\%) & 2203 (0.99$\times$) & 552 (1.79$\times$) & $-0.4$ & $+0.2$ & $-0.7$ & $-1.4$ & $+0.8$ & $-1.1$ & $-0.9$ & $-1.2$ & 1.1 \\
+SM5/10 (5, 10\%) & 2123 (1.03$\times$) & 284 (3.47$\times$) & $-2.6$ & $-2.3$ & $-1.9$ & $-4.1$ & $+1.2$ & $-1.2$ & $-4.7$ & $-19.3$ & 8.4 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Change in accuracy of the mix models against the uncompressed model (percentage points; negative is a loss). Params: the weights on the GPU. In parentheses: after the latency, the speedup over the uncompressed model (2186\,ms); after a size, the compression ratio. Avg.\ Gap: how far the compressed model's average accuracy falls below the uncompressed model's, as a percentage of it (negative: above it).}\label{tab:turndelta}
+\end{table}
+\end{frame}
+
+\begin{frame}{Benchmarks: long context, A100}{Hardware-aware + KV cache}
+\begin{table}
+\centering
+\begin{adjustbox}{width=\linewidth, totalheight=0.64\textheight, keepaspectratio, center}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lcccccccc}
+\toprule
+Model & Calib & Latency & Params & KV cache & Cache & Window & MLP & Recall \\
+($\dloss$ (\%)) & loss (\%) & (ms) & (MB) & (MB) & bits & bands 0/3 & kept (\%) & (\%) \\
+\midrule
+Uncompressed & 0.00 & 2186 (1.00$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 16.0 & 1/1 & 100 & 100 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Fastest within the level}} \\
+KT0 (0\%) & $-0.02$ & 2067 (1.06$\times$) & 988 (1.00$\times$) & 1281 (1.23$\times$) & 15.0 & 0.5/1 & 100 & 100 \\
+KT1 (1\%) & 0.96 & 1838 (1.19$\times$) & 971 (1.02$\times$) & 959 (1.64$\times$) & 15.0 & 0.25/0.25 & 100 & 100 \\
+KT2 (2\%) & 1.93 & 1814 (1.21$\times$) & 763 (1.30$\times$) & 983 (1.60$\times$) & 16.0 & 0.25/0.25 & 100 & 100 \\
+KT5 (5\%) & 4.73 & 1812 (1.21$\times$) & 719 (1.37$\times$) & 959 (1.64$\times$) & 15.0 & 0.25/0.25 & 91 & 100 \\
+KT10 (10\%) & 7.74 & 1794 (1.22$\times$) & 660 (1.50$\times$) & 983 (1.60$\times$) & 16.0 & 0.25/0.25 & 84 & 100 \\
+\addlinespace
+\multicolumn{9}{l}{\emph{Least memory within the level}} \\
+KM0 (0\%) & $-0.02$ & 2115 (1.03$\times$) & 988 (1.00$\times$) & 852 (1.85$\times$) & 10.0 & 0.5/1 & 100 & 100 \\
+KM1 (1\%) & 0.96 & 1963 (1.11$\times$) & 837 (1.18$\times$) & 434 (3.62$\times$) & 7.0 & 0.25/0.5 & 100 & 98 \\
+KM2 (2\%) & 1.98 & 1936 (1.13$\times$) & 614 (1.61$\times$) & 459 (3.42$\times$) & 7.0 & 0.25/0.5 & 100 & 98 \\
+KM5 (5\%) & 3.88 & 1917 (1.14$\times$) & 392 (2.52$\times$) & 385 (4.09$\times$) & 6.5 & 0.25/0.5 & 100 & 98 \\
+KM10 (10\%) & 9.74 & 1893 (1.15$\times$) & 316 (3.13$\times$) & 373 (4.21$\times$) & 5.5 & 0.25/0.5 & 88 & 100 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\caption{Selected solutions of the Hardware-aware + KV cache search. Latency: predicted end-to-end latency of one agent's reply. Params: on the GPU. KV cache: the cache of 4 agents at 32{,}000 tokens, with the windows. Cache bits: bits per stored key or value, averaged over keys, values and bands (16 = bf16, 8 = int8, 4 = int4; scales not counted). Window: the fraction of the cache kept in the first and last bands; the middle bands always keep the whole cache. Recall: facts recalled in the search's recall test. Fastest: least GPU time per request, the search's time objective. In parentheses: after the latency, the speedup over the uncompressed model (2186\,ms); after a size, the compression ratio.}\label{tab:kvmodels}
+\end{table}
+\end{frame}
+
+\begin{frame}{Benchmarks: long context, A100}{Hardware-aware + KV cache}
+\begin{table}
+\centering
+\begin{adjustbox}{width=\linewidth, totalheight=0.64\textheight, keepaspectratio, center}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccccccccc}
+\toprule
+Model & Latency & Params & KV cache & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average \\
+($\dloss$ (\%)) & (ms) & (MB) & (MB) & &  &  &  &  &  & 5-shot & 5-shot &  \\
+\midrule
+Uncompressed & 2186 (1.00$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 70.6 & 59.2 & 33.0 & 52.4 & 55.2 & 67.7 & 47.0 & 30.3 & 51.9 \\
+\addlinespace
+\multicolumn{13}{l}{\emph{Fastest within the level}} \\
+KT0 (0\%) & 2067 (1.06$\times$) & 988 (1.00$\times$) & 1281 (1.23$\times$) & 70.3 & 58.9 & 33.6 & 52.3 & 56.4 & 67.6 & 46.9 & 30.6 & 52.1 \\
+KT1 (1\%) & 1838 (1.19$\times$) & 971 (1.02$\times$) & 959 (1.64$\times$) & 70.2 & 61.3 & 33.9 & 51.7 & 56.2 & 65.8 & 46.5 & 27.6 & 51.6 \\
+KT2 (2\%) & 1814 (1.21$\times$) & 763 (1.30$\times$) & 983 (1.60$\times$) & 70.2 & 59.3 & 33.1 & 51.7 & 56.8 & 66.8 & 46.3 & 28.7 & 51.6 \\
+KT5 (5\%) & 1812 (1.21$\times$) & 719 (1.37$\times$) & 959 (1.64$\times$) & 68.2 & 52.3 & 30.7 & 46.5 & 57.3 & 61.4 & 41.4 & 3.0 & 45.1 \\
+KT10 (10\%) & 1794 (1.22$\times$) & 660 (1.50$\times$) & 983 (1.60$\times$) & 67.5 & 50.6 & 28.1 & 43.8 & 56.2 & 53.9 & 33.7 & 1.8 & 42.0 \\
+\addlinespace
+\multicolumn{13}{l}{\emph{Least memory within the level}} \\
+KM0 (0\%) & 2115 (1.03$\times$) & 988 (1.00$\times$) & 852 (1.85$\times$) & 70.1 & 59.5 & 33.0 & 52.3 & 55.9 & 67.3 & 46.9 & 30.7 & 52.0 \\
+KM1 (1\%) & 1963 (1.11$\times$) & 837 (1.18$\times$) & 434 (3.62$\times$) & 69.5 & 59.8 & 32.1 & 52.0 & 57.1 & 67.1 & 45.8 & 26.0 & 51.2 \\
+KM2 (2\%) & 1936 (1.13$\times$) & 614 (1.61$\times$) & 459 (3.42$\times$) & 70.2 & 60.3 & 32.6 & 51.1 & 55.3 & 64.4 & 46.0 & 23.0 & 50.4 \\
+KM5 (5\%) & 1917 (1.14$\times$) & 392 (2.52$\times$) & 385 (4.09$\times$) & 69.6 & 56.4 & 31.3 & 50.0 & 57.7 & 67.2 & 45.9 & 20.3 & 49.8 \\
+KM10 (10\%) & 1893 (1.15$\times$) & 316 (3.13$\times$) & 373 (4.21$\times$) & 67.4 & 48.6 & 28.8 & 44.2 & 55.6 & 55.3 & 33.7 & 1.5 & 41.9 \\
+\midrule
+Std. error & & & & 1.1 & 1.0 & 1.4 & 0.5 & 1.4 & 0.8 & 0.4 & 1.3 &  \\
+\bottomrule
+\end{tabular}}
+\end{adjustbox}
+\caption{Accuracy (\%, higher is better) of the Hardware-aware + KV cache models, with the unweighted average. The windows drop no token on these benchmarks (Section~\ref{B-sec:turn}). Params: the weights on the GPU; KV cache: of 4 agents at 32{,}000 tokens. In parentheses: after the latency, the speedup over the uncompressed model (2186\,ms); after a size, the compression ratio.}\label{tab:kvresults}
+\end{table}
+\end{frame}
+
+\begin{frame}{Benchmarks: long context, A100}{Hardware-aware + KV cache}
+\begin{table}
+\centering
+\begin{adjustbox}{width=\linewidth, totalheight=0.64\textheight, keepaspectratio, center}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccccccccc}
+\toprule
+Model & Latency & Params & KV cache & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Avg. \\
+($\dloss$ (\%)) & (ms) & (MB) & (MB) &  &  &  &  &  &  &  &  & Gap (\%) \\
+\midrule
+\multicolumn{13}{l}{\emph{Fastest within the level}} \\
+KT0 (0\%) & 2067 (1.06$\times$) & 988 (1.00$\times$) & 1281 (1.23$\times$) & $-0.3$ & $-0.3$ & $+0.6$ & $-0.1$ & $+1.2$ & $-0.1$ & $-0.1$ & $+0.3$ & $-0.3$ \\
+KT1 (1\%) & 1838 (1.19$\times$) & 971 (1.02$\times$) & 959 (1.64$\times$) & $-0.4$ & $+2.1$ & $+0.9$ & $-0.7$ & $+1.0$ & $-1.9$ & $-0.5$ & $-2.7$ & 0.5 \\
+KT2 (2\%) & 1814 (1.21$\times$) & 763 (1.30$\times$) & 983 (1.60$\times$) & $-0.4$ & $+0.1$ & $+0.1$ & $-0.7$ & $+1.6$ & $-0.9$ & $-0.7$ & $-1.6$ & 0.6 \\
+KT5 (5\%) & 1812 (1.21$\times$) & 719 (1.37$\times$) & 959 (1.64$\times$) & $-2.4$ & $-6.9$ & $-2.3$ & $-5.9$ & $+2.1$ & $-6.3$ & $-5.6$ & $-27.3$ & 13.1 \\
+KT10 (10\%) & 1794 (1.22$\times$) & 660 (1.50$\times$) & 983 (1.60$\times$) & $-3.1$ & $-8.6$ & $-4.9$ & $-8.6$ & $+1.0$ & $-13.8$ & $-13.3$ & $-28.5$ & 19.2 \\
+\addlinespace
+\multicolumn{13}{l}{\emph{Least memory within the level}} \\
+KM0 (0\%) & 2115 (1.03$\times$) & 988 (1.00$\times$) & 852 (1.85$\times$) & $-0.5$ & $+0.3$ & $0.0$ & $-0.1$ & $+0.7$ & $-0.4$ & $-0.1$ & $+0.4$ & $-0.1$ \\
+KM1 (1\%) & 1963 (1.11$\times$) & 837 (1.18$\times$) & 434 (3.62$\times$) & $-1.1$ & $+0.6$ & $-0.9$ & $-0.4$ & $+1.9$ & $-0.6$ & $-1.2$ & $-4.3$ & 1.4 \\
+KM2 (2\%) & 1936 (1.13$\times$) & 614 (1.61$\times$) & 459 (3.42$\times$) & $-0.4$ & $+1.1$ & $-0.4$ & $-1.3$ & $+0.1$ & $-3.3$ & $-1.0$ & $-7.3$ & 3.0 \\
+KM5 (5\%) & 1917 (1.14$\times$) & 392 (2.52$\times$) & 385 (4.09$\times$) & $-1.0$ & $-2.8$ & $-1.7$ & $-2.4$ & $+2.5$ & $-0.5$ & $-1.1$ & $-10.0$ & 4.0 \\
+KM10 (10\%) & 1893 (1.15$\times$) & 316 (3.13$\times$) & 373 (4.21$\times$) & $-3.2$ & $-10.6$ & $-4.2$ & $-8.2$ & $+0.4$ & $-12.4$ & $-13.3$ & $-28.8$ & 19.3 \\
+\bottomrule
+\end{tabular}}
+\end{adjustbox}
+\caption{Change in accuracy of the Hardware-aware + KV cache models against the uncompressed model (percentage points; negative is a loss). Params: the weights on the GPU; KV cache: of 4 agents at 32{,}000 tokens. In parentheses: after the latency, the speedup over the uncompressed model (2186\,ms); after a size, the compression ratio. Avg.\ Gap: how far the compressed model's average accuracy falls below the uncompressed model's, as a percentage of it (negative: above it).}\label{tab:kvdelta}
+\end{table}
+\end{frame}
+
+\begin{frame}{Benchmarks: Comparison of the methods}{}
+\begin{table}
+\centering
+\begin{adjustbox}{width=\linewidth, totalheight=0.64\textheight, keepaspectratio, center}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{1.7pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccccccccccccc}
+\toprule
+Model & Calib & Reply & Token & Storage & Params & KV cache & PIQA & ARC-e & ARC-c & HellaS. & WinoG. & BoolQ & MMLU & GSM8K & Average & Avg. \\
+($\dloss$ (\%)) & loss (\%) & latency (ms) & latency (ms) & (MB) & (MB) & (MB) & &  &  &  &  &  & 5-shot & 5-shot &  & Gap (\%) \\
+\midrule
+Uncompressed & 0.00 & 2186 (1.00$\times$) & 5.27 (1.00$\times$) & 988 (1.00$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 70.5 & 59.2 & 33.1 & 52.4 & 55.6 & 67.8 & 47.0 & 30.7 & 52.0 & 0.0 \\
+\addlinespace
+\multicolumn{17}{l}{\emph{UBQ-ECSQ: least stored size}} \\
+Q0 (0\%) & 0.12 & 2186 (1.00$\times$) & 5.27 (1.00$\times$) & 495 (2.00$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 70.2 & 59.9 & 33.5 & 52.4 & 56.6 & 68.4 & 47.0 & 31.7 & 52.5 & $-0.8$ \\
+Q1 (1\%) & 1.00 & 2186 (1.00$\times$) & 5.27 (1.00$\times$) & 414 (2.39$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 70.2 & 59.6 & 33.7 & 52.5 & 55.9 & 64.3 & 46.5 & 27.6 & 51.3 & 1.4 \\
+Q2 (2\%) & 1.61 & 2186 (1.00$\times$) & 5.27 (1.00$\times$) & 372 (2.66$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 69.5 & 61.0 & 32.8 & 52.0 & 54.2 & 66.6 & 46.1 & 26.7 & 51.1 & 1.8 \\
+Q5 (5\%) & 4.75 & 2186 (1.00$\times$) & 5.27 (1.00$\times$) & 310 (3.19$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 69.2 & 55.2 & 32.0 & 50.0 & 56.4 & 49.7 & 45.0 & 9.7 & 45.9 & 11.8 \\
+Q10 (10\%) & 9.87 & 2186 (1.00$\times$) & 5.27 (1.00$\times$) & 309 (3.20$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 67.5 & 56.2 & 31.0 & 47.7 & 57.2 & 56.1 & 38.3 & 12.6 & 45.8 & 11.9 \\
+\emph{Mean $\pm$ std} & 3.47 $\pm$ 3.98 & 2186 $\pm$ 0 & 5.27 $\pm$ 0.00 & 380 $\pm$ 78 & 988 $\pm$ 0 & 1573 $\pm$ 0 & 69.3 $\pm$ 1.1 & 58.4 $\pm$ 2.5 & 32.6 $\pm$ 1.1 & 50.9 $\pm$ 2.0 & 56.1 $\pm$ 1.1 & 61.0 $\pm$ 7.9 & 44.6 $\pm$ 3.6 & 21.7 $\pm$ 9.8 & 49.3 $\pm$ 3.2 & 5.2 $\pm$ 6.1 \\
+\addlinespace
+\multicolumn{17}{l}{\emph{Hardware-aware, A100, 2 objectives: fastest decode step}} \\
+A0 (0\%) & 0.17 & 2185 (1.00$\times$) & 5.23 (1.01$\times$) & 910 (1.09$\times$) & 910 (1.09$\times$) & 1573 (1.00$\times$) & 70.5 & 60.9 & 33.2 & 52.3 & 55.4 & 68.5 & 46.6 & 30.5 & 52.2 & $-0.4$ \\
+A1 (1\%) & 0.89 & 2170 (1.01$\times$) & 5.07 (1.04$\times$) & 701 (1.41$\times$) & 701 (1.41$\times$) & 1573 (1.00$\times$) & 70.9 & 58.8 & 32.4 & 51.4 & 55.6 & 67.1 & 46.6 & 28.1 & 51.4 & 1.3 \\
+A2 (2\%) & 1.47 & 2162 (1.01$\times$) & 5.00 (1.05$\times$) & 616 (1.60$\times$) & 616 (1.60$\times$) & 1573 (1.00$\times$) & 70.0 & 59.8 & 32.7 & 50.7 & 56.7 & 66.2 & 46.0 & 27.1 & 51.1 & 1.7 \\
+A5 (5\%) & 4.44 & 2070 (1.06$\times$) & 4.71 (1.12$\times$) & 293 (3.38$\times$) & 293 (3.38$\times$) & 1507 (1.04$\times$) & 68.2 & 55.4 & 30.5 & 49.2 & 54.6 & 67.2 & 45.6 & 19.6 & 48.8 & 6.2 \\
+A10 (10\%) & 9.72 & 1898 (1.15$\times$) & 4.38 (1.20$\times$) & 293 (3.37$\times$) & 293 (3.37$\times$) & 1311 (1.20$\times$) & 67.2 & 58.1 & 30.5 & 46.9 & 55.7 & 60.2 & 41.6 & 5.8 & 45.8 & 12.1 \\
+\emph{Mean $\pm$ std} & 3.34 $\pm$ 3.92 & 2097 $\pm$ 120 & 4.88 $\pm$ 0.33 & 562 $\pm$ 268 & 562 $\pm$ 268 & 1507 $\pm$ 114 & 69.4 $\pm$ 1.6 & 58.6 $\pm$ 2.1 & 31.9 $\pm$ 1.2 & 50.1 $\pm$ 2.1 & 55.6 $\pm$ 0.7 & 65.8 $\pm$ 3.2 & 45.3 $\pm$ 2.1 & 22.2 $\pm$ 10.1 & 49.9 $\pm$ 2.6 & 4.2 $\pm$ 5.0 \\
+\addlinespace
+\multicolumn{17}{l}{\emph{Mix with sharing: least stored size}} \\
+W0 (0\%) & 0.00 & 2186 (1.00$\times$) & 5.27 (1.00$\times$) & 947 (1.04$\times$) & 988 (1.00$\times$) & 1573 (1.00$\times$) & 70.2 & 59.3 & 33.8 & 52.5 & 56.6 & 67.7 & 46.9 & 29.9 & 52.1 & $-0.2$ \\
+W1 (1\%) & 0.91 & 2146 (1.02$\times$) & 5.12 (1.03$\times$) & 673 (1.47$\times$) & 948 (1.04$\times$) & 1573 (1.00$\times$) & 69.6 & 59.9 & 33.2 & 51.3 & 56.0 & 65.4 & 45.7 & 24.0 & 50.6 & 2.7 \\
+W2 (2\%) & 1.90 & 2184 (1.00$\times$) & 5.03 (1.05$\times$) & 346 (2.86$\times$) & 528 (1.87$\times$) & 1573 (1.00$\times$) & 69.7 & 59.3 & 32.5 & 50.8 & 57.5 & 66.5 & 45.5 & 27.3 & 51.1 & 1.7 \\
+W5 (5\%) & 3.43 & 2147 (1.02$\times$) & 4.96 (1.06$\times$) & 272 (3.63$\times$) & 423 (2.34$\times$) & 1573 (1.00$\times$) & 70.0 & 61.2 & 32.5 & 50.3 & 55.5 & 65.6 & 45.5 & 25.9 & 50.8 & 2.3 \\
+W10 (10\%) & 9.80 & 2138 (1.02$\times$) & 4.96 (1.06$\times$) & 232 (4.25$\times$) & 639 (1.55$\times$) & 1573 (1.00$\times$) & 67.2 & 52.7 & 30.5 & 45.7 & 56.5 & 50.6 & 36.3 & 2.7 & 42.8 & 17.8 \\
+\emph{Mean $\pm$ std} & 3.21 $\pm$ 3.90 & 2160 $\pm$ 23 & 5.07 $\pm$ 0.13 & 494 $\pm$ 307 & 705 $\pm$ 252 & 1573 $\pm$ 0 & 69.3 $\pm$ 1.2 & 58.5 $\pm$ 3.3 & 32.5 $\pm$ 1.3 & 50.1 $\pm$ 2.6 & 56.4 $\pm$ 0.7 & 63.1 $\pm$ 7.1 & 44.0 $\pm$ 4.3 & 22.0 $\pm$ 11.0 & 49.5 $\pm$ 3.8 & 4.9 $\pm$ 7.3 \\
+\addlinespace
+\multicolumn{17}{l}{\emph{Hardware-aware + KV cache: least memory}} \\
+KM0 (0\%) & $-0.02$ & 2115 (1.03$\times$) & 5.23 (1.01$\times$) & 988 (1.00$\times$) & 988 (1.00$\times$) & 852 (1.85$\times$) & 70.1 & 59.5 & 33.0 & 52.3 & 55.9 & 67.3 & 46.9 & 30.7 & 52.0 & 0.1 \\
+KM1 (1\%) & 0.96 & 1963 (1.11$\times$) & 4.99 (1.06$\times$) & 837 (1.18$\times$) & 837 (1.18$\times$) & 434 (3.62$\times$) & 69.5 & 59.8 & 32.1 & 52.0 & 57.1 & 67.1 & 45.8 & 26.0 & 51.2 & 1.6 \\
+KM2 (2\%) & 1.98 & 1936 (1.13$\times$) & 4.89 (1.08$\times$) & 614 (1.61$\times$) & 614 (1.61$\times$) & 459 (3.42$\times$) & 70.2 & 60.3 & 32.6 & 51.1 & 55.3 & 64.4 & 46.0 & 23.0 & 50.4 & 3.2 \\
+KM5 (5\%) & 3.88 & 1917 (1.14$\times$) & 4.71 (1.12$\times$) & 392 (2.52$\times$) & 392 (2.52$\times$) & 385 (4.09$\times$) & 69.6 & 56.4 & 31.3 & 50.0 & 57.7 & 67.2 & 45.9 & 20.3 & 49.8 & 4.3 \\
+KM10 (10\%) & 9.74 & 1893 (1.15$\times$) & 4.62 (1.14$\times$) & 316 (3.13$\times$) & 316 (3.13$\times$) & 373 (4.21$\times$) & 67.4 & 48.6 & 28.8 & 44.2 & 55.6 & 55.3 & 33.7 & 1.5 & 41.9 & 19.5 \\
+\emph{Mean $\pm$ std} & 3.31 $\pm$ 3.87 & 1965 $\pm$ 88 & 4.89 $\pm$ 0.24 & 629 $\pm$ 286 & 629 $\pm$ 286 & 501 $\pm$ 200 & 69.3 $\pm$ 1.2 & 56.9 $\pm$ 4.9 & 31.6 $\pm$ 1.7 & 49.9 $\pm$ 3.3 & 56.3 $\pm$ 1.0 & 64.3 $\pm$ 5.2 & 43.7 $\pm$ 5.6 & 20.3 $\pm$ 11.2 & 49.0 $\pm$ 4.1 & 5.7 $\pm$ 7.9 \\
+\bottomrule
+\end{tabular}}
+\end{adjustbox}
+\caption{Accuracy (\%) of the five selected models of each method. Latencies at 32k tokens of context: a full reply and one generation step. In parentheses: speedup or size reduction. Uncompressed: mean of two benchmark runs. Avg.\ Gap: average accuracy lost against it (\%). Mean $\pm$ std: over each method's five models.}\label{tab:compare}
 \end{table}
 \end{frame}
 

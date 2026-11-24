@@ -176,15 +176,63 @@ class DecodedDuplicateElimination(ElementwiseDuplicateElimination):
 class Search:
     """One run of a turn-time search in args.out_dir. Rerunning the same command continues it. A subclass can score more
     than the calibration loss (extra_scores, run with the configuration applied), constrain those scores (extra_constraints:
-    functions of a solution's row, feasible at <= 0) and add to each solution's log line (note)."""
+    functions of a solution's row, feasible at <= 0) and add to each solution's log line (note).
+
+    A search with another quality objective (scripts/compress_search_tpot.py: KL divergence) sets `quality` to its column,
+    returns it from quality_scores, sets quality_limit / test_quality_limit after __init__, and can replace the log texts
+    (result_text, baseline_text, generation_text, front_text, test_text) and the test scoring (test_sets, prepare_test,
+    test_scores). The defaults are the turn-time searches' own."""
 
     extra_constraints = ()
+    quality = "delta_loss"  # the first objective: a column of each solution's row
 
     def extra_scores(self):
         return {}
 
     def note(self, r):
         return ""
+
+    def quality_scores(self):
+        """The quality of the configuration written into the model: the calibration loss and its increase."""
+        loss = self.eval_loss(self.calib)
+        if not math.isfinite(loss):
+            loss = 1e6  # a broken model: dominated by everything, but the run goes on
+        return {"loss": loss, "delta_loss": loss - self.baseline_loss, "ppl": math.exp(min(loss, 700.0))}
+
+    def result_text(self, r):
+        return (f"delta {r['delta_loss']:+.4f} turn {r['latency_ms']:.0f} ms size {r['size_mb']:.0f} MB "
+                f"memory {r['memory_mb']:.0f} MB")
+
+    def baseline_text(self, b):
+        return (f"Uncompressed: an agent's turn takes {b['latency_ms']:.0f} ms ({b['prompt_us']:.0f} us per prompt token, "
+                f"{b['decode_us']:.0f} us per generated token), {b['size_mb']:.0f} MB stored, "
+                f"{b['memory_mb']:.0f} MB deployed (KV cache {b['kv_mb']:.0f} MB), {b['agents_fit']} agents fit")
+
+    def generation_text(self, s):
+        return (f", best delta loss {s['best_delta_loss']:+.4f}, fastest turn {s['min_latency_ms']:.0f} ms, "
+                f"smallest {s['min_size_mb']:.0f} MB stored, {s['min_memory_mb']:.0f} MB deployed")
+
+    def front_text(self, r):
+        """A row of the final front's table, or its header for r None."""
+        if r is None:
+            return f"{'delta':>8} {'turn':>9} {'stored':>7} {'deployed':>8} {'agents':>6}  configuration"
+        return (f"{r['delta_loss']:+8.4f} {r['latency_ms']:7.0f}ms {r['size_mb']:5.0f}MB {r['memory_mb']:6.0f}MB "
+                f"{r['agents_fit']:6.0f}  {r['config']}")
+
+    def test_sets(self):
+        a = self.args
+        return compress_eval.load_test_sets(self.tokenizer, a.test_seq_len, a.wikitext_seqs, a.c4_test_seqs, cache_key=a.model)
+
+    def prepare_test(self, test_sets):
+        """Called once with the uncompressed model in place, before any test score."""
+
+    def test_scores(self, name, tokens):
+        """Scores of the model as it is (uncompressed, or a solution written into it) on one test set."""
+        loss = self.eval_loss(tokens)
+        return {f"{name}_loss": loss, f"{name}_ppl": math.exp(min(loss, 700.0))}
+
+    def test_text(self, name, entry, baseline):
+        return f"{name} ppl {entry[f'{name}_ppl']:.2f} (base {baseline[f'{name}_ppl']:.2f})"
 
     def __init__(self, args, script):
         self.args = args
@@ -216,6 +264,7 @@ class Search:
         self.act_sq, self.removal = self._statistics()
         self.formats = [f for f in args.formats.split(",") if f]
         self.mlp_keep = sorted({float(k) for k in args.mlp_keep.split(",")} | {1.0}, reverse=True)
+        self.quality_limit, self.test_quality_limit = args.max_delta_loss, args.test_max_delta_loss
 
     def out(self, name):
         return os.path.join(self.args.out_dir, name)
@@ -355,12 +404,10 @@ class Search:
         b = self.baseline
         print(f"{len(compressor.genes)} genes ({', '.join(f'{n}:{k}' for n, k in compressor.genes)}), originals "
               f"{'offloaded to CPU' if compressor.offloaded else 'kept on GPU'}", flush=True)
-        print(f"Uncompressed: an agent's turn takes {b['latency_ms']:.0f} ms ({b['prompt_us']:.0f} us per prompt token, "
-              f"{b['decode_us']:.0f} us per generated token), {b['size_mb']:.0f} MB stored, "
-              f"{b['memory_mb']:.0f} MB deployed (KV cache {b['kv_mb']:.0f} MB), {b['agents_fit']} agents fit", flush=True)
+        print(self.baseline_text(b), flush=True)
         atomic_dump({"args": {**{k: v for k, v in vars(a).items() if k != "fixed_extra"}, "calib_every": 0},  # read by compress_compare
                      "git_commit": self.git_commit, "genes": compressor.genes, "baseline_size_mb": b["size_mb"],
-                     "baseline": {"loss": self.baseline_loss, "delta_loss": 0.0, **b},
+                     "baseline": {"loss": self.baseline_loss, "delta_loss": 0.0, self.quality: 0.0, **b},
                      "latency_table": {k: decode_table[k] for k in ("gpu", "torch", "batch", "context", "formats")},
                      "layout": {"n_layer": L.n_layer, "intermediate": L.intermediate, "tied": L.tied,
                                 "n_target_params": compressor.n_target_params, "rest_params": compressor.rest_params}},
@@ -368,7 +415,7 @@ class Search:
 
         self.cost_objectives = [COST_STAT[o] for o in a.objectives]
         self.problem = Problem(n_var=len(compressor.genes), n_obj=1 + len(self.cost_objectives),
-                               n_ieq_constr=(a.max_delta_loss is not None) + (a.memory_budget_mb is not None) + len(self.extra_constraints),
+                               n_ieq_constr=(self.quality_limit is not None) + (a.memory_budget_mb is not None) + len(self.extra_constraints),
                                xl=np.zeros(len(compressor.genes)), xu=np.array([n - 1 for _, n in compressor.genes], dtype=float))
         if os.path.exists(self.out("checkpoint.pkl")):
             with open(self.out("checkpoint.pkl"), "rb") as f:
@@ -393,7 +440,8 @@ class Search:
         self.evals_log = CsvLog(self.out("evals.csv"), self.eval_fields)
         self.pop_log = CsvLog(self.out("population.csv"), self.pop_fields, keep_upto=done_gen)
         self.front_log = CsvLog(self.out("front.csv"), self.pop_fields, keep_upto=done_gen)
-        self.gen_log = CsvLog(self.out("generations.csv"), GEN_FIELDS, keep_upto=done_gen)
+        self.gen_fields = [f"best_{self.quality}" if f == "best_delta_loss" else f for f in GEN_FIELDS]
+        self.gen_log = CsvLog(self.out("generations.csv"), self.gen_fields, keep_upto=done_gen)
         norm = self.out("normalization.json")
         self.nadir = np.array(json.load(open(norm))["nadir"]) if os.path.exists(norm) else None
 
@@ -410,14 +458,11 @@ class Search:
         t0 = time.time()
         try:
             stored = c.apply(cfg)
-            loss = self.eval_loss(self.calib)
+            quality = self.quality_scores()
             extra = self.extra_scores()
         finally:
             c.restore()
-        if not math.isfinite(loss):
-            loss = 1e6  # a broken model: dominated by everything, but the run goes on
-        return {"loss": loss, "delta_loss": loss - self.baseline_loss, "ppl": math.exp(min(loss, 700.0)), **c.cost(cfg), **stored, **extra,
-                "seconds": round(time.time() - t0, 2)}
+        return {**quality, **c.cost(cfg), **stored, **extra, "seconds": round(time.time() - t0, 2)}
 
     def _evaluate_all(self, individuals, gen, role):
         """Objectives and constraints of each individual (from the cache when seen before). Returns (F, G, n_reused)."""
@@ -432,11 +477,11 @@ class Search:
                 self.cache[key] = r = self._evaluate(genes)
                 text = c.describe(c.config(genes))
                 self.evals_log.write([{"gen": gen, "role": role, "key": key, "config": text, **dict(zip(self.gene_names, genes)), **r}])
-                print(f"gen {gen} {role} [{i + 1}/{len(individuals)}] {text} | delta {r['delta_loss']:+.4f} turn {r['latency_ms']:.0f} ms "
-                      f"size {r['size_mb']:.0f} MB memory {r['memory_mb']:.0f} MB{self.note(r)} ({r['seconds']:.1f}s)", flush=True)
+                print(f"gen {gen} {role} [{i + 1}/{len(individuals)}] {text} | {self.result_text(r)}{self.note(r)} "
+                      f"({r['seconds']:.1f}s)", flush=True)
             r = self.cache[key]
-            F.append([r["delta_loss"]] + [r[s] for s in self.cost_objectives])
-            G.append(([r["delta_loss"] - a.max_delta_loss] if a.max_delta_loss is not None else [])
+            F.append([r[self.quality]] + [r[s] for s in self.cost_objectives])
+            G.append(([r[self.quality] - self.quality_limit] if self.quality_limit is not None else [])
                      + ([r["memory_mb"] - a.memory_budget_mb] if a.memory_budget_mb is not None else [])
                      + [f(r) for f in self.extra_constraints])
         return np.array(F), np.array(G), n_reused
@@ -465,13 +510,13 @@ class Search:
             if self.nadir is None and len(front_F):  # fixed once, from the first front with a feasible solution
                 self.nadir = front_F.max(axis=0)
                 if self.nadir[0] <= 0:  # the whole front is at least as good as the original: use the population's worst
-                    self.nadir[0] = max(alg.pop.get("F")[:, 0].max(), a.max_delta_loss or 1.0)
-                atomic_dump({"nadir": self.nadir.tolist(), "objectives": ["delta_loss", *self.cost_objectives], "gen": gen},
+                    self.nadir[0] = max(alg.pop.get("F")[:, 0].max(), self.quality_limit or 1.0)
+                atomic_dump({"nadir": self.nadir.tolist(), "objectives": [self.quality, *self.cost_objectives], "gen": gen},
                             self.out("normalization.json"), json)
             hv = float(HV(ref_point=np.ones(self.problem.n_obj))(front_F / self.nadir)) if len(front_F) else 0.0
             best = lambda col: min(self.cache[self.key_of(c.decode(x))][col] for x in opt.get("X")) if len(opt) else None
             summary = {"gen": gen, "hypervolume": hv, "front_size": len(opt), "n_feasible": int(alg.pop.get("feas").sum()),
-                       "n_offspring": len(offspring), "n_reused": n_reused, "best_delta_loss": best("delta_loss"),
+                       "n_offspring": len(offspring), "n_reused": n_reused, f"best_{self.quality}": best(self.quality),
                        "min_latency_ms": best("latency_ms"), "min_size_mb": best("size_mb"), "min_memory_mb": best("memory_mb"),
                        "seconds": round(time.time() - t_gen, 1), "peak_gpu_mb": round(torch.cuda.max_memory_allocated() / 1e6)}
             self.pop_log.write(self._rows(alg.pop, gen))
@@ -480,9 +525,7 @@ class Search:
             atomic_dump(alg, self.out("checkpoint.pkl"), dill)  # last: a crash before this re-runs the generation from the cache
             print(f"=== generation {gen}/{a.n_gen} done in {summary['seconds']:.0f}s ({n_reused} reused), HV {hv:.5f}, "
                   f"front {len(opt)} points, {summary['n_feasible']}/{len(alg.pop)} feasible" +
-                  (f", best delta loss {summary['best_delta_loss']:+.4f}, fastest turn {summary['min_latency_ms']:.0f} ms, "
-                   f"smallest {summary['min_size_mb']:.0f} MB stored, {summary['min_memory_mb']:.0f} MB deployed" if len(opt)
-                   else ", no feasible solution yet"), flush=True)
+                  (self.generation_text(summary) if len(opt) else ", no feasible solution yet"), flush=True)
 
     # --- the final front: summary, then test-set scores (resumable: test_scores.json is written after each solution)
 
@@ -490,15 +533,14 @@ class Search:
         a, b, alg, c = self.args, self.baseline, self.algorithm, self.compressor
         first = self.cost_objectives[0]
         front = sorted(self._rows(alg.opt[alg.opt.get("feas")], alg.n_gen - 1), key=lambda r: r[first])
-        print(f"\nFinal front ({len(front)} points, sorted by {first}); uncompressed: turn {b['latency_ms']:.0f} ms, "
-              f"{b['size_mb']:.0f} MB stored, {b['memory_mb']:.0f} MB deployed", flush=True)
-        print(f"{'delta':>8} {'turn':>9} {'stored':>7} {'deployed':>8} {'agents':>6}  configuration", flush=True)
+        print(f"\nFinal front ({len(front)} points, sorted by {first}). {self.baseline_text(b)}", flush=True)
+        print(self.front_text(None), flush=True)
         for r in front:
-            print(f"{r['delta_loss']:+8.4f} {r['latency_ms']:7.0f}ms {r['size_mb']:5.0f}MB {r['memory_mb']:6.0f}MB {r['agents_fit']:6.0f}  {r['config']}", flush=True)
+            print(self.front_text(r), flush=True)
         if a.wikitext_seqs == 0 and a.c4_test_seqs == 0:
             print("Test scoring skipped (no test windows)", flush=True)
             return
-        scored = [r for r in front if r["delta_loss"] <= a.test_max_delta_loss]
+        scored = [r for r in front if r[self.quality] <= self.test_quality_limit]
         if a.test_max_points is not None and len(scored) > a.test_max_points:
             scored = [scored[j] for j in np.linspace(0, len(scored) - 1, a.test_max_points).round().astype(int)]
         settings = {"seq_len": a.test_seq_len, "wikitext_seqs": a.wikitext_seqs, "c4_test_seqs": a.c4_test_seqs}
@@ -507,13 +549,13 @@ class Search:
         if results is None or results["settings"] != settings:
             results = {"settings": settings, "baseline": None, "pareto": []}  # the layout of compress_score's
         done = {p["key"] for p in results["pareto"]}
-        test_sets = compress_eval.load_test_sets(self.tokenizer, a.test_seq_len, a.wikitext_seqs, a.c4_test_seqs, cache_key=a.model)
+        test_sets = self.test_sets()
         print(f"Scoring {len(scored)} front solutions on " + ", ".join(f"{n} ({t.size(0)} windows)" for n, t in test_sets.items()), flush=True)
+        self.prepare_test(test_sets)
         if results["baseline"] is None:
             results["baseline"] = {k: b[k] for k in ("latency_ms", "size_mb", "memory_mb")}
             for name, tokens in test_sets.items():
-                results["baseline"][f"{name}_loss"] = loss = self.eval_loss(tokens)
-                results["baseline"][f"{name}_ppl"] = math.exp(loss)
+                results["baseline"].update(self.test_scores(name, tokens))
             atomic_dump(results, path, json)
         for r in scored:
             if r["key"] in done:
@@ -523,14 +565,13 @@ class Search:
             try:
                 c.apply(c.config(c.decode([r[n] for n in self.gene_names])))
                 for name, tokens in test_sets.items():
-                    entry[f"{name}_loss"] = loss = self.eval_loss(tokens)
-                    entry[f"{name}_ppl"] = math.exp(min(loss, 700.0))
+                    entry.update(self.test_scores(name, tokens))
             finally:
                 c.restore()
             results["pareto"].append(entry)
             atomic_dump(results, path, json)
-            print(f"  {r['latency_ms']:.0f} ms {r['memory_mb']:.0f} MB: " + ", ".join(
-                f"{n} ppl {entry[f'{n}_ppl']:.2f} (base {results['baseline'][f'{n}_ppl']:.2f})" for n in test_sets)
+            print(f"  {self.result_text(r)}: " + ", ".join(
+                self.test_text(n, entry, results["baseline"]) for n in test_sets)
                 + f" ({time.time() - t0:.0f}s)", flush=True)
         print(f"Done. Test scores in {path}", flush=True)
 

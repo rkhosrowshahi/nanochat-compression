@@ -51,6 +51,14 @@ search.method: kv2 is its second version (scripts/compress_search_kv2.py: per-ch
 planted-fact recall as a constraint, decode timed with a kernel that reads the quantized cache; needs Triton): the mix keys
 without sharing, plus kv_keys, kv_values, kv_windows, kv_group, recall_seqs, min_recall, recall_batch. Steps: search and plot.
 
+search.method: tpot is the search for decode speed (scripts/compress_search_tpot.py): format per matrix role and band (bands =
+number of layers: per layer), objectives KL divergence on code + TPOT at batch 1 + weight memory. Steps: search (it scores its
+final front itself). Keys:
+    search:             method: tpot, pop_size, n_gen, seed, objectives ([time], [memory] or both), max_kld,
+                        memory_budget_mb, context, formats, bands, mlp_keep, max_skip, no_embeddings, clip_ratios
+    calibration:        seqs, seq_len, data_seed (code conversations: bigcode/self-oss-instruct-sc2-exec-filter-50k)
+    test:               seq_len, code_seqs, wikitext_seqs, c4_seqs, max_kld, max_points
+
 search.method: mix_simple searches the deployed formats only (scripts/compress_search_mix_simple.py), with the mix keys. Steps:
 search, plot and storage, the optional storage step on its final front (scripts/compress_storage.py). --steps storage also
 works on a finished hw run. Key:
@@ -90,9 +98,15 @@ SEARCH_MIX = {"method", "pop_size", "n_gen", "seed", "objectives", "max_delta_lo
 SEARCH_KV = SEARCH_MIX | {"kv_precisions", "kv_windows"}
 # search.method: kv2 (scripts/compress_search_kv2.py)
 SEARCH_KV2 = SEARCH_MIX | {"kv_keys", "kv_values", "kv_windows", "kv_group", "recall_seqs", "min_recall", "recall_batch"}
-SEARCH_BY_METHOD = {"mix": SEARCH_MIX, "kv": SEARCH_KV, "mix_simple": SEARCH_MIX, "kv2": SEARCH_KV2}
+# search.method: tpot (scripts/compress_search_tpot.py)
+SEARCH_TPOT = {"method", "pop_size", "n_gen", "seed", "objectives", "max_kld", "memory_budget_mb", "context", "formats", "bands",
+               "mlp_keep", "max_skip", "no_embeddings", "clip_ratios", "importance_seqs"}
+TEST_TPOT = {"seq_len": "test_seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_test_seqs", "code_seqs": "code_test_seqs",
+             "max_kld": "test_max_kld", "max_points": "test_max_points"}
+SEARCH_BY_METHOD = {"mix": SEARCH_MIX, "kv": SEARCH_KV, "mix_simple": SEARCH_MIX, "kv2": SEARCH_KV2, "tpot": SEARCH_TPOT}
 SCRIPT_BY_METHOD = {"hw": "scripts.compress_search_hw", "mix": "scripts.compress_search_mix", "kv": "scripts.compress_search_kv",
-                    "mix_simple": "scripts.compress_search_mix_simple", "kv2": "scripts.compress_search_kv2"}
+                    "mix_simple": "scripts.compress_search_mix_simple", "kv2": "scripts.compress_search_kv2",
+                    "tpot": "scripts.compress_search_tpot"}
 STORAGE = {"k", "max_points"}
 CALIBRATION_HW = {k: v for k, v in CALIBRATION.items() if k != "every"}
 TEST_HW = {"seq_len": "test_seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_test_seqs",
@@ -147,17 +161,19 @@ mix = method in SEARCH_BY_METHOD  # the turn-time searches
 hw = mix or method == "hw"  # they run like hw, each with its own script and no validation
 check_keys(search, SEARCH_BY_METHOD[method] if mix else SEARCH_HW if hw else SEARCH, "search")
 check_keys(calib, CALIBRATION_HW if hw else CALIBRATION, "calibration")
-check_keys(test, TEST_HW if hw else TEST, "test")
+check_keys(test, TEST_TPOT if method == "tpot" else TEST_HW if hw else TEST, "test")
 check_keys(validate, VALIDATE if hw and not mix else {}, "validate")
 check_keys(storage, STORAGE if method in ("hw", "mix_simple") else {}, "storage")
 if hw and cfg.get("include"):
     sys.exit(f"{args.config}: search.method {search['method']} has no 'include': lm_head and the embeddings are genes of the search")
-steps = args.steps or (["search", "plot", "storage"] if method == "mix_simple" else ["search", "plot"] if mix
+steps = args.steps or (["search"] if method == "tpot" else ["search", "plot", "storage"] if method == "mix_simple" else ["search", "plot"] if mix
                        else ["search", "plot", "validate"] if hw else ["search", "score", "plot"])
 if "validate" in steps and (mix or not hw):
     sys.exit("--steps validate is for search.method hw")
 if "storage" in steps and method not in ("hw", "mix_simple"):
     sys.exit("--steps storage is for search.method hw and mix_simple")
+if "plot" in steps and method == "tpot":
+    sys.exit("--steps plot: compress_plot does not plot KL divergence fronts yet (search.method tpot)")
 assert "model" in cfg, f"{args.config}: 'model' is required"
 out_dir = cfg.get("out_dir") or os.path.join("compress_runs", os.path.splitext(os.path.basename(args.config))[0])
 if args.smoke:
@@ -197,7 +213,7 @@ common = {"model": cfg["model"], "dtype": cfg.get("dtype"), "offload_originals":
           "include": cfg.get("include") or None}
 batch = cfg.get("eval_batch_size", 1)
 max_delta = test.pop("max_delta_loss", search.get("max_delta_loss", 1.0))
-if hw:  # passed on as --test-max-delta-loss
+if hw and method != "tpot":  # passed on as --test-max-delta-loss (tpot: test.max_kld)
     test["max_delta_loss"] = max_delta
 
 
@@ -221,7 +237,7 @@ if hw:
     if {"search", "score"} & set(steps):  # one script: rerun, it resumes, then scores what is missing
         run("search", py + [SCRIPT_BY_METHOD[method]] + flags({k: v for k, v in common.items() if k != "include"})
             + flags(search) + flags({CALIBRATION_HW[k]: v for k, v in calib.items()})
-            + flags({TEST_HW[k]: v for k, v in test.items()})
+            + flags({(TEST_TPOT if method == "tpot" else TEST_HW)[k]: v for k, v in test.items()})
             + ["--eval-batch-size", str(batch), "--out-dir", out_dir], log=False)  # it writes run.log itself
     if "plot" in steps:
         run("plot", py + ["scripts.compress_plot", "--run-dir", out_dir, "--all"])

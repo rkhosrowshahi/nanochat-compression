@@ -27,6 +27,7 @@ SHORT = {  # section titles that are too long for a slide
 BENCHMARK_TITLES = {
     "Hardware-aware compression on an RTX 3060": "Benchmarks: hardware-aware, RTX 3060",
     "Hardware-aware compression on an A100": "Benchmarks: hardware-aware, A100",
+    "Long-context searches on an A100": "Benchmarks: long context, A100",
 }
 
 BOX = {  # a table grows or shrinks to the slide's width or height, whichever it reaches first; a figure only shrinks

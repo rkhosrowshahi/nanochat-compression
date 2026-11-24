@@ -1,0 +1,540 @@
+{
+  "args": {
+    "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "dtype": "bfloat16",
+    "offload_originals": "yes",
+    "eval_batch_size": 1,
+    "calib_dataset": "bigcode/self-oss-instruct-sc2-exec-filter-50k",
+    "calib_config": "chat",
+    "calib_split": "calib",
+    "calib_seqs": 8,
+    "seq_len": 2048,
+    "data_seed": 0,
+    "calib_from": null,
+    "text_field": "text",
+    "importance_seqs": 4,
+    "objectives": [
+      "time",
+      "memory"
+    ],
+    "max_delta_loss": null,
+    "memory_budget_mb": null,
+    "serve_batch": 4,
+    "prompt_batch": 256,
+    "context": 640,
+    "new_tokens": 2000,
+    "gen_tokens": 300,
+    "vram_gb": 80.0,
+    "reserve": 0.1,
+    "formats": "bf16,int4_g32,int4_g64,int4_g128",
+    "bands": 28,
+    "mlp_keep": "1.0",
+    "max_skip": 0,
+    "no_embeddings": false,
+    "clip_ratios": "1.0,0.95,0.9,0.85,0.8,0.75",
+    "pop_size": 50,
+    "n_gen": 100,
+    "seed": 42,
+    "wikitext_seqs": 32,
+    "c4_test_seqs": 0,
+    "test_seq_len": 2048,
+    "test_max_delta_loss": 1.0,
+    "test_max_points": 8,
+    "out_dir": "compress_runs/coder15_tpot",
+    "max_kld": null,
+    "test_max_kld": 1.0,
+    "code_test_seqs": 64,
+    "calib_every": 0
+  },
+  "git_commit": "182fe0da7c3e4bd602cd0f1cb0dbd05055646f61",
+  "genes": [
+    [
+      "qkv_b0",
+      4
+    ],
+    [
+      "qkv_b1",
+      4
+    ],
+    [
+      "qkv_b2",
+      4
+    ],
+    [
+      "qkv_b3",
+      4
+    ],
+    [
+      "qkv_b4",
+      4
+    ],
+    [
+      "qkv_b5",
+      4
+    ],
+    [
+      "qkv_b6",
+      4
+    ],
+    [
+      "qkv_b7",
+      4
+    ],
+    [
+      "qkv_b8",
+      4
+    ],
+    [
+      "qkv_b9",
+      4
+    ],
+    [
+      "qkv_b10",
+      4
+    ],
+    [
+      "qkv_b11",
+      4
+    ],
+    [
+      "qkv_b12",
+      4
+    ],
+    [
+      "qkv_b13",
+      4
+    ],
+    [
+      "qkv_b14",
+      4
+    ],
+    [
+      "qkv_b15",
+      4
+    ],
+    [
+      "qkv_b16",
+      4
+    ],
+    [
+      "qkv_b17",
+      4
+    ],
+    [
+      "qkv_b18",
+      4
+    ],
+    [
+      "qkv_b19",
+      4
+    ],
+    [
+      "qkv_b20",
+      4
+    ],
+    [
+      "qkv_b21",
+      4
+    ],
+    [
+      "qkv_b22",
+      4
+    ],
+    [
+      "qkv_b23",
+      4
+    ],
+    [
+      "qkv_b24",
+      4
+    ],
+    [
+      "qkv_b25",
+      4
+    ],
+    [
+      "qkv_b26",
+      4
+    ],
+    [
+      "qkv_b27",
+      4
+    ],
+    [
+      "o_b0",
+      4
+    ],
+    [
+      "o_b1",
+      4
+    ],
+    [
+      "o_b2",
+      4
+    ],
+    [
+      "o_b3",
+      4
+    ],
+    [
+      "o_b4",
+      4
+    ],
+    [
+      "o_b5",
+      4
+    ],
+    [
+      "o_b6",
+      4
+    ],
+    [
+      "o_b7",
+      4
+    ],
+    [
+      "o_b8",
+      4
+    ],
+    [
+      "o_b9",
+      4
+    ],
+    [
+      "o_b10",
+      4
+    ],
+    [
+      "o_b11",
+      4
+    ],
+    [
+      "o_b12",
+      4
+    ],
+    [
+      "o_b13",
+      4
+    ],
+    [
+      "o_b14",
+      4
+    ],
+    [
+      "o_b15",
+      4
+    ],
+    [
+      "o_b16",
+      4
+    ],
+    [
+      "o_b17",
+      4
+    ],
+    [
+      "o_b18",
+      4
+    ],
+    [
+      "o_b19",
+      4
+    ],
+    [
+      "o_b20",
+      4
+    ],
+    [
+      "o_b21",
+      4
+    ],
+    [
+      "o_b22",
+      4
+    ],
+    [
+      "o_b23",
+      4
+    ],
+    [
+      "o_b24",
+      4
+    ],
+    [
+      "o_b25",
+      4
+    ],
+    [
+      "o_b26",
+      4
+    ],
+    [
+      "o_b27",
+      4
+    ],
+    [
+      "up_b0",
+      4
+    ],
+    [
+      "up_b1",
+      4
+    ],
+    [
+      "up_b2",
+      4
+    ],
+    [
+      "up_b3",
+      4
+    ],
+    [
+      "up_b4",
+      4
+    ],
+    [
+      "up_b5",
+      4
+    ],
+    [
+      "up_b6",
+      4
+    ],
+    [
+      "up_b7",
+      4
+    ],
+    [
+      "up_b8",
+      4
+    ],
+    [
+      "up_b9",
+      4
+    ],
+    [
+      "up_b10",
+      4
+    ],
+    [
+      "up_b11",
+      4
+    ],
+    [
+      "up_b12",
+      4
+    ],
+    [
+      "up_b13",
+      4
+    ],
+    [
+      "up_b14",
+      4
+    ],
+    [
+      "up_b15",
+      4
+    ],
+    [
+      "up_b16",
+      4
+    ],
+    [
+      "up_b17",
+      4
+    ],
+    [
+      "up_b18",
+      4
+    ],
+    [
+      "up_b19",
+      4
+    ],
+    [
+      "up_b20",
+      4
+    ],
+    [
+      "up_b21",
+      4
+    ],
+    [
+      "up_b22",
+      4
+    ],
+    [
+      "up_b23",
+      4
+    ],
+    [
+      "up_b24",
+      4
+    ],
+    [
+      "up_b25",
+      4
+    ],
+    [
+      "up_b26",
+      4
+    ],
+    [
+      "up_b27",
+      4
+    ],
+    [
+      "down_b0",
+      4
+    ],
+    [
+      "down_b1",
+      4
+    ],
+    [
+      "down_b2",
+      4
+    ],
+    [
+      "down_b3",
+      4
+    ],
+    [
+      "down_b4",
+      4
+    ],
+    [
+      "down_b5",
+      4
+    ],
+    [
+      "down_b6",
+      4
+    ],
+    [
+      "down_b7",
+      4
+    ],
+    [
+      "down_b8",
+      4
+    ],
+    [
+      "down_b9",
+      4
+    ],
+    [
+      "down_b10",
+      4
+    ],
+    [
+      "down_b11",
+      4
+    ],
+    [
+      "down_b12",
+      4
+    ],
+    [
+      "down_b13",
+      4
+    ],
+    [
+      "down_b14",
+      4
+    ],
+    [
+      "down_b15",
+      4
+    ],
+    [
+      "down_b16",
+      4
+    ],
+    [
+      "down_b17",
+      4
+    ],
+    [
+      "down_b18",
+      4
+    ],
+    [
+      "down_b19",
+      4
+    ],
+    [
+      "down_b20",
+      4
+    ],
+    [
+      "down_b21",
+      4
+    ],
+    [
+      "down_b22",
+      4
+    ],
+    [
+      "down_b23",
+      4
+    ],
+    [
+      "down_b24",
+      4
+    ],
+    [
+      "down_b25",
+      4
+    ],
+    [
+      "down_b26",
+      4
+    ],
+    [
+      "down_b27",
+      4
+    ],
+    [
+      "lm_head",
+      4
+    ]
+  ],
+  "baseline_size_mb": 3087.428608,
+  "baseline": {
+    "loss": 0.9744332094103986,
+    "delta_loss": 0.0,
+    "kld": 0.0,
+    "tpot_ms": 16.56946300000003,
+    "latency_ms": 16.56946300000003,
+    "tok_s": 60.35198606013955,
+    "memory_mb": 3087.428608,
+    "size_mb": 3087.428608,
+    "weights_gib": 2.875391960144043,
+    "bits_per_weight": 16.0,
+    "int4_pct": 0.0,
+    "mlp_kept_pct": 100.0,
+    "n_removed_attn": 0,
+    "n_removed_mlp": 0
+  },
+  "latency_table": {
+    "gpu": "NVIDIA GeForce RTX 3060",
+    "torch": "2.13.0+cu126",
+    "batch": 1,
+    "context": 640,
+    "formats": [
+      "bf16",
+      "int4_g32",
+      "int4_g64",
+      "int4_g128"
+    ]
+  },
+  "layout": {
+    "n_layer": 28,
+    "intermediate": 8960,
+    "tied": true,
+    "n_target_params": 1543569408,
+    "rest_params": 87552
+  }
+}

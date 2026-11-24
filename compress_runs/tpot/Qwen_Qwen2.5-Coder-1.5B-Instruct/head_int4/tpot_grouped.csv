@@ -1,0 +1,2 @@
+configuration,batch,weights_gib,embedding_gib,ttft_ms,tpot_ms,tok_s,tok_s_total,speedup,predicted_tpot_ms,e2e_ms,peak_gib,graph_matches_eager,attention,layout
+int4_g128 + head,1,1.198667049407959,0.4346923828125,289.40252685546875,6.343242091758579,157.64808997267255,157.64808997267255,,6.1892070000000015,1906.9292602539062,1.329944133758545,33/33,grouped,qkv:8 o:8 up:8 down:8 head:8

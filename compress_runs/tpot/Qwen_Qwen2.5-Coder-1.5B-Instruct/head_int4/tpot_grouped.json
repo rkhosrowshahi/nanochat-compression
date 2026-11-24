@@ -1,0 +1,49 @@
+{
+  "settings": {
+    "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "dtype": "bfloat16",
+    "formats": "int4_g128",
+    "quantize_head": true,
+    "batch": "1",
+    "prompt_tokens": 512,
+    "gen_tokens": 256,
+    "repeats": 5,
+    "check_tokens": 32,
+    "attention": "grouped",
+    "no_predict": false,
+    "out_dir": "compress_runs/tpot/Qwen_Qwen2.5-Coder-1.5B-Instruct/head_int4",
+    "gpu": "NVIDIA GeForce RTX 3060",
+    "torch": "2.13.0+cu126",
+    "predict_context": 640
+  },
+  "rows": [
+    {
+      "configuration": "int4_g128 + head",
+      "layout": "qkv:8 o:8 up:8 down:8 head:8",
+      "weights_gib": 1.198667049407959,
+      "embedding_gib": 0.4346923828125,
+      "batch": 1,
+      "prompt_tokens": 512,
+      "gen_tokens": 256,
+      "repeats": 5,
+      "ttft_ms": 289.40252685546875,
+      "tpot_ms": 6.343242091758579,
+      "tpot_ms_runs": [
+        6.3305367264093135,
+        6.346723728553922,
+        6.340620212928922,
+        6.343242091758579,
+        6.350068933823529
+      ],
+      "tok_s": 157.64808997267255,
+      "tok_s_total": 157.64808997267255,
+      "e2e_ms": 1906.9292602539062,
+      "graph_matches_eager": "33/33",
+      "peak_bytes": 1428016640,
+      "attention": "grouped",
+      "peak_gib": 1.329944133758545,
+      "predicted_tpot_ms": 6.1892070000000015,
+      "speedup": null
+    }
+  ]
+}
