@@ -1,0 +1,28 @@
+# Stage 2 of the two-stage search on the A100 server: weight sharing + pruning (UBQ-ECSQ, one global codebook) of the bf16
+# matrices of the stage-1 front (configs/compress/coder15_tpot_a100.yaml), scripts/compress_search_stage2.py. Every solution
+# keeps its base's kernels, so its TPOT and GPU memory; sharing trades KL divergence against the stored size.
+# Genes: the base (32 stage-1 front solutions along TPOT), share on/off per role x 4 depth bands, the head, the bf16 embedding
+# copy of an int4 head, and the candidate k / clipping / pruning interval / merge rho.
+# Model, calibration windows, activation statistics, formats and eval batch size come from the stage-1 run.
+#   python -m scripts.compress_run configs/compress/coder15_stage2.yaml
+model: Qwen/Qwen2.5-Coder-1.5B-Instruct
+out_dir: compress_runs/coder15_stage2
+offload_originals: "no"
+
+search:
+  method: stage2
+  stage1_dir: compress_runs/coder15_tpot_a100
+  objectives: [time, memory, size]
+  pop_size: 96               # the 4-objective front outgrows a small population: 96 x 40 = 3840 evaluations
+  n_gen: 40
+  seed: 42
+  max_bases: 32
+  share_bands: 4
+
+test:
+  seq_len: 2048
+  code_seqs: 64
+  wikitext_seqs: 32
+  c4_seqs: 0
+  max_kld: 1.0
+  max_points: 10

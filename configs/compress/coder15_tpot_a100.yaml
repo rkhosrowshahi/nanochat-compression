@@ -1,0 +1,30 @@
+# Stage 1 of the two-stage search on the A100 server: the decode-speed search of coder15_tpot.yaml (per-layer formats among bf16
+# and int4 g32/g64/g128, objectives KL divergence on code + TPOT at batch 1 + weight memory), with the A100's own latency table and
+# a fresh out_dir (compress_runs/coder15_tpot holds RTX 3060 evaluations, whose TPOT would be reused from evals.csv).
+# Stage 2 (configs/compress/coder15_stage2.yaml) then shares and prunes the bf16 matrices of its front.
+#   python -m scripts.compress_run configs/compress/coder15_tpot_a100.yaml
+model: Qwen/Qwen2.5-Coder-1.5B-Instruct
+out_dir: compress_runs/coder15_tpot_a100
+eval_batch_size: 4
+offload_originals: "no"      # 80 GB: the originals stay on the GPU
+
+search:
+  method: tpot
+  objectives: [time, memory]
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  context: 640               # mean context of a 512-token prompt and 256 generated tokens (as compress_tpot_measure)
+  bands: 28                  # = the number of layers: per-layer genes
+
+calibration:
+  seqs: 8                    # 8 x 2048 tokens of code conversations
+  seq_len: 2048
+  data_seed: 0
+
+test:
+  seq_len: 2048
+  code_seqs: 64              # held-out code conversations
+  wikitext_seqs: 32
+  c4_seqs: 0
+  max_points: 8

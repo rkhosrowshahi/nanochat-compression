@@ -59,6 +59,14 @@ final front itself). Keys:
     calibration:        seqs, seq_len, data_seed (code conversations: bigcode/self-oss-instruct-sc2-exec-filter-50k)
     test:               seq_len, code_seqs, wikitext_seqs, c4_seqs, max_kld, max_points
 
+search.method: stage2 is the second stage on a finished tpot (or hw) run (scripts/compress_search_stage2.py): weight sharing +
+pruning (UBQ-ECSQ) of the bf16 matrices of that run's front, for KL divergence and stored size at the stage-1 TPOT and memory.
+The model, calibration and formats come from the stage-1 run (model must match it; no calibration section). Steps: search
+(it scores its final front itself). Keys:
+    search:             method: stage2, stage1_dir, pop_size, n_gen, seed, objectives (from time, memory, size), max_kld,
+                        memory_budget_mb, max_bases, base_max_kld, share_bands, share_k, share_c, share_prune, share_rho
+    test:               as tpot
+
 search.method: mix_simple searches the deployed formats only (scripts/compress_search_mix_simple.py), with the mix keys. Steps:
 search, plot and storage, the optional storage step on its final front (scripts/compress_storage.py). --steps storage also
 works on a finished hw run. Key:
@@ -103,10 +111,14 @@ SEARCH_TPOT = {"method", "pop_size", "n_gen", "seed", "objectives", "max_kld", "
                "mlp_keep", "max_skip", "no_embeddings", "clip_ratios", "importance_seqs"}
 TEST_TPOT = {"seq_len": "test_seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_test_seqs", "code_seqs": "code_test_seqs",
              "max_kld": "test_max_kld", "max_points": "test_max_points"}
-SEARCH_BY_METHOD = {"mix": SEARCH_MIX, "kv": SEARCH_KV, "mix_simple": SEARCH_MIX, "kv2": SEARCH_KV2, "tpot": SEARCH_TPOT}
+# search.method: stage2 (scripts/compress_search_stage2.py)
+SEARCH_STAGE2 = {"method", "stage1_dir", "pop_size", "n_gen", "seed", "objectives", "max_kld", "memory_budget_mb", "max_bases",
+                 "base_max_kld", "share_bands", "share_k", "share_c", "share_prune", "share_rho"}
+SEARCH_BY_METHOD = {"mix": SEARCH_MIX, "kv": SEARCH_KV, "mix_simple": SEARCH_MIX, "kv2": SEARCH_KV2, "tpot": SEARCH_TPOT,
+                    "stage2": SEARCH_STAGE2}
 SCRIPT_BY_METHOD = {"hw": "scripts.compress_search_hw", "mix": "scripts.compress_search_mix", "kv": "scripts.compress_search_kv",
                     "mix_simple": "scripts.compress_search_mix_simple", "kv2": "scripts.compress_search_kv2",
-                    "tpot": "scripts.compress_search_tpot"}
+                    "tpot": "scripts.compress_search_tpot", "stage2": "scripts.compress_search_stage2"}
 STORAGE = {"k", "max_points"}
 CALIBRATION_HW = {k: v for k, v in CALIBRATION.items() if k != "every"}
 TEST_HW = {"seq_len": "test_seq_len", "wikitext_seqs": "wikitext_seqs", "c4_seqs": "c4_test_seqs",
@@ -160,26 +172,30 @@ method = search.get("method")
 mix = method in SEARCH_BY_METHOD  # the turn-time searches
 hw = mix or method == "hw"  # they run like hw, each with its own script and no validation
 check_keys(search, SEARCH_BY_METHOD[method] if mix else SEARCH_HW if hw else SEARCH, "search")
-check_keys(calib, CALIBRATION_HW if hw else CALIBRATION, "calibration")
-check_keys(test, TEST_TPOT if method == "tpot" else TEST_HW if hw else TEST, "test")
+kld = method in ("tpot", "stage2")  # KL divergence searches: their own test keys, no plots yet
+check_keys(calib, {} if method == "stage2" else CALIBRATION_HW if hw else CALIBRATION, "calibration")
+check_keys(test, TEST_TPOT if kld else TEST_HW if hw else TEST, "test")
 check_keys(validate, VALIDATE if hw and not mix else {}, "validate")
 check_keys(storage, STORAGE if method in ("hw", "mix_simple") else {}, "storage")
 if hw and cfg.get("include"):
     sys.exit(f"{args.config}: search.method {search['method']} has no 'include': lm_head and the embeddings are genes of the search")
-steps = args.steps or (["search"] if method == "tpot" else ["search", "plot", "storage"] if method == "mix_simple" else ["search", "plot"] if mix
+steps = args.steps or (["search"] if kld else ["search", "plot", "storage"] if method == "mix_simple" else ["search", "plot"] if mix
                        else ["search", "plot", "validate"] if hw else ["search", "score", "plot"])
 if "validate" in steps and (mix or not hw):
     sys.exit("--steps validate is for search.method hw")
 if "storage" in steps and method not in ("hw", "mix_simple"):
     sys.exit("--steps storage is for search.method hw and mix_simple")
-if "plot" in steps and method == "tpot":
-    sys.exit("--steps plot: compress_plot does not plot KL divergence fronts yet (search.method tpot)")
+if "plot" in steps and kld:
+    sys.exit(f"--steps plot: compress_plot does not plot KL divergence fronts yet (search.method {method})")
 assert "model" in cfg, f"{args.config}: 'model' is required"
 out_dir = cfg.get("out_dir") or os.path.join("compress_runs", os.path.splitext(os.path.basename(args.config))[0])
 if args.smoke:
     out_dir += "_smoke"
-    search.update(pop_size=20 if method == "kv2" else 16 if method == "kv" else 8 if hw else 4, n_gen=2)  # hw: the first 4 individuals are the uniform formats, kv: 11 seeds, kv2: 17
-    calib["seqs"] = 8
+    search.update(pop_size=20 if method == "kv2" else 16 if method == "kv" else 8 if hw else 4, n_gen=2)
+    if method == "stage2":
+        search.update(max_bases=4)  # and the stage-1 run's own calibration (not resized here)  # hw: the first 4 individuals are the uniform formats, kv: 11 seeds, kv2: 17
+    if method != "stage2":
+        calib["seqs"] = 8
     test.update(wikitext_seqs=4, c4_seqs=4)
     validate.update(points=2)
 os.makedirs(out_dir, exist_ok=True)
@@ -213,7 +229,7 @@ common = {"model": cfg["model"], "dtype": cfg.get("dtype"), "offload_originals":
           "include": cfg.get("include") or None}
 batch = cfg.get("eval_batch_size", 1)
 max_delta = test.pop("max_delta_loss", search.get("max_delta_loss", 1.0))
-if hw and method != "tpot":  # passed on as --test-max-delta-loss (tpot: test.max_kld)
+if hw and not kld:  # passed on as --test-max-delta-loss (tpot, stage2: test.max_kld)
     test["max_delta_loss"] = max_delta
 
 
@@ -237,7 +253,7 @@ if hw:
     if {"search", "score"} & set(steps):  # one script: rerun, it resumes, then scores what is missing
         run("search", py + [SCRIPT_BY_METHOD[method]] + flags({k: v for k, v in common.items() if k != "include"})
             + flags(search) + flags({CALIBRATION_HW[k]: v for k, v in calib.items()})
-            + flags({(TEST_TPOT if method == "tpot" else TEST_HW)[k]: v for k, v in test.items()})
+            + flags({(TEST_TPOT if kld else TEST_HW)[k]: v for k, v in test.items()})
             + ["--eval-batch-size", str(batch), "--out-dir", out_dir], log=False)  # it writes run.log itself
     if "plot" in steps:
         run("plot", py + ["scripts.compress_plot", "--run-dir", out_dir, "--all"])
