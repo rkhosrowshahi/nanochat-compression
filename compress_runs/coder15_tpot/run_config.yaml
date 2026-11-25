@@ -1,7 +1,7 @@
 model: Qwen/Qwen2.5-Coder-1.5B-Instruct
 out_dir: compress_runs/coder15_tpot
 eval_batch_size: 1
-offload_originals: 'yes'
+offload_originals: false
 search:
   method: tpot
   objectives:

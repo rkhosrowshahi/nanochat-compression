@@ -2,7 +2,7 @@
   "settings": {
     "version": 2,
     "kind": "decode",
-    "gpu": "NVIDIA GeForce RTX 3060",
+    "gpu": "NVIDIA A100 80GB PCIe",
     "torch": "2.13.0+cu126",
     "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
     "batch": 1,
@@ -17,7 +17,7 @@
       1.0
     ]
   },
-  "gpu": "NVIDIA GeForce RTX 3060",
+  "gpu": "NVIDIA A100 80GB PCIe",
   "torch": "2.13.0+cu126",
   "batch": 1,
   "context": 640,
@@ -29,55 +29,55 @@
   ],
   "gemm_us": {
     "256x1536+bias": {
-      "bf16": 5.782,
-      "int4_g32": 4.072,
-      "int4_g64": 3.951,
-      "int4_g128": 3.89
+      "bf16": 7.756,
+      "int4_g32": 4.297,
+      "int4_g64": 4.209,
+      "int4_g128": 4.181
     },
     "1536x1536": {
-      "bf16": 23.011,
-      "int4_g32": 8.129,
-      "int4_g64": 7.722,
-      "int4_g128": 7.42
+      "bf16": 7.488,
+      "int4_g32": 4.36,
+      "int4_g64": 4.155,
+      "int4_g128": 4.043
     },
     "1536x1536+bias": {
-      "bf16": 23.183,
-      "int4_g32": 9.228,
-      "int4_g64": 8.801,
-      "int4_g128": 8.503
+      "bf16": 7.326,
+      "int4_g32": 5.912,
+      "int4_g64": 5.724,
+      "int4_g128": 5.612
     },
     "1536x8960": {
-      "bf16": 137.716,
-      "int4_g32": 40.284,
-      "int4_g64": 36.696,
-      "int4_g128": 34.816
+      "bf16": 27.947,
+      "int4_g32": 12.973,
+      "int4_g64": 12.612,
+      "int4_g128": 12.442
     },
     "8960x1536": {
-      "bf16": 124.03,
-      "int4_g32": 39.786,
-      "int4_g64": 36.008,
-      "int4_g128": 34.042
+      "bf16": 20.928,
+      "int4_g32": 11.058,
+      "int4_g64": 10.589,
+      "int4_g128": 10.389
     },
     "151936x1536": {
-      "bf16": 2055.68,
-      "int4_g32": 644.8,
-      "int4_g64": 580.544,
-      "int4_g128": 549.492
+      "bf16": 271.808,
+      "int4_g32": 148.544,
+      "int4_g64": 137.472,
+      "int4_g128": 128.0
     }
   },
-  "attn_us": 17.948,
-  "attn_impl": "grouped",
+  "attn_us": 11.494,
+  "attn_impl": "sdpa",
   "attn_impl_us": {
-    "sdpa": 140.595,
-    "grouped": 17.948
+    "sdpa": 11.494,
+    "grouped": 20.89
   },
-  "attn_profiled_us": 20.404,
-  "misc_attn_us": 23.213,
-  "misc_mlp_us": 4.807,
-  "fixed_us": 807.727,
+  "attn_profiled_us": 6.696,
+  "misc_attn_us": 39.06,
+  "misc_mlp_us": 7.731,
+  "fixed_us": 1461.034,
   "profile_us": {
-    "full": 16638.2,
-    "no_attention": 13799.7,
-    "no_mlp": 5701.9
+    "full": 6034.1,
+    "no_attention": 3903.8,
+    "no_mlp": 3863.1
   }
 }

@@ -46,7 +46,7 @@
     "code_test_seqs": 64,
     "calib_every": 0
   },
-  "git_commit": "182fe0da7c3e4bd602cd0f1cb0dbd05055646f61",
+  "git_commit": "236ad635475bafc70f839162f619156ed912f8a0",
   "genes": [
     [
       "qkv_b0",
@@ -503,12 +503,12 @@
   ],
   "baseline_size_mb": 3087.428608,
   "baseline": {
-    "loss": 0.9744332094103986,
+    "loss": 0.9742505511948698,
     "delta_loss": 0.0,
     "kld": 0.0,
-    "tpot_ms": 16.56946300000003,
-    "latency_ms": 16.56946300000003,
-    "tok_s": 60.35198606013955,
+    "tpot_ms": 6.168434000000007,
+    "latency_ms": 6.168434000000007,
+    "tok_s": 162.11570067864858,
     "memory_mb": 3087.428608,
     "size_mb": 3087.428608,
     "weights_gib": 2.875391960144043,
@@ -519,7 +519,7 @@
     "n_removed_mlp": 0
   },
   "latency_table": {
-    "gpu": "NVIDIA GeForce RTX 3060",
+    "gpu": "NVIDIA A100 80GB PCIe",
     "torch": "2.13.0+cu126",
     "batch": 1,
     "context": 640,
