@@ -1,0 +1,83 @@
+{
+  "settings": {
+    "version": 2,
+    "kind": "decode",
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "torch": "2.13.0+cu126",
+    "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "batch": 1,
+    "context": 640,
+    "formats": [
+      "bf16",
+      "int4_g32",
+      "int4_g64",
+      "int4_g128"
+    ],
+    "mlp_keep": [
+      1.0
+    ]
+  },
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "torch": "2.13.0+cu126",
+  "batch": 1,
+  "context": 640,
+  "formats": [
+    "bf16",
+    "int4_g32",
+    "int4_g64",
+    "int4_g128"
+  ],
+  "gemm_us": {
+    "256x1536+bias": {
+      "bf16": 7.756,
+      "int4_g32": 4.297,
+      "int4_g64": 4.209,
+      "int4_g128": 4.181
+    },
+    "1536x1536": {
+      "bf16": 7.488,
+      "int4_g32": 4.36,
+      "int4_g64": 4.155,
+      "int4_g128": 4.043
+    },
+    "1536x1536+bias": {
+      "bf16": 7.326,
+      "int4_g32": 5.912,
+      "int4_g64": 5.724,
+      "int4_g128": 5.612
+    },
+    "1536x8960": {
+      "bf16": 27.947,
+      "int4_g32": 12.973,
+      "int4_g64": 12.612,
+      "int4_g128": 12.442
+    },
+    "8960x1536": {
+      "bf16": 20.928,
+      "int4_g32": 11.058,
+      "int4_g64": 10.589,
+      "int4_g128": 10.389
+    },
+    "151936x1536": {
+      "bf16": 271.808,
+      "int4_g32": 148.544,
+      "int4_g64": 137.472,
+      "int4_g128": 128.0
+    }
+  },
+  "attn_us": 11.494,
+  "attn_impl": "sdpa",
+  "attn_impl_us": {
+    "sdpa": 11.494,
+    "grouped": 20.89
+  },
+  "attn_profiled_us": 6.696,
+  "misc_attn_us": 39.06,
+  "misc_mlp_us": 7.731,
+  "fixed_us": 1461.034,
+  "profile_us": {
+    "full": 6034.1,
+    "no_attention": 3903.8,
+    "no_mlp": 3863.1
+  }
+}

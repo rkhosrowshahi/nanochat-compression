@@ -1,0 +1,24 @@
+model: Qwen/Qwen2.5-Coder-1.5B-Instruct
+out_dir: compress_runs/coder15_stage2
+offload_originals: 'no'
+search:
+  method: stage2
+  stage1_dir: compress_runs/coder15_tpot_a100
+  objectives:
+  - time
+  - memory
+  - size
+  pop_size: 96
+  n_gen: 40
+  seed: 42
+  max_bases: 32
+  share_bands: 4
+test:
+  seq_len: 2048
+  code_seqs: 64
+  wikitext_seqs: 32
+  c4_seqs: 0
+  max_kld: 1.0
+  max_points: 10
+calibration: {}
+validate: {}

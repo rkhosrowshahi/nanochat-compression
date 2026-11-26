@@ -1,0 +1,187 @@
+{
+  "args": {
+    "model": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+    "dtype": "bfloat16",
+    "offload_originals": "no",
+    "eval_batch_size": 4,
+    "calib_dataset": "bigcode/self-oss-instruct-sc2-exec-filter-50k",
+    "calib_config": "chat",
+    "calib_split": "calib",
+    "calib_seqs": 8,
+    "seq_len": 2048,
+    "data_seed": 0,
+    "calib_from": "compress_runs/coder15_tpot_a100",
+    "text_field": "text",
+    "importance_seqs": 4,
+    "objectives": [
+      "time",
+      "memory",
+      "size"
+    ],
+    "max_delta_loss": null,
+    "memory_budget_mb": null,
+    "serve_batch": 4,
+    "prompt_batch": 256,
+    "context": 640,
+    "new_tokens": 2000,
+    "gen_tokens": 300,
+    "vram_gb": 80.0,
+    "reserve": 0.1,
+    "formats": "bf16,int4_g32,int4_g64,int4_g128",
+    "bands": 28,
+    "mlp_keep": "1.0",
+    "max_skip": 0,
+    "no_embeddings": false,
+    "clip_ratios": "1.0,0.95,0.9,0.85,0.8,0.75",
+    "pop_size": 96,
+    "n_gen": 40,
+    "seed": 42,
+    "wikitext_seqs": 32,
+    "c4_test_seqs": 0,
+    "test_seq_len": 2048,
+    "test_max_delta_loss": 1.0,
+    "test_max_points": 10,
+    "out_dir": "compress_runs/coder15_stage2",
+    "stage1_dir": "compress_runs/coder15_tpot_a100",
+    "max_bases": 32,
+    "base_max_kld": null,
+    "share_bands": 4,
+    "share_k": "9,17,33,65,129,257",
+    "share_c": "1.0,0.95,0.9,0.85,0.8,0.7",
+    "share_prune": "0.0,0.05,0.1,0.2,0.3,0.5",
+    "share_rho": "1.0,0.75,0.5,0.35,0.25,0.15",
+    "max_kld": null,
+    "test_max_kld": 1.0,
+    "code_test_seqs": 64,
+    "calib_every": 0
+  },
+  "git_commit": "e17c24e97b9cedcca822fd5e07e926e1080f7da8",
+  "genes": [
+    [
+      "base",
+      32
+    ],
+    [
+      "share_qkv_b0",
+      2
+    ],
+    [
+      "share_qkv_b1",
+      2
+    ],
+    [
+      "share_qkv_b2",
+      2
+    ],
+    [
+      "share_qkv_b3",
+      2
+    ],
+    [
+      "share_o_b0",
+      2
+    ],
+    [
+      "share_o_b1",
+      2
+    ],
+    [
+      "share_o_b2",
+      2
+    ],
+    [
+      "share_o_b3",
+      2
+    ],
+    [
+      "share_up_b0",
+      2
+    ],
+    [
+      "share_up_b1",
+      2
+    ],
+    [
+      "share_up_b2",
+      2
+    ],
+    [
+      "share_up_b3",
+      2
+    ],
+    [
+      "share_down_b0",
+      2
+    ],
+    [
+      "share_down_b1",
+      2
+    ],
+    [
+      "share_down_b2",
+      2
+    ],
+    [
+      "share_down_b3",
+      2
+    ],
+    [
+      "share_head",
+      2
+    ],
+    [
+      "share_k",
+      6
+    ],
+    [
+      "share_c",
+      6
+    ],
+    [
+      "share_prune",
+      6
+    ],
+    [
+      "share_rho",
+      6
+    ]
+  ],
+  "baseline_size_mb": 3087.428608,
+  "baseline": {
+    "loss": 0.9742505586490902,
+    "delta_loss": 0.0,
+    "kld": 0.0,
+    "base": 31,
+    "base_quality": 0.0,
+    "tpot_ms": 6.168434000000007,
+    "latency_ms": 6.168434000000007,
+    "tok_s": 162.11570067864858,
+    "memory_mb": 3087.428608,
+    "weights_gib": 2.875391960144043,
+    "deployed_bits_per_weight": 16.0,
+    "int4_pct": 0.0,
+    "size_mb": 3087.428608,
+    "shared_pct": 0.0,
+    "k_merged": 0,
+    "stored_bits_per_weight": 16.00059440410988
+  },
+  "latency_table": {
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "torch": "2.13.0+cu126",
+    "batch": 1,
+    "context": 640,
+    "formats": [
+      "bf16",
+      "int4_g32",
+      "int4_g64",
+      "int4_g128"
+    ]
+  },
+  "layout": {
+    "n_layer": 28,
+    "intermediate": 8960,
+    "tied": true,
+    "n_target_params": 1543569408,
+    "rest_params": 87552
+  }
+}

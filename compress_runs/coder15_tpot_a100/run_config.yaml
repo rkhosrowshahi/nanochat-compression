@@ -1,0 +1,25 @@
+model: Qwen/Qwen2.5-Coder-1.5B-Instruct
+out_dir: compress_runs/coder15_tpot_a100
+eval_batch_size: 4
+offload_originals: 'no'
+search:
+  method: tpot
+  objectives:
+  - time
+  - memory
+  pop_size: 50
+  n_gen: 100
+  seed: 42
+  context: 640
+  bands: 28
+calibration:
+  seqs: 8
+  seq_len: 2048
+  data_seed: 0
+test:
+  seq_len: 2048
+  code_seqs: 64
+  wikitext_seqs: 32
+  c4_seqs: 0
+  max_points: 8
+validate: {}
