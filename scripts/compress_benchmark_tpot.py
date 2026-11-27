@@ -19,7 +19,9 @@ machine or container where that is acceptable.
 Outputs in <run-dir>/benchmarks_<selection> (or --out-dir):
     benchmarks.json       scores per solution, saved after every solution: an interrupted run resumes
     benchmarks.md/.csv    pass@1 (%) of every evaluated solution, next to its KLD, TPOT and memory
-    samples/<point>.jsonl every problem: the model's completion and whether it passed
+    samples/<name>.jsonl  every problem: the model's completion and whether it passed. <name> is uncompressed, or
+                          the front index and a hash of the configuration (e.g. 07_3fa2c19b): the configuration
+                          itself is too long for a Windows path. Each entry of benchmarks.json names its file
 
 Needs lm-eval (see scripts/compress_benchmark.py for its environment). From the repo root:
 
@@ -32,6 +34,7 @@ Needs lm-eval (see scripts/compress_benchmark.py for its environment). From the 
 
 import argparse
 import csv
+import hashlib
 import json
 import os
 import sys
@@ -124,8 +127,9 @@ def point_id(p):
     return "uncompressed" if p is None else p["key"]
 
 
-def samples_path(p):
-    return os.path.join(samples_dir, ("uncompressed" if p is None else p["key"].replace(".", "-")) + ".jsonl")
+def samples_name(idx, p):
+    """uncompressed.jsonl, or <front index>_<first 8 hex digits of the configuration key's SHA-1>.jsonl"""
+    return "uncompressed.jsonl" if p is None else f"{idx:02d}_{hashlib.sha1(p['key'].encode()).hexdigest()[:8]}.jsonl"
 
 
 settings = {"tasks": shots, "limit": args.limit, "chat_template": args.chat_template, "selection": selection}
@@ -184,11 +188,12 @@ if todo:
             comp.restore()
         entry["benchmarks"] = {t: {m: v for m, v in out["results"][t].items() if isinstance(v, (int, float))} for t in tasks}
         entry["seconds"] = round(time.time() - t0)
+        entry["samples"] = samples_name(idx, p)
         results["results"][point_id(p)] = entry
         with open(out_path + ".tmp", "w") as f:
             json.dump(results, f, indent=2)
         os.replace(out_path + ".tmp", out_path)
-        with open(samples_path(p), "w", encoding="utf-8") as f:
+        with open(os.path.join(samples_dir, entry["samples"]), "w", encoding="utf-8") as f:
             for task, samples in out["samples"].items():
                 for s in samples:
                     metric = next(m for m in s["metrics"] if "pass" in m) if any("pass" in m for m in s["metrics"]) else s["metrics"][0]
