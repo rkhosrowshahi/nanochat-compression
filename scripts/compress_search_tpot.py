@@ -13,8 +13,9 @@ Objectives (all minimized):
             in the model's chat template; 2,000 documents held out for test)
     time    TPOT: the latency table's decode step at batch 1 over --context tokens (default 640: the mean context of a
             512-token prompt and 256 generated tokens). Logged as tpot_ms (= latency_ms) and tok_s
-    memory  deployed weights (MB = 1e6 bytes; weights_gib also logged): int4 codes with their scales, the rest in bf16, a
-            tied embedding counted again when the head is int4
+    memory  memory of the model as loaded on the GPU (memory_mb in 1e6 bytes; reported in GiB, logged as weights_gib):
+            int4 codes with their scales, the rest in bf16, a tied embedding counted again when the head is int4. Not
+            the KV cache, activations or the CUDA context (measure the peak with scripts/compress_tpot_measure.py)
 Constraint (optional): --max-kld.
 
 The latency table is cached per GPU, so a table measured by scripts/compress_tpot_measure.py on the same settings is reused.
@@ -37,7 +38,7 @@ from scripts.compress_search_common import KLDSearch, parser
 STATS = ["kld", "kld_median", "kld_p99", "top1_agree", "loss", "delta_loss", "tpot_ms", "latency_ms", "tok_s", "memory_mb",
          "size_mb", "weights_gib", "bits_per_weight", "int4_pct", "mlp_kept_pct", "n_removed_attn", "n_removed_mlp"]
 
-p = parser("NSGA-II search over the weight format of every matrix, for KL divergence, decode TPOT and weight memory",
+p = parser("NSGA-II search over the weight format of every matrix, for KL divergence, decode TPOT and memory",
            ["time", "memory"], "compress_runs/tpot_default")
 p.set_defaults(calib_dataset=compress_eval.CODE_DATASET, calib_config="chat", calib_split="calib", context=640,
                mlp_keep="1.0", max_skip=0, max_delta_loss=None, c4_test_seqs=0, wikitext_seqs=32,

@@ -1,6 +1,6 @@
 """
 Measure the decode speed of a model as deployed on this GPU: TTFT, TPOT and tok/s (nanochat/compress_tpot.py), the
-deployed weight memory, and the TPOT the latency table predicts (nanochat/compress_hw.py) for the same configuration.
+memory of the model as loaded (GiB), and the TPOT the latency table predicts (nanochat/compress_hw.py) for the same configuration.
 
 Configurations: the uncompressed model (bf16) and uniform weight-only int4 at each group size, built with
 HWCompressor.materialize on PyTorch's tinygemm kernel. As in GPTQ and AWQ, the int4 baselines quantize every matrix

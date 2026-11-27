@@ -29,6 +29,16 @@ over the deployed memory and the predicted decode latency, with the hypervolume 
     python -m scripts.compress_compare --run-dirs compress_runs/qwen_hw_2obj compress_runs/qwen_hw_3obj \
         --labels "2 objectives" "3 objectives" --3d --out compress_runs/comparisons/qwen_hw_2obj_vs_3obj/qwen_hw_fronts_3d
 
+The quality axis is the runs' first objective: delta_loss, or KL divergence for compress_search_tpot runs (whose
+latency is the decode TPOT at batch 1 and memory the weights only). --archive takes each run's final front from
+every evaluation it made (evals.csv: the feasible solutions no other evaluation dominates in the run's objectives)
+instead of its last population, which holds at most --pop-size of them:
+    python -m scripts.compress_compare --run-dirs compress_runs/coder15_tpot --labels "Pareto front" --archive --3d \
+        --out compress_runs/coder15_tpot/pareto_front_archive_3d
+--front-from gives the source per run instead (population or archive), e.g. one run's last population against all its
+evaluations:
+    python -m scripts.compress_compare --run-dirs compress_runs/coder15_tpot compress_runs/coder15_tpot         --labels "All evaluations" "Last population" --front-from archive population --x memory         --out compress_runs/coder15_tpot/pareto_front_population_vs_archive_memory
+
 --hv plots the hypervolume of each run's front per generation instead, with the same shared normalization
 (of delta_loss and x; with --3d of delta_loss, latency and memory, e.g. to judge a 2-objective run by all
 three). Runs with the same label are seeds of one setting: the line is their mean, the band their range,
@@ -64,7 +74,7 @@ COLORS = ["#2a78d6", "#1baf7a", "#eb6834", "#eda100", "#e87ba4", "#008300", "#4a
 parser.add_argument("--colors", nargs="+", default=COLORS, help="one color per run, in --run-dirs order")
 parser.add_argument("--y", type=str, default="log", choices=["log", "linear"],
                     help="y-axis scale: log (for the calibration loss symlog, linear near 0) or linear")
-parser.add_argument("--x", type=str, default="size", choices=["size", "latency", "memory"],
+parser.add_argument("--x", type=str, default="size", choices=["size", "latency", "throughput", "memory"],
                     help="x-axis: model size, or (compress_search_hw runs) predicted decode latency / deployed memory")
 parser.add_argument("--3d", dest="three_d", action="store_true",
                     help="compress_search_hw runs: 3-D plot over deployed memory (x) and predicted decode latency (y) "
@@ -72,12 +82,25 @@ parser.add_argument("--3d", dest="three_d", action="store_true",
 parser.add_argument("--hv", action="store_true",
                     help="the hypervolume per generation instead of the final fronts (with --3d: of all three "
                          "objectives); runs with the same label are seeds of one setting")
+parser.add_argument("--archive", action="store_true",
+                    help="final front from every evaluation of the run (evals.csv), not only its last population")
+parser.add_argument("--xlim", type=str, default=None, help="x-axis range as lo,hi (default: from 0)")
+parser.add_argument("--ylim-margin", type=float, default=0.02, help="space below y = 0 (linear y), as a fraction of the top")
+parser.add_argument("--legend-inside", action="store_true", help="the legend inside the axes (default: below them)")
+parser.add_argument("--archive-size", type=int, default=None,
+                    help="with an archive front: keep this many evaluations, chosen as NSGA-II does (non-dominated "
+                         "sorting, then crowding distance), e.g. the run's --pop-size")
+parser.add_argument("--front-from", nargs="+", choices=["population", "archive"], default=None,
+                    help="the final front's source per run, in --run-dirs order (instead of --archive for all)")
 args = parser.parse_args()
+FRONT_FROM = args.front_from or ["archive" if args.archive else "population"] * len(args.run_dirs)
+assert len(FRONT_FROM) == len(args.run_dirs), "give one --front-from per run"
 labels = args.labels or [os.path.basename(os.path.normpath(d)) for d in args.run_dirs]
 assert len(labels) == len(args.run_dirs), "give one label per run"
 METRIC_NAME = {"wikitext2": "WikiText-2 test perplexity", "c4": "C4 validation perplexity"}
-X = {"size": "size_mb", "latency": "latency_ms", "memory": "memory_mb"}[args.x]
-X_LABEL = {"size": "Model size (MB)", "latency": "Predicted decode latency (ms per token)",
+X = {"size": "size_mb", "latency": "latency_ms", "throughput": "tok_s", "memory": "memory_mb"}[args.x]
+XH = "latency_ms" if X == "tok_s" else X  # the objective behind x: throughput is 1000 / latency
+X_LABEL = {"size": "Model size (MB)", "latency": "Predicted decode latency (ms per token)", "throughput": "",
            "memory": "Deployed memory: weights + KV cache (MB)"}[args.x]
 if args.title is None:
     args.title = ("Hypervolume per generation, objectives " + ("{delta loss, latency, memory}" if args.three_d else f"{{delta loss, {args.x}}}")
@@ -110,13 +133,46 @@ def run_nadir(run_dir, cols):
     return [nadir[names.index(c)] if c in names else first[c].max() for c in cols]
 
 
+def final_front(run_dir, source):
+    """(last generation, final front): the last population's front, or with --archive the feasible evaluations of the run
+    that no other one dominates in the run's objectives."""
+    front = pd.read_csv(os.path.join(run_dir, "front.csv")).rename(columns={"loss_increase": "delta_loss"})
+    n_gen = int(front["gen"].max())
+    if source == "population":
+        return n_gen, front[front["gen"] == n_gen]
+    evals = pd.read_csv(os.path.join(run_dir, "evals.csv")).rename(columns={"loss_increase": "delta_loss"})
+    evals = evals.drop_duplicates("key")
+    a, names = json.load(open(os.path.join(run_dir, "config.json")))["args"], objectives(run_dir)
+    limit = a.get("max_kld") if names[0] == "kld" else a.get("max_delta_loss")
+    if limit is not None:
+        evals = evals[evals[names[0]] <= limit]
+    if a.get("memory_budget_mb") is not None:
+        evals = evals[evals["memory_mb"] <= a["memory_budget_mb"]]
+    F = evals[names].to_numpy()
+    if args.archive_size:  # NSGA-II survival over every evaluation: non-dominated sorting, then crowding distance
+        from pymoo.core.population import Population
+        from pymoo.core.problem import Problem
+        from pymoo.algorithms.moo.nsga2 import RankAndCrowding
+        pop = Population.new("F", F, "index", np.arange(len(F)))
+        kept = RankAndCrowding().do(Problem(n_var=1, n_obj=F.shape[1]), pop, n_survive=args.archive_size)
+        kept = evals.iloc[kept.get("index")]
+        F = kept[names].to_numpy()
+        return n_gen, kept[[not ((F <= f).all(1) & (F < f).any(1)).any() for f in F]]  # its first front
+    dominated = [((F <= f).all(1) & (F < f).any(1)).any() for f in F]
+    return n_gen, evals[~np.array(dominated)]
+
+
 def save(fig, ax, details):
     # below the axes, never over the data; two columns, names | details, so the details line up
     # whatever the width of each name (matplotlib ignores tabs and its fonts are proportional)
     handles, names = ax.get_legend_handles_labels()
-    blank = Line2D([], [], linestyle="none")
-    ax.legend(handles + [blank] * len(handles), names + details + [""] * (len(handles) - len(details)), ncol=2,
-              loc="upper center", bbox_to_anchor=(0.5, -0.13), frameon=False, columnspacing=0.0)
+    if args.legend_inside:  # one column inside the axes, each name followed by its details
+        labels = [f"{n} {d}" if d else n for n, d in zip(names, details + [""] * (len(names) - len(details)))]
+        ax.legend(handles, labels, loc="upper left" if args.three_d else "best", framealpha=0.9)
+    else:
+        blank = Line2D([], [], linestyle="none")
+        ax.legend(handles + [blank] * len(handles), names + details + [""] * (len(handles) - len(details)), ncol=2,
+                  loc="upper center", bbox_to_anchor=(0.5, -0.13), frameon=False, columnspacing=0.0)
     fig.tight_layout()
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     for ext in ("png", "pdf"):
@@ -130,14 +186,27 @@ LATENCY_LABEL = "Predicted decode latency (ms per token)"
 if "prompt_us" in configs[0]["baseline"]:  # compress_search_mix: its latency_ms is the GPU time of an agent's turn
     LATENCY_LABEL = "Predicted GPU time of a turn (ms)"
     X_LABEL = LATENCY_LABEL if args.x == "latency" else X_LABEL
-calib = {tuple(c["args"].get(k) for k in CALIB_KEYS) for c in configs}
+MEMORY_LABEL, MEM_SCALE = "Deployed memory (MB)", 1.0
+if "tpot_ms" in configs[0]["baseline"]:  # compress_search_tpot: decode TPOT at batch 1; memory of the model as loaded
+    LATENCY_LABEL = "TPOT (ms/tok)"  # from measured kernel times; within 2-5% of timed decoding
+    THROUGHPUT_LABEL = "Throughput (tok/s)"  # 1000 / TPOT, as Unsloth's plots
+    MEMORY_LABEL, MEM_SCALE = "Memory (GiB)", 1e6 / 2 ** 30  # memory_mb is in 1e6 bytes
+    X_LABEL = {"latency": LATENCY_LABEL, "throughput": THROUGHPUT_LABEL, "memory": MEMORY_LABEL}.get(args.x, X_LABEL)
+else:
+    THROUGHPUT_LABEL = "Predicted decode throughput (tok/s)"
+    X_LABEL = THROUGHPUT_LABEL if args.x == "throughput" else X_LABEL
+XS = MEM_SCALE if X == "memory_mb" else 1.0  # x as plotted
+Q = objectives(args.run_dirs[0])[0]  # the quality objective: delta_loss, or kld
+assert all(objectives(d)[0] == Q for d in args.run_dirs), "the runs have different quality objectives"
+Q_LABEL = {"kld": "KL divergence from the uncompressed model (nats)"}.get(Q, r"$\Delta$ Calibration loss (nats)")
+calib ={tuple(c["args"].get(k) for k in CALIB_KEYS) for c in configs}
 if len(calib) > 1 or any(c["args"].get("calib_every", 1) != 0 for c in configs):
     print("warning: the runs were not all scored on one fixed calibration batch, so their delta_loss "
           "values are not strictly comparable")
 assert len(args.run_dirs) <= len(args.colors), f"give --colors for all {len(args.run_dirs)} runs"
 
 if args.hv:  # hypervolume of each run's front per generation, one shared normalization
-    cols = ["delta_loss", "latency_ms", "memory_mb"] if args.three_d else ["delta_loss", X]
+    cols = [Q, "latency_ms", "memory_mb"] if args.three_d else [Q, XH]
     nadir = np.max([run_nadir(d, cols) for d in args.run_dirs], axis=0)
     print(f"hypervolume of {cols}: divided by the shared nadir {np.round(nadir, 4).tolist()}, reference {(1,) * len(cols)}")
     groups = {}  # label -> [(generations, hypervolumes)], one per seed
@@ -174,19 +243,18 @@ if args.hv:  # hypervolume of each run's front per generation, one shared normal
     raise SystemExit
 
 if args.three_d:  # compress_search_hw fronts over deployed memory (x) and predicted latency (y)
-    cols = ["delta_loss", "latency_ms", "memory_mb"]
+    cols = [Q, "latency_ms", "memory_mb"]
+    Y3 = "latency_ms"  # minimized, as the search does (--x throughput plots tok/s in 2-D)
     if args.metric == "calib":
         nadir = np.max([run_nadir(d, cols) for d in args.run_dirs], axis=0)
         print(f"hypervolume: objectives divided by the shared nadir {np.round(nadir, 4).tolist()}, reference (1, 1, 1)")
     fig = plt.figure(figsize=(8, 6.5))
     ax = fig.add_subplot(projection="3d")
     details = []
-    for d, label, marker, color in zip(args.run_dirs, labels, "osD^v<>", args.colors):
-        front = pd.read_csv(os.path.join(d, "front.csv"))
-        n_gen = int(front["gen"].max())
+    for d, source, label, marker, color in zip(args.run_dirs, FRONT_FROM, labels, "osD^v<>", args.colors):
+        n_gen, last = final_front(d, source)
         if args.metric == "calib":
-            last = front[front["gen"] == n_gen]
-            z = last["delta_loss"]
+            z = last[Q]
             hv = HV(ref_point=np.ones(3))(last[cols].to_numpy() / nadir)
             details.append(f"(N={len(last)}, Gens={n_gen}, HV={hv:.4f})")
             print(f"{label}: generation {n_gen}, {len(last)} points, HV {hv:.5f}")
@@ -194,51 +262,51 @@ if args.three_d:  # compress_search_hw fronts over deployed memory (x) and predi
             base, last = test_scores(d)
             z = last[f"{args.metric}_ppl"]
             details.append(f"(N={len(last)} scored, Gens={n_gen})")
-        ax.scatter(last["memory_mb"], last["latency_ms"], z, marker=marker, s=20, color=color, depthshade=False, label=label)
+        ax.scatter(last["memory_mb"] * MEM_SCALE, last[Y3], z, marker=marker, s=20, color=color, depthshade=False, label=label)
     base = configs[0]["baseline"]
     base_z = 0 if args.metric == "calib" else test_scores(args.run_dirs[0])[0][f"{args.metric}_ppl"]
-    ax.scatter(base["memory_mb"], base["latency_ms"], base_z, marker="D", s=30, color="black", depthshade=False,
+    ax.scatter(base["memory_mb"] * MEM_SCALE, base[Y3], base_z, marker="D", s=30, color="black", depthshade=False,
                label="Uncompressed")
-    ax.set_xlabel("Deployed memory (MB)")
-    ax.set_ylabel(LATENCY_LABEL)
-    ax.set_zlabel(r"$\Delta$ Calibration loss (nats)" if args.metric == "calib" else METRIC_NAME[args.metric])
+    ax.set_xlabel(MEMORY_LABEL, labelpad=10)
+    ax.set_ylabel(THROUGHPUT_LABEL if Y3 == "tok_s" else LATENCY_LABEL, labelpad=10)
+    ax.set_zlabel(("KL divergence (nats)" if Q == "kld" else Q_LABEL) if args.metric == "calib" else METRIC_NAME[args.metric],
+                  labelpad=10)
     ax.set_title(args.title)
     save(fig, ax, details)
     raise SystemExit
 
 if args.metric == "calib":
-    nadir = np.max([run_nadir(d, ["delta_loss", X]) for d in args.run_dirs], axis=0)
+    nadir = np.max([run_nadir(d, [Q, XH]) for d in args.run_dirs], axis=0)
     print(f"hypervolume: objectives divided by the shared nadir {np.round(nadir, 4).tolist()}, reference (1, 1)")
 
 fig, ax = plt.subplots(figsize=(8, 5))
-x_min, details = float("inf"), []
+x_min, x_max, details = float("inf"), 0.0, []
 baselines = []
-for d, label, marker, color in zip(args.run_dirs, labels, "osD^v<>", args.colors):
-    front = pd.read_csv(os.path.join(d, "front.csv")).rename(columns={"loss_increase": "delta_loss"})
-    n_gen = int(front["gen"].max())
-    ls = "-" if objectives(d) == ["delta_loss", X] else "none"  # a line only where the front is monotone in x
+for d, source, label, marker, color in zip(args.run_dirs, FRONT_FROM, labels, "osD^v<>", args.colors):
+    ls = "-" if objectives(d) == [Q, XH] else "none"  # a line only where the front is monotone in x
     if args.metric == "calib":
-        last = front[front["gen"] == n_gen].sort_values(X)
-        hv = HV(ref_point=np.ones(2))(last[["delta_loss", X]].to_numpy() / nadir)
-        ax.plot(last[X], last["delta_loss"], marker=marker, ms=5, lw=1.5, ls=ls, color=color, label=label)
+        n_gen, last = final_front(d, source)
+        last = last.sort_values(X)
+        hv = HV(ref_point=np.ones(2))(last[[Q, XH]].to_numpy() / nadir)
+        ax.plot(last[X] * XS, last[Q], marker=marker, ms=5, lw=1.5, ls=ls, color=color, label=label)
         details.append(f"(N={len(last)}, Gens={n_gen}, HV={hv:.4f})")
         print(f"{label}: generation {n_gen}, {len(last)} points, HV {hv:.5f}")
     else:  # the front's test scores; the line follows x
-        base, last = test_scores(d)
+        n_gen, base, last = int(pd.read_csv(os.path.join(d, "front.csv"))["gen"].max()), *test_scores(d)
         baselines.append(base[f"{args.metric}_ppl"])
-        ax.plot(last[X], last[f"{args.metric}_ppl"], marker=marker, ms=5, lw=1.5, ls=ls, color=color, label=label)
+        ax.plot(last[X] * XS, last[f"{args.metric}_ppl"], marker=marker, ms=5, lw=1.5, ls=ls, color=color, label=label)
         details.append(f"(N={len(last)} scored, Gens={n_gen})")
         print(f"{label}: {len(last)} scored, {METRIC_NAME[args.metric]} {last[f'{args.metric}_ppl'].min():.3f}-"
               f"{last[f'{args.metric}_ppl'].max():.3f} (uncompressed {baselines[-1]:.3f})")
-    x_min = min(x_min, last[X].min())
-baseline_mb = configs[0]["baseline_size_mb"] if args.x == "size" else configs[0]["baseline"][X]
+    x_min, x_max = min(x_min, last[X].min()), max(x_max, last[X].max() * XS)
+baseline_mb = configs[0]["baseline_size_mb"] if args.x == "size" else configs[0]["baseline"][X] * XS
 if args.metric == "calib":
     ax.plot(baseline_mb, 0, "D", color="black", label="Uncompressed")
     if args.y == "log":
         ax.set_yscale("symlog", linthresh=0.01)  # linear near 0, log above
         ax.set_ylim(bottom=-0.005)
     else:
-        ax.set_ylim(bottom=-0.02 * ax.get_ylim()[1])
+        ax.set_ylim(bottom=-args.ylim_margin * ax.get_ylim()[1])
 else:
     if max(baselines) - min(baselines) > 1e-6 * max(baselines):
         print("warning: the runs have different uncompressed perplexities (different models?); the line shows the first")
@@ -249,9 +317,9 @@ else:
         plain = FuncFormatter(lambda v, _: f"{v:g}")  # 40, not 4x10^1
         ax.yaxis.set_major_formatter(plain)
         ax.yaxis.set_minor_formatter(plain)
-ax.set_xlim(0, 1.05 * baseline_mb)  # from 0, as in compress_plot
+ax.set_xlim(*map(float, args.xlim.split(",")) if args.xlim else (0, 1.05 * max(baseline_mb, x_max)))  # from 0, as in compress_plot
 ax.set_xlabel(X_LABEL)
-ax.set_ylabel(r"$\Delta$ Calibration loss (nats)" if args.metric == "calib" else METRIC_NAME[args.metric])
+ax.set_ylabel(Q_LABEL if args.metric == "calib" else METRIC_NAME[args.metric])
 ax.set_title(args.title)
 ax.grid(True, alpha=0.3)
 save(fig, ax, details)

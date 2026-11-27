@@ -45,8 +45,8 @@ MiB = 1 << 20
 
 class TPOTCompressor(HWCompressor):
     """HWCompressor for scripts/compress_search_tpot.py: a configuration costs its decode TPOT (the latency table's step at
-    batch 1, see the module docstring) and its deployed weights, nothing else (no KV cache, no stored size apart from the
-    weights). With bands = n_layer every layer has its own format per role. Genes with one option (MLP width when nothing
+    batch 1, see the module docstring) and its memory as loaded on the GPU (the model's tensors), nothing else (no KV
+    cache or activations, no separate stored size). With bands = n_layer every layer has its own format per role. Genes with one option (MLP width when nothing
     is pruned, sublayer removal when max_skip is 0) are left out of the gene vector and take their only value.
 
     Memory: with an output head tied to the embedding, HWCompressor.cost counts the shared matrix once, in the head's

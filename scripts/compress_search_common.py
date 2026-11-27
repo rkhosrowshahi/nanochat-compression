@@ -141,6 +141,15 @@ def atomic_dump(obj, path, dumper):
     os.replace(tmp, path)
 
 
+def recost(cached, genes, compressor, kept=()):
+    """A previous evaluation's statistics with its predicted costs recomputed by compressor.cost on the current latency
+    table. The costs are cheap and come from the table, which is measured per GPU: an evals.csv carried over from another
+    GPU (or settings) holds that GPU's latencies. The quality scores, and the statistics apply() and extra_scores() measure
+    on the model (kept), stay as cached."""
+    fresh = compressor.cost(compressor.config(genes))
+    return {**cached, **{k: float(v) for k, v in fresh.items() if k in cached and k not in kept}}
+
+
 def decode_genes(x, genes):
     """As HWCompressor.decode, from the gene sizes alone."""
     return tuple(int(min(max(round(float(v)), 0), n - 1)) for v, (_, n) in zip(x, genes))
@@ -433,10 +442,17 @@ class Search:
             done_gen = 0
         self.cache = {}
         if os.path.exists(self.out("evals.csv")):
+            kept = set(stored) | set(extra)  # measured with the model: the same on every GPU
+            n_recosted = 0
             with open(self.out("evals.csv"), newline="") as f:
                 for r in csv.DictReader(f):
-                    self.cache[r["key"]] = {s: float(r[s]) for s in stats}
-            print(f"Loaded {len(self.cache)} previous evaluations", flush=True)
+                    cached = {s: float(r[s]) for s in stats}
+                    self.cache[r["key"]] = recost(cached, [int(r[n]) for n in self.gene_names], compressor, kept)
+                    n_recosted += self.cache[r["key"]] != cached
+            print(f"Loaded {len(self.cache)} previous evaluations ({n_recosted} re-costed on this latency table)", flush=True)
+            if n_recosted and done_gen:
+                print("WARNING: the checkpoint's population was ranked on another latency table (another GPU or settings); "
+                      "start a new out_dir to search on this one", flush=True)
         self.evals_log = CsvLog(self.out("evals.csv"), self.eval_fields)
         self.pop_log = CsvLog(self.out("population.csv"), self.pop_fields, keep_upto=done_gen)
         self.front_log = CsvLog(self.out("front.csv"), self.pop_fields, keep_upto=done_gen)
@@ -587,7 +603,7 @@ GiB_PER_MB = 1e6 / (1 << 30)
 
 class KLDSearch(Search):
     """A Search whose quality is the KL divergence from the uncompressed model on code conversations, with decode TPOT and
-    weight memory as its costs (scripts/compress_search_tpot.py, scripts/compress_search_stage2.py). Needs args.max_kld,
+    memory (GiB) as its costs (scripts/compress_search_tpot.py, scripts/compress_search_stage2.py). Needs args.max_kld,
     args.test_max_kld and args.code_test_seqs."""
 
     quality = "kld"
